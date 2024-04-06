@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Numerics;
 
 namespace OfficeBite.Infrastructure.Data.Models
 {
@@ -10,14 +11,14 @@ namespace OfficeBite.Infrastructure.Data.Models
 
         public string Name { get; set; } = string.Empty;
         public DateTime SelectedDate { get; set; }
-        public DateTime CurDateTime { get; set; }
+        public DateTime OrderPlacedOnDate { get; set; }
 
         public bool IsEaten { get; set; }
 
         public string Details { get; set; } = string.Empty;
         public string UserAgentId { get; set; } = string.Empty;
 
-        [ForeignKey(nameof(UserAgentId))] 
+        [ForeignKey(nameof(UserAgentId))]
         public UserAgent UserAgent { get; set; } = null!;
 
         public int MenuOrderRequestNumber { get; set; }
