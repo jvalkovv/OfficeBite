@@ -22,7 +22,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\OfficeBite.Core\OfficeBite.Core.csproj" />
-    <ProjectReference Include="..\OfficeBite.Infrastructure\OfficeBite.Infrastructure.csproj" />
   </ItemGroup>
 
 </Project>

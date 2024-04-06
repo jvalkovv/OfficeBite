@@ -1,5 +1,6 @@
-using Microsoft.AspNetCore.Localization;
+﻿using Microsoft.AspNetCore.Localization;
 using OfficeBite.Extensions;
+using OfficeBite.Infrastructure.Data.Seeds.Interfaces;
 using System.Globalization;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -7,10 +8,19 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddOfficeBiteDbContext(builder.Configuration);
 builder.Services.AddOfficeBiteServices();
 builder.Services.AddApplicationIdentity(builder.Configuration);
-builder.Services.AddSeedDataLoader();
+builder.Services.AddSeedDataLoader(); 
 builder.Services.AddControllersWithViews();
 builder.Services.ConfigureCookie(builder.Configuration);
+
 var app = builder.Build();
+
+
+using (var scope = app.Services.CreateScope())
+{
+    var serviceProvider = scope.ServiceProvider;
+    var seedDataLoader = serviceProvider.GetRequiredService<ISeedDataLoader>();
+    seedDataLoader.InitializeSeedData();
+}
 
 
 var supportedCultures = new[]
@@ -46,5 +56,6 @@ app.UseAuthorization();
 
 app.MapDefaultControllerRoute();
 app.MapRazorPages();
+
 
 app.Run();
