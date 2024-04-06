@@ -31,7 +31,7 @@ namespace OfficeBite.Infrastructure.Data.Models
         [ForeignKey(nameof(UserId))]
         public IdentityUser IdentityUser { get; set; } = null!;
 
-        public ICollection<OrderHistory> OrderHistories { get; set; } = new ICollection<OrderHistory>();
+        public ICollection<OrderHistory> OrderHistories { get; set; } = new List<OrderHistory>();
 
     }
 }
