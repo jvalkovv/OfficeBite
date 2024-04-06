@@ -31,6 +31,7 @@ namespace OfficeBite.Extensions
         public static IServiceCollection AddSeedDataLoader(this IServiceCollection services)
         {
             services.AddScoped<ISeedDataLoader, SeedDataLoader>();
+
             return services;
         }
         //Identity Application Password Validation
