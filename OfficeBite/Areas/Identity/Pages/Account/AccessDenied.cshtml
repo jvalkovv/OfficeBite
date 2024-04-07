@@ -6,5 +6,14 @@
 
 <header>
     <h1 class="text-danger">@ViewData["Title"]</h1>
-    <p class="text-danger">You do not have access to this resource.</p>
+    @if (!User.Identity!.IsAuthenticated)
+    {
+        <p class="text-danger">You need to <a asp-page="/Account/Login">log in</a> first.</p>
+    }
+    else
+    {
+        <p class="text-danger">You do not have permission to access this page.</p>
+        <p class="text-danger">Please contact your Administrator to request access.</p>
+         <a asp-page="/Home">Return to the Home Page</a>
+    }
 </header>
