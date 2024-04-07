@@ -1,0 +1,39 @@
+﻿@model OfficeBite.Core.Models.AdminModels.AdminPanelViewModel
+@{
+    ViewData["Title"] = "Admin panel";
+}
+<h1>Admin Panel</h1>
+<table class="table">
+    <thead>
+        <tr>
+            <th>Username</th>
+            <th>Email</th>
+            <th>Roles</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var user in Model.AllUsers)
+        {
+            <tr>
+                <td>@user.UserName</td>
+                <td>@user.Email</td>
+                <td>@user.RoleName</td>
+                <td>
+                    <form method="post" asp-action="AssignRole" asp-controller="Admin">
+                        <input type="hidden" name="UserId" value="@user.UserId" />
+                        <select asp-for="@Model.RoleId" class="form-control" aria-required="true">
+                            <option disabled selected value="">Избери роля...</option>
+                            @foreach (var role in Model.AllRoles)
+                            {
+                                <option value="@role.Id">@role.Name</option>
+                            }
+                        </select>
+                        <span asp-validation-for="@Model.RoleId" class="text-danger"></span>
+                        <button type="submit">Assign Role</button>
+                    </form>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
