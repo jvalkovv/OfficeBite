@@ -8,7 +8,8 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddOfficeBiteDbContext(builder.Configuration);
 builder.Services.AddOfficeBiteServices();
 builder.Services.AddApplicationIdentity(builder.Configuration);
-builder.Services.AddSeedDataLoader(); 
+builder.Services.AddSeedDataLoader();
+builder.Services.AddScoped<HelperMethods>();
 builder.Services.AddControllersWithViews();
 builder.Services.ConfigureCookie(builder.Configuration);
 
