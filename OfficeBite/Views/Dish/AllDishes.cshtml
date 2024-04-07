@@ -1,0 +1,113 @@
+﻿@model OfficeBite.Core.Models.DishModels.AllDishesViewModel
+
+@{
+    ViewData["Title"] = "All dishes";
+}
+<style>
+    .note {
+        color: black;
+        width: 100%;
+    }
+
+    .buttons-action {
+        display: flex;
+        gap: 5px;
+    }
+
+    .search-bar {
+        margin-bottom: 15px;
+    }
+
+</style>
+<div class="container mt-5">
+    <h2 class="mb-4">Управление на менюто</h2>
+    <div class="search-bar">
+        <input type="text" id="search-input" class="form-control" placeholder="Търсене по ястие...">
+    </div>
+    <div class="table-responsive">
+        <div class="row" data-aos="fade-up" data-aos-delay="100">
+            <div class="col-lg-12 d-flex justify-content-center">
+                <ul id="menu-flters" class="list-inline" style="display:flex">
+                    <li class="list-inline-item btn btn-secondary" data-category="all">Всички</li>
+                    @foreach (var category in Model.Categories)
+                    {
+                        <li class="list-inline-item btn btn-secondary" data-category="@category.Id">@category.Name</li>
+                    }
+                </ul>
+            </div>
+        </div>
+
+        <table class="table">
+            <thead>
+                <tr class="notesTitle">
+                    <th>Ястие</th>
+                    <th>Цена</th>
+                    <th>Допълнително</th>
+                    <th>Снимка</th>
+                    <th>Статус</th>
+                    <th>Действие</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var dish in Model.Dishes.OrderBy(c => c.CategoryId))
+                {
+                    <tr class="category-@dish.CategoryId note category" style="display: none;">
+                        <td class="notes">@dish.DishName</td>
+                        <td class="notes">@dish.Price лв.</td>
+                        <td class="notes">@dish.Description</td>
+                        @if (string.IsNullOrEmpty(@dish.ImageUrl))
+                        {
+                            <td>Няма избрана снимка</td>
+                        }
+                        else
+                        {
+                            <td><img src="@dish.ImageUrl" alt="Не съществува" width="120px" height="120px" /></td>
+                        }
+                        <td>
+                            @if (dish.IsVisible)
+                            {
+                                <span>Видимо</span>
+                            }
+                            else
+                            {
+                                <span>Скрито</span>
+                            }
+                        </td>
+                        <td>
+                           @*  <div class="buttons-action">
+                                <a asp-controller="Dish" asp-action="EditDish" asp-route-id="@dish.DishId" class="btn btn-secondary">Редактирай</a>
+                                <a asp-controller="Dish" asp-action="HideDish" asp-route-DishId="@dish.DishId" class="btn btn-secondary">Скрий</a>
+                            </div> *@
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script>
+    $(document).ready(function () {
+        $('.category').show();
+        $('#menu-flters li').on('click', function () {
+            var category = $(this).attr('data-category');
+            $('.category').hide();
+            if (category === 'all') {
+                $('.category').show();
+            } else {
+                $('.category-' + category).show();
+            }
+        });
+
+        $('#search-input').on('input', function () {
+            var searchText = $(this).val().toLowerCase();
+            $('.category').hide();
+            $('.notes').filter(function () {
+                return $(this).text().toLowerCase().indexOf(searchText) !== -1;
+            }).closest('.category').show();
+            highlightMatches(searchText);
+        });
+    });
+</script>
