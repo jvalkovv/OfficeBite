@@ -67,7 +67,7 @@ namespace OfficeBite.Extensions
                 options.Cookie.Name = "OfficeBiteCookies";
                 options.Cookie.SameSite = SameSiteMode.Strict;
                 options.Cookie.HttpOnly = true;
-                options.ExpireTimeSpan = TimeSpan.FromDays(1);
+                options.ExpireTimeSpan = TimeSpan.FromMinutes(30);
                 options.LoginPath = "/Identity/Account/AccessDenied";
                 options.SlidingExpiration = true;
             });
