@@ -1,0 +1,44 @@
+﻿@model OfficeBite.Core.Models.DishModels.DishViewModel
+@{
+    ViewBag.Title = "Скриване на ястието";
+}
+
+<style>
+    .card {
+        display: flex;
+    }
+
+    .card-body {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex-direction: column;
+    }
+</style>
+
+
+<h2 class="text-center">@ViewBag.Title</h2>
+<hr />
+
+<div class="row justify-content-center">
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-body">
+                <h3 class="card-title text-center">Име на ястие: @Model.DishName</h3>
+                <h3 class="card-title text-center">Цена на ястие: @Model.DishPrice лв.</h3>
+                <h3 class="card-title text-center">Описание на ястието: @Model.Description</h3>
+                <img class="img" src="@Model.ImageUrl" width="240px" />
+                <p class="text-danger mt-3">"Сигурни ли сте, че искате, да скриете това ястие от менюто?"</p>
+            </div>
+            <div class="card-footer">
+                <form asp-action="HideDishConfirm" method="post">
+                    <input type="hidden" asp-for="DishId" />
+                    <button type="submit" class="btn btn-danger">Скрий ястие</button>
+                </form>
+                <form asp-action="AllDishes" method="post">
+                    <a asp-controller="Dish" asp-action="AllDishes" class="btn btn-secondary">Откажи</a>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
