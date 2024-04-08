@@ -4,6 +4,34 @@
     ViewData["Title"] = "All dishes";
 }
 <style>
+
+    @@media (max-width: 650px) {
+        .row {
+            display: flex;
+            flex-wrap: wrap;
+        }
+
+        .row-category {
+            display: flex;
+            flex-wrap: wrap;
+        }
+
+        .col-md-4 {
+            width: 50%;
+        }
+
+        #menu-flters {
+            display: flex;
+            flex-wrap: wrap;
+            width: 100%;
+        }
+
+            #menu-flters li {
+                width: 32%;
+                margin: 1px;
+            }
+    }
+
     .note {
         color: black;
         width: 100%;
@@ -18,52 +46,82 @@
         margin-bottom: 15px;
     }
 
+    .row {
+        justify-content: center;
+    }
+
+    .card {
+        border: none;
+        height: max-content;
+    }
+
+    .dish-card {
+        border: 1px solid #ccc;
+        width: 340px;
+        border-radius: 5px;
+        padding: 10px;
+        margin-bottom: 20px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        transition: all 0.3s ease;
+    }
+
+        .dish-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 6px 8px rgba(0, 0, 0, 0.2);
+        }
+
+    .dish-image {
+        width: 100%;
+        height: 220px;
+        border-radius: 5px;
+    }
+
+    .dish-name {
+        font-weight: bold;
+        color: #333;
+        margin-bottom: 5px;
+    }
+
+    .dish-price {
+        color: #007bff;
+    }
+
+    .dish-description {
+        color: #666;
+    }
+
+    .dish-status {
+        font-weight: bold;
+        color: green;
+    }
 </style>
 <div class="container mt-5">
     <h2 class="mb-4">Управление на менюто</h2>
     <div class="search-bar">
         <input type="text" id="search-input" class="form-control" placeholder="Търсене по ястие...">
     </div>
-    <div class="table-responsive">
-        <div class="row" data-aos="fade-up" data-aos-delay="100">
-            <div class="col-lg-12 d-flex justify-content-center">
-                <ul id="menu-flters" class="list-inline" style="display:flex">
-                    <li class="list-inline-item btn btn-secondary" data-category="all">Всички</li>
-                    @foreach (var category in Model.Categories)
-                    {
-                        <li class="list-inline-item btn btn-secondary" data-category="@category.Id">@category.Name</li>
-                    }
-                </ul>
-            </div>
-        </div>
-
-        <table class="table">
-            <thead>
-                <tr class="notesTitle">
-                    <th>Ястие</th>
-                    <th>Цена</th>
-                    <th>Допълнително</th>
-                    <th>Снимка</th>
-                    <th>Статус</th>
-                    <th>Действие</th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach (var dish in Model.Dishes.OrderBy(c => c.CategoryId))
+    <div class="row-category" data-aos="fade-up" data-aos-delay="100">
+        <div class="col-lg-12 d-flex justify-content-center">
+            <ul id="menu-flters" class="list-inline" style="display:flex">
+                <li class="list-inline-item btn btn-secondary" data-category="all">Всички</li>
+                @foreach (var category in Model.Categories)
                 {
-                    <tr class="category-@dish.CategoryId note category" style="display: none;">
-                        <td class="notes">@dish.DishName</td>
-                        <td class="notes">@dish.Price лв.</td>
-                        <td class="notes">@dish.Description</td>
-                        @if (string.IsNullOrEmpty(@dish.ImageUrl))
-                        {
-                            <td>Няма избрана снимка</td>
-                        }
-                        else
-                        {
-                            <td><img src="@dish.ImageUrl" alt="Не съществува" width="120px" height="120px" /></td>
-                        }
-                        <td>
+                    <li class="list-inline-item btn btn-secondary" data-category="@category.Id">@category.Name</li>
+                }
+            </ul>
+        </div>
+    </div>
+    <div class="row" id="dish-card-container">
+        @foreach (var dish in Model.Dishes.OrderBy(c => c.CategoryId))
+        {
+            <div class="col-md-4 dish-card category-@dish.CategoryId">
+                <div class="card">
+                    <img src="@dish.ImageUrl" alt="@dish.DishName" class="dish-image" />
+                    <div class="card-body">
+                        <h5 class="card-title dish-name">@dish.DishName</h5>
+                        <p class="card-text dish-price">@dish.Price лв.</p>
+                        <p class="card-text dish-description">@dish.Description</p>
+                        <p class="card-text dish-status">
                             @if (dish.IsVisible)
                             {
                                 <span>Видимо</span>
@@ -72,42 +130,47 @@
                             {
                                 <span>Скрито</span>
                             }
-                        </td>
-                        <td>
-                           @*  <div class="buttons-action">
-                                <a asp-controller="Dish" asp-action="EditDish" asp-route-id="@dish.DishId" class="btn btn-secondary">Редактирай</a>
-                                <a asp-controller="Dish" asp-action="HideDish" asp-route-DishId="@dish.DishId" class="btn btn-secondary">Скрий</a>
-                            </div> *@
-                        </td>
-                    </tr>
-                }
-            </tbody>
-        </table>
+                        </p>
+                        @*  <div class="buttons-action">
+                    <a asp-controller="Dish" asp-action="EditDish" asp-route-id="@dish.DishId" class="btn btn-secondary">Редактирай</a>
+                    <a asp-controller="Dish" asp-action="HideDish" asp-route-DishId="@dish.DishId" class="btn btn-secondary">Скрий</a>
+                    </div> *@
+                    </div>
+                </div>
+            </div>
+        }
     </div>
 </div>
-
 
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 <script>
     $(document).ready(function () {
+        // Показваме всички ястия при зареждане на страницата
         $('.category').show();
+
+        // Функция за филтриране на ястията по категория
         $('#menu-flters li').on('click', function () {
             var category = $(this).attr('data-category');
-            $('.category').hide();
+
+            // Скриваме всички ястия
+            $('.dish-card').hide();
+
+            // Показваме ястията, които съответстват на избраната категория
             if (category === 'all') {
-                $('.category').show();
+                $('.dish-card').show(); // Показваме всички ястия, ако е избрана опцията "Всички"
             } else {
-                $('.category-' + category).show();
+                $('.category-' + category).show(); // Показваме само ястията от избраната категория
             }
         });
 
+        // Функцията за търсене по дума
         $('#search-input').on('input', function () {
             var searchText = $(this).val().toLowerCase();
-            $('.category').hide();
-            $('.notes').filter(function () {
+            $('.dish-card').hide(); // Скриваме всички картички
+
+            $('.dish-card').filter(function () {
                 return $(this).text().toLowerCase().indexOf(searchText) !== -1;
-            }).closest('.category').show();
-            highlightMatches(searchText);
+            }).closest('.dish-card').show(); // Показваме картичките, които отговарят на критерия за търсене
         });
     });
 </script>
