@@ -1,39 +1,138 @@
 ﻿@model OfficeBite.Core.Models.AdminModels.AdminPanelViewModel
 @{
-    ViewData["Title"] = "Admin panel";
+    ViewData["Title"] = "Админ панел";
 }
-<h1>Admin Panel</h1>
-<table class="table">
-    <thead>
-        <tr>
-            <th>Username</th>
-            <th>Email</th>
-            <th>Roles</th>
-            <th>Actions</th>
-        </tr>
-    </thead>
-    <tbody>
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="~/customcss/admins/desktop.css" />
+    <link rel="stylesheet" href="~/customcss/admins/mobile.css" />
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body>
+    <h1>Администраторски панел</h1>
+    <div class="search-box">
+        <h4 class="mb-4">Управление на потребителските роли</h4>
+        <div class="search-bar">
+            <input type="text" id="search-input" class="form-control" placeholder="Търсене по потребител...">
+            <select id="role-filter" class="form-control">
+                <option value="">Търсене по роля...</option>
+                <option value="">Всички</option>
+                @foreach (var role in Model.AllRoles)
+                {
+                    <option value="@role.Name">@role.Name</option>
+                }
+            </select>
+        </div>
+    </div>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Потребителско име</th>
+                <th>Имена</th>
+                <th>Email адрес</th>
+                <th>Тип потребителска роля</th>
+                <th>Действия</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var user in Model.AllUsers)
+            {
+                <tr class="search-user" data-role="@user.RoleName">
+                    <td>@user.UserName</td>
+                    <td>@user.FullName</td>
+                    <td>@user.Email</td>
+                    <td>@user.RoleName</td>
+                    <td>
+                        <form method="post" asp-action="AssignRole" asp-controller="Admin">
+                            <input type="hidden" name="UserId" value="@user.UserId" />
+                            <select asp-for="@Model.RoleId" class="form-control" aria-required="true">
+                                <option disabled selected value="">Избери роля...</option>
+                                @foreach (var role in Model.AllRoles)
+                                {
+                                    <option value="@role.Id">@role.Name</option>
+                                }
+                            </select>
+                            <span asp-validation-for="@Model.RoleId" class="text-danger"></span>
+                            <button class="admin-page-button" type="submit">Assign Role</button>
+                        </form>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+    <div id="mobile-view">
         @foreach (var user in Model.AllUsers)
         {
-            <tr>
-                <td>@user.UserName</td>
-                <td>@user.Email</td>
-                <td>@user.RoleName</td>
-                <td>
-                    <form method="post" asp-action="AssignRole" asp-controller="Admin">
-                        <input type="hidden" name="UserId" value="@user.UserId" />
-                        <select asp-for="@Model.RoleId" class="form-control" aria-required="true">
-                            <option disabled selected value="">Избери роля...</option>
-                            @foreach (var role in Model.AllRoles)
-                            {
-                                <option value="@role.Id">@role.Name</option>
-                            }
-                        </select>
-                        <span asp-validation-for="@Model.RoleId" class="text-danger"></span>
-                        <button type="submit">Assign Role</button>
-                    </form>
-                </td>
-            </tr>
+            <div class="user-card search-user" data-role="@user.RoleName">
+                <div class="user-header">
+                    <h3>Потребителско име: @user.UserName </h3>
+                    <i class="toggle-icon fas fa-chevron-down"></i>
+                    @*       <button class="toggle-details">Покажи детайли</button> *@
+                </div>
+                <div class="user-details" style="display: none;">
+                    <p>Пълно име: @user.FullName</p>
+                    <p>Email адрес: @user.Email</p>
+                    <p>Тип потребителска роля: @user.RoleName</p>
+                    <div class="user-actions">
+                        <form method="post" asp-action="AssignRole" asp-controller="Admin">
+                            <input type="hidden" name="UserId" value="@user.UserId" />
+                            <select asp-for="@Model.RoleId" class="form-control" aria-required="true">
+                                <option disabled selected value="">Избери роля...</option>
+                                @foreach (var role in Model.AllRoles)
+                                {
+                                    <option value="@role.Id">@role.Name</option>
+                                }
+                            </select>
+                            <span asp-validation-for="@Model.RoleId" class="text-danger"></span>
+                            <button class="admin-page-button" type="submit">Assign Role</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
         }
-    </tbody>
-</table>
+    </div>
+
+</body>
+</html>
+
+<script>
+    $(document).ready(function () {
+        $('#search-input, #role-filter').on('input', function () {
+            var searchText = $('#search-input').val().toLowerCase();
+            var roleFilter = $('#role-filter').val().toLowerCase();
+
+            $('.search-user').hide();
+
+            $('.search-user').filter(function () {
+                var role = $(this).data('role').toLowerCase();
+                return ((roleFilter === "" || roleFilter === "всички") ||
+                    (role.indexOf(roleFilter) !== -1)) &&
+                    ($(this).text().toLowerCase().indexOf(searchText) !== -1);
+            }).show();
+        });
+
+        $('.user-header').click(function () {
+
+            $('.user-details').not($(this).siblings('.user-details')).hide();
+
+            $(this).siblings('.user-details').toggle();
+        });
+
+
+        $('.user-card').click(function (event) {
+            event.stopPropagation();
+        });
+    });
+</script>
+
+
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
