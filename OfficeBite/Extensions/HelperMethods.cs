@@ -46,7 +46,7 @@ namespace OfficeBite.Extensions
                     DishId = dm.Id,
                     DishName = dm.DishName,
                     Description = dm.Description,
-                    Price = dm.Price,
+                    DishPrice = dm.Price,
                     CategoryId = dm.CategoryId
                 })
                 .ToListAsync();
@@ -60,7 +60,7 @@ namespace OfficeBite.Extensions
                     DishId = d.Id,
                     CategoryId = d.CategoryId,
                     DishName = d.DishName,
-                    Price = d.Price,
+                    DishPrice = d.Price,
                     Description = d.Description,
                     ImageUrl = d.ImageUrl,
                     IsVisible = d.IsVisible

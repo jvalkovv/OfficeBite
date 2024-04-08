@@ -24,4 +24,17 @@
     <ProjectReference Include="..\OfficeBite.Core\OfficeBite.Core.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <UpToDateCheckInput Remove="Views\Dish\HideDish.cshtml" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <_ContentIncludedByDefault Remove="Views\Dish\AllHiddenDishes.cshtml" />
+    <_ContentIncludedByDefault Remove="Views\Dish\HideDish.cshtml" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <UpToDateCheckInput Remove="Views\Dish\AllHiddenDishes.cshtml" />
+  </ItemGroup>
+
 </Project>

@@ -1,13 +1,14 @@
 ﻿@model OfficeBite.Core.Models.DishModels.AllDishesViewModel
 
 @{
-    ViewData["Title"] = "Всички ястия";
+    ViewBag.Title = "Скрити ястия";
+    Layout = "_Layout";
 }
-
 <link rel="stylesheet" href="~/customcss/dishes/allDishes.css" />
+<h2>Всички сктити ястия</h2>
 
 <div class="container mt-5">
-    <h2 class="mb-4">Управление на менюто</h2>
+    <h4 class="mb-4">Управление на скритите ястия</h4>
     <div class="search-bar">
         <input type="text" id="search-input" class="form-control" placeholder="Търсене по ястие...">
     </div>
@@ -23,7 +24,7 @@
         </div>
     </div>
     <div class="row" id="dish-card-container">
-        @foreach (var dish in Model.Dishes.OrderBy(c => c.CategoryId))
+        @foreach (var dish in Model.Dishes.Where(d => d.IsVisible == false).Where(d => d.IsVisible == false).OrderBy(c => c.CategoryId))
         {
             <div class="col-md-4 dish-card category-@dish.CategoryId">
                 <div class="card">
@@ -43,8 +44,8 @@
                             }
                         </p>
                         <div class="buttons-action">
-                            @* <a asp-controller="Dish" asp-action="EditDish" asp-route-dishId="@dish.DishId" class="btn btn-secondary">Редактирай</a> *@
-                            <a asp-controller="Dish" asp-action="HideDish" asp-route-dishId="@dish.DishId" class="btn btn-secondary">Скрий</a>
+                        @*     <a asp-controller="Dish" asp-action="UnHideDish" asp-route-id="@dish.DishId" class="btn btn-secondary">Върни ястието</a>
+                            <a asp-controller="Dish" asp-action="DeleteDish" asp-route-dishId="@dish.DishId" class="btn btn-secondary">Скрий ястието</a> *@
                         </div>
                     </div>
                 </div>
@@ -56,28 +57,27 @@
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 <script>
     $(document).ready(function () {
-       
+
         $('.category').show();
 
-        
+  
         $('#menu-flters li').on('click', function () {
             var category = $(this).attr('data-category');
 
-            
+    
             $('.dish-card').hide();
 
-           
+     
             if (category === 'all') {
-                $('.dish-card').show(); /
+                $('.dish-card').show();
             } else {
                 $('.category-' + category).show(); 
             }
         });
 
-       
         $('#search-input').on('input', function () {
             var searchText = $(this).val().toLowerCase();
-            $('.dish-card').hide(); 
+            $('.dish-card').hide();
 
             $('.dish-card').filter(function () {
                 return $(this).text().toLowerCase().indexOf(searchText) !== -1;

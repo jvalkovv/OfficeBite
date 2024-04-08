@@ -6,7 +6,7 @@ namespace OfficeBite.Core.Models.DishModels
 {
     public class AllDishesViewModel
     {
-        public int Id { get; set; }
+        public int DishId { get; set; }
 
         [Display(Name = "Име на ястието")]
         public string DishName { get; set; } = string.Empty;
@@ -15,7 +15,7 @@ namespace OfficeBite.Core.Models.DishModels
         public decimal DishPrice { get; set; }
 
         [Display(Name = "Описание на ястието")]
-        public string Details { get; set; } = string.Empty;
+        public string Description { get; set; } = string.Empty;
 
         [Display(Name = "Изберете категория на ястието")]
         public int CategoryId { get; set; }
