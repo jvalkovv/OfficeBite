@@ -22,7 +22,7 @@ namespace OfficeBite.Core.Models.DishModels
 
         public bool IsVisible { get; set; }
 
-        [Display(Name = "Качете снимка на ястието")]
+        [Display(Name = "Качете снимка на ястието")] 
         public IFormFile ImageFile { get; set; } = null!;
 
         public IEnumerable<CategoryViewModel> Categories { get; set; } = new List<CategoryViewModel>();
