@@ -2,13 +2,10 @@
 // The .NET Foundation licenses this file to you under the MIT license.
 #nullable disable
 
-using System;
-using System.ComponentModel.DataAnnotations;
-using System.Text.Encodings.Web;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using System.ComponentModel.DataAnnotations;
 
 namespace OfficeBite.Areas.Identity.Pages.Account.Manage
 {
@@ -30,6 +27,9 @@ namespace OfficeBite.Areas.Identity.Pages.Account.Manage
         ///     directly from your code. This API may change or be removed in future releases.
         /// </summary>
         public string Username { get; set; }
+
+
+        public string UserRole { get; set; }
 
         /// <summary>
         ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
@@ -64,6 +64,8 @@ namespace OfficeBite.Areas.Identity.Pages.Account.Manage
         {
             var userName = await _userManager.GetUserNameAsync(user);
             var phoneNumber = await _userManager.GetPhoneNumberAsync(user);
+            var roles = await _userManager.GetRolesAsync(user);
+            UserRole = roles.FirstOrDefault();
 
             Username = userName;
 
