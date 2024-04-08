@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using OfficeBite.Core.Models.AdminModels;
+using OfficeBite.Infrastructure.Data;
 
 namespace OfficeBite.Controllers
 {
@@ -11,10 +12,12 @@ namespace OfficeBite.Controllers
     {
         private readonly UserManager<IdentityUser> _userManager;
         private readonly RoleManager<IdentityRole> _roleManager;
-        public AdminController(UserManager<IdentityUser> userManager, RoleManager<IdentityRole> roleManager)
+        private readonly OfficeBiteDbContext _dbContext;
+        public AdminController(UserManager<IdentityUser> userManager, RoleManager<IdentityRole> roleManager, OfficeBiteDbContext dbContext)
         {
             _userManager = userManager;
             _roleManager = roleManager;
+            _dbContext = dbContext;
         }
         public async Task<List<RoleViewModel>> GetRoleAsync()
         {
@@ -33,26 +36,26 @@ namespace OfficeBite.Controllers
         {
             var users = await _userManager.Users.ToListAsync();
 
-            // Създаване на списък, в който ще съхраняваме данните за потребителите
+            var userInBase = _dbContext.UserAgents;
             var usersData = new List<UsersViewModel>();
 
-            // За всеки потребител
+
             foreach (var user in users)
             {
-                // Извличане на ролите на потребителя
+                var currUser = userInBase.FirstOrDefault(u => u.UserId == user.Id);
                 var roles = await _userManager.GetRolesAsync(user);
 
-                // Създаване на списък за ролите на потребителя
                 var roleNames = roles.ToList();
 
-                // Добавяне на данните за потребителя и ролите му към списъка с моделите за изгледа
-                usersData.Add(new UsersViewModel
-                {
-                    UserId = user.Id,
-                    UserName = user.UserName,
-                    Email = user.Email,
-                    RoleName = string.Join(", ", roleNames) // Преобразуване на списъка с роли в низ
-                });
+                if (currUser != null)
+                    usersData.Add(new UsersViewModel
+                    {
+                        UserId = user.Id,
+                        UserName = user.UserName,
+                        FullName = $"{currUser.FirstName} {currUser.LastName}",
+                        Email = user.Email,
+                        RoleName = string.Join(", ", roleNames)
+                    });
             }
 
             return usersData;
@@ -68,6 +71,7 @@ namespace OfficeBite.Controllers
             return View(model);
         }
 
+        [HttpPost]
         public async Task<IActionResult> AssignRole(AdminPanelViewModel model)
         {
             var roleId = model.RoleId;
@@ -93,7 +97,7 @@ namespace OfficeBite.Controllers
 
             if (!result.Succeeded)
             {
-                return BadRequest("HAHHAHAHHSsadasdawdas dasd asd asdsad asd asdasdasdasd");
+                return BadRequest();
             }
             return RedirectToAction("Admin");
 
