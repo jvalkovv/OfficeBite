@@ -1,0 +1,27 @@
+﻿.card-body {
+display: flex;
+flex-direction: column;
+}
+
+.form-group {
+margin-bottom: 10px;
+}
+
+.form-group label {
+margin-bottom: 5px;
+}
+
+.form-group input,
+.form-group select,
+.form-group textarea {
+width: 100%;
+}
+
+.form-group span.text-danger {
+display: block;
+margin-top: 5px;
+}
+
+.card-body button {
+align-self: center;
+}

@@ -1,19 +1,10 @@
-﻿.buttons-action {
-    display: flex;
-    gap: 5px;
-}
-
-.search-bar {
+﻿.search-bar {
     margin-bottom: 15px;
 }
 
+/*cards row*/
 .row {
     justify-content: center;
-}
-
-.card {
-    border: none;
-    height: max-content;
 }
 
 .dish-card {
@@ -21,7 +12,7 @@
     width: 340px;
     border-radius: 5px;
     padding: 10px;
-    margin-bottom: 20px;
+    margin: 5px 5px 20px 0;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     transition: all 0.3s ease;
 }
@@ -57,6 +48,43 @@
 }
 
 
+.card {
+    height: 500px;
+    border: none;
+}
+
+.buttons-action {
+    display: flex;
+    gap: 5px;
+}
+
+.card-body > div {
+    position: absolute;
+    bottom: 3px;
+    left: 0;
+    right: 0;
+}
+
+.buttons-action .btn:nth-child(1) {
+    width: 50%;
+}
+
+.buttons-action .btn:nth-child(2) {
+    width: 50%;
+}
+
+#unHide:hover {
+    background-color: #26d026;
+}
+
+.buttons-action .btn:nth-child(1):hover {
+    background-color: #0056b3;
+}
+
+.buttons-action .btn:nth-child(2):hover {
+    background-color: #f05555d4;
+}
+
 
 @media (max-width: 650px) {
     .row {
@@ -69,8 +97,24 @@
         flex-wrap: wrap;
     }
 
-    .col-md-4 {
-        width: 50%;
+    .buttons-action {
+        display: grid;
+        gap: 5px;
+    }
+
+    .card-body > div {
+        position: absolute;
+        bottom: 3px;
+        left: 0;
+        right: 0;
+    }
+
+    .buttons-action .btn:nth-child(1) {
+        width: 100%;
+    }
+
+    .buttons-action .btn:nth-child(2) {
+        width: 100%;
     }
 
     #menu-flters {
