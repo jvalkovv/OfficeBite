@@ -80,7 +80,9 @@
 .buttons-action .btn:nth-child(1):hover {
     background-color: #0056b3;
 }
-
+#return-hide-dish {
+    background-color: #26d026;
+}
 .buttons-action .btn:nth-child(2):hover {
     background-color: #f05555d4;
 }
