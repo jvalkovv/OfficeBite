@@ -1,0 +1,44 @@
+﻿.card {
+    display: flex;
+}
+
+.card-body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+}
+
+.card-footer {
+    display: flex;
+    gap: 5px;
+    justify-content: space-between;
+}
+
+.message {
+    color: #26d026
+}
+
+.card-footer .btn {
+    width: 100%;
+    justify-content: stretch;
+}
+
+button.btn:nth-child(2) {
+    background-color: red;
+}
+
+
+a.btn:hover {
+    background-color: #26d026;
+}
+
+@media (max-width: 650px) {
+    .card-footer {
+        justify-content: space-between;
+    }
+
+        .card-footer .btn {
+            width: 100%;
+        }
+}
