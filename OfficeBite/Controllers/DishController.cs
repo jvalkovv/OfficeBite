@@ -26,7 +26,7 @@ namespace OfficeBite.Controllers
             return User.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? string.Empty;
         }
 
-        //ОК
+      
         [HttpGet]
         public async Task<IActionResult> AllDishes()
         {
@@ -50,7 +50,7 @@ namespace OfficeBite.Controllers
             return View(model);
         }
 
-        //ОК
+       
         [HttpGet]
         public async Task<IActionResult> AllHiddenDishes()
         {
@@ -74,7 +74,7 @@ namespace OfficeBite.Controllers
             return View(model);
         }
 
-        //ОК -> TODO... CSS 
+    
         [HttpGet]
         public async Task<IActionResult> HideDish(int id)
         {
@@ -95,7 +95,6 @@ namespace OfficeBite.Controllers
             return View(dishToHide);
         }
 
-        //ОК -> TODO... CSS 
         [HttpPost]
         public async Task<IActionResult> HideDishConfirm(int dishId)
         {
@@ -129,7 +128,7 @@ namespace OfficeBite.Controllers
             return RedirectToAction(nameof(AllDishes));
         }
 
-        //ОК -> TODO... CSS 
+      
         [HttpGet]
         public async Task<IActionResult> UnHideDish(int dishId)
         {
@@ -152,7 +151,7 @@ namespace OfficeBite.Controllers
             return View(dishToUnHide);
         }
 
-        //ОК -> TODO... CSS 
+        
         [HttpPost]
         public async Task<IActionResult> UnHideDishConfirm(int dishId)
         {
@@ -186,7 +185,7 @@ namespace OfficeBite.Controllers
             return RedirectToAction(nameof(AllDishes));
         }
 
-        //ОК
+    
         [HttpGet]
         public async Task<IActionResult> EditDish(int id)
         {
@@ -205,7 +204,7 @@ namespace OfficeBite.Controllers
             return View(model);
         }
 
-        //ОК
+        
         [HttpPost]
         public async Task<IActionResult> EditDish(AllDishesViewModel model, int dishId)
         {
@@ -272,7 +271,7 @@ namespace OfficeBite.Controllers
 
         }
 
-        //ОК
+        
         [HttpGet]
         public async Task<IActionResult> AddDish()
         {
@@ -295,7 +294,6 @@ namespace OfficeBite.Controllers
             return View(model);
         }
 
-        //ОК
         [HttpPost]
         public async Task<IActionResult> AddDish(AllDishesViewModel model) 
         {
@@ -361,7 +359,7 @@ namespace OfficeBite.Controllers
             return View(model);
         }
 
-        //ОК -> TODO... CSS 
+        
         [HttpGet]
         public async Task<IActionResult> DeleteDish(int dishId)
         {
@@ -382,7 +380,6 @@ namespace OfficeBite.Controllers
             return View(dishToDelete);
         }
 
-        //ОК -> TODO... CSS 
         [HttpPost]
         public async Task<IActionResult> DeleteDishConfirm(int dishId)
         {
