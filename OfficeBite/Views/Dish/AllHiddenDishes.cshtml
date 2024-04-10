@@ -44,7 +44,7 @@
                             }
                         </p>
                         <div class="buttons-action">
-                            <a asp-controller="Dish" asp-action="UnHideDish" asp-route-dishId="@dish.DishId" class="btn btn-secondary">Върни ястието</a>
+                            <a id="return-hide-dish" asp-controller="Dish" asp-action="UnHideDish" asp-route-dishId="@dish.DishId" class="btn btn-secondary">Върни ястието</a>
                             <a asp-controller="Dish" asp-action="DeleteDish" asp-route-dishId="@dish.DishId" class="btn btn-secondary">Изтрий ястието</a>
                         </div>
                     </div>
