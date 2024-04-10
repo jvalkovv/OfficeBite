@@ -2,42 +2,7 @@
 @{
     ViewBag.Title = "Връщане на ястие в менюто";
 }
-
-<style>
-    .card {
-        display: flex;
-    }
-
-    .card-body {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        flex-direction: column;
-    }
-
-    .card-footer {
-        display: flex;
-        gap: 5px;
-    }
-
-    .card-footer .btn {
-        width: 100%;
-    }
-
-    button.btn:nth-child(2):hover {
-        background-color: #0056b3;
-    }
-
-    .card-footer .btn:hover {
-        background-color: #f05555d4;
-    }
-
-    @@media (max-width: 650px) {
-        .card-footer .btn {
-            width: 50%;
-        }
-    }
-</style>
+<link rel="stylesheet" href="~/customcss/dishes/unhideDish.css"/>
 
 <h2 class="text-center">@ViewBag.Title</h2>
 <hr />
@@ -50,7 +15,7 @@
                 <h3 class="card-title text-center">Цена на ястие: @Model.DishPrice лв.</h3>
                 <h3 class="card-title text-center">Описание на ястието: @Model.Description</h3>
                 <img class="img" src="@Model.ImageUrl" width="240px" />
-                <p class="text-danger mt-3">"Сигурни ли сте, че искате, да върнете това ястие в менюто?"</p>
+                <p  class="message">"Сигурни ли сте, че искате, да върнете това ястие в менюто?"</p>
             </div>
             <div class="card-footer">
                 <form asp-action="UnHideDishConfirm" method="post">
