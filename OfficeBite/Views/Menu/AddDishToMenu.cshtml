@@ -1,0 +1,102 @@
+﻿@model OfficeBite.Core.Models.MenuModels.AddDishToMenuViewModel
+
+@{
+    ViewBag.Title = "Добавяне на ястие към менюто";
+}
+
+<h1>Добавяне на ястие към менюто @Model.RequestMenuNumber</h1>
+
+<div>
+    <form method="post" asp-action="AddDishToMenu" asp-controller="Menu">
+
+        <input type="hidden" id="RequestMenuNumber" name="RequestMenuNumber" value="@Model.RequestMenuNumber" />
+
+        <div class="row">
+            <div class="col">
+                <div class="form-group">
+                    <label>Изберете ястие:</label>
+                    <select id="DishId" class="form-control" multiple>
+
+                        @foreach (var dish in Model.AllDishes.OrderBy(c => c.CategoryId))
+                        {
+                            <option value="@dish.DishId">@dish.DishName</option>
+                        }
+                    </select>
+                </div>
+            </div>
+            <div class="col">
+                <div class="form-group">
+                    <label for="selectedDishes">Избрани ястия:</label>
+                    <select asp-for="SelectedDishes" class="form-control" id="selectedDishes" name="SelectedDishes" multiple></select>
+                </div>
+                <div class="btn-group">
+                    <button type="button" id="addSelectedDishBtn" class="btn btn-primary">Добави</button>
+                    <button type="button" id="removeSelectedDishBtn" class="btn btn-danger">Премахни</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label asp-for="MenuTypeId">Изберете тип меню:</label>
+            <select asp-for="MenuTypeId" class="form-control">
+                @foreach (var menuType in Model.AllMenuTypes)
+                {
+                    <option value="@menuType.MenuTypeId">@menuType.MenuName</option>
+                }
+            </select>
+        </div>
+
+        <div class="mb-3">
+            <label asp-for="@Model.SelectedDates" class="form-label-add-edit">Изберете дати за обяд</label>
+            <div class="d-flex flex-wrap">
+                @for (DateTime date = DateTime.Today; date <= DateTime.Today.AddDays(5); date = date.AddDays(1))
+                {
+                    <label class="btn btn-warning mb-2 me-3 p-3 fw-bold">
+                        <input type="checkbox" name="selectedDates" value="@date" aria-required="true" />
+                        @date.ToString("dd-MM-yyyy")
+                    </label>
+                }
+            </div>
+
+        </div>
+        <div class="mb-3">
+            <button class="btn btn-warning mb-2 w-100 p-3 fw-bold" id="mark-all" onclick="markAllOptionsOnSubmit()">Маркирай всички преди изпращане</button>
+        </div>
+        <div class="mb-3">
+            <input class="btn btn-warning mb-2 w-100 p-3 fw-bold" type="submit" value="Изпрати ястие към менюто" />
+        </div>
+    </form>
+</div>
+@section Scripts {
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            $('#addSelectedDishBtn').click(function () {
+                $('#selectedDishes').append($('#DishId option:selected'));
+                updateSelectedDishes();
+            });
+
+            $('#removeSelectedDishBtn').click(function () {
+                $('#DishId').append($('#selectedDishes option:selected'));
+                updateSelectedDishes();
+            });
+            $('#mark-all').click(function (e) {
+                e.preventDefault();
+                markAllOptionsAsSelected();
+            });
+        });
+        function updateSelectedDishes() {
+            var selectedDishes = [];
+            $('#selectedDishes').find('option').forEach(function () {
+                selectedDishes.push(parseInt($(this).val()));
+            });
+            $('#SelectedDishes').val(selectedDishes.join(','));
+        }
+
+        function markAllOptionsAsSelected() {
+            $('#selectedDishes option').prop('selected', true);
+        }
+
+    </script>
+}
