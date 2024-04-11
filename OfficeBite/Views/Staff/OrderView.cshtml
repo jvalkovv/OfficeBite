@@ -1,0 +1,50 @@
+﻿@model OfficeBite.Core.Models.StaffModels.StaffOrderViewModel?
+
+@{
+    ViewBag.Title = "Преглед на завката";
+}
+
+
+
+<div class="container mt-5">
+    <h2 class="mb-4">Управление на Хранителни Заявки</h2>
+
+    <div class="table-responsive">
+
+        <h4>Потребител: @Model?.FirstName @Model?.LastName</h4>
+        <h5>Акаунт: @Model?.CustomerUsername</h5>
+        <h6>Заявка за дата: @Model.SelectedDate</h6>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Ястия</th>
+                    <th>Цена</th>
+                </tr>
+            </thead>
+            <tbody>
+                
+                @foreach (var dish in @Model.MenuItems)
+                {
+                    <tr>
+                        <td>@dish.DishName</td>
+                        <td>@dish.DishPrice</td>
+                    </tr>
+
+                }
+
+            </tbody>
+        </table>
+        <hr />
+        <h2>Обща сума: @Model.TotalSum</h2>
+        <hr />
+       
+        <hr />
+        @*  <form asp-controller="Staff" asp-action="Delete" method="post">
+        <input type="hidden" name="id" value="@Model.RequestMenuNumber" />
+        <input type="hidden" name="userId" value="@Model.CustomerIdentifier" />
+        <button type="submit" class="btn btn-secondary">Управление</button>
+        </form> *@
+        @*      <a asp-controller="Staff" asp-action="Delete" asp-route-id="@Model.Id" class="btn btn-secondary">Изтрий</a>
+        <a asp-controller="Staff" asp-action="Delete" asp-route-id="@Model.Id" class="btn btn-secondary">Приключи</a> *@
+    </div>
+</div>
