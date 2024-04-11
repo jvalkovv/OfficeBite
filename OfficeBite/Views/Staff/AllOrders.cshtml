@@ -1,0 +1,241 @@
+﻿@using Microsoft.AspNetCore.Mvc.TagHelpers
+@model List<OfficeBite.Core.Models.StaffModels.StaffAllOrdersViewModel>
+
+@{
+    ViewData["Title"] = "Чакащи поръчки";
+}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="~/css/site.css"/>
+    <style>
+        @@media screen and (max-width: 767px) {
+            div.container:nth-child(6) {
+               display:flex;s
+            }
+
+            .user-card {
+                border: 1px solid #ccc;
+                border-radius: 5px;
+                padding: 10px;
+                margin-bottom: 10px;
+            }
+
+            .user-header {
+                display: flex;
+                justify-content: space-between;
+            }
+
+            .toggle-icon {
+                background-color: #007bff;
+                height: 22px;
+                color: white;
+                border: none;
+                border-radius: 5px;
+                padding: 3px 6px;
+                cursor: pointer;
+            }
+
+                .toggle-icon:hover {
+                    background-color: #0056b3;
+                }
+
+            .user-details {
+                display: none;
+                margin-top: 10px;
+            }
+
+            .toggle-details {
+                background-color: #007bff;
+                color: white;
+                border: none;
+                border-radius: 10px;
+                padding: 8px 16px;
+                margin-bottom: 5px;
+                cursor: pointer;
+            }
+
+                .toggle-details:hover {
+                    background-color: #0056b3;
+                }
+
+            .table {
+                display: none;
+            }
+
+            .user-header h3 {
+                cursor: default;
+            }
+
+            .user-details p {
+                font-size: 16px;
+            }
+
+            .form-control {
+                margin-bottom: 10px;
+            }
+        }
+
+        @@media screen and (min-width: 768px) {
+            #mobile-view {
+                display: none;
+            }
+
+            .form-control {
+                margin-bottom: 10px;
+            }
+        }
+
+    </style>
+</head>
+<body>
+    <div class="container mt-5">
+        <h2 class="mb-4">Управление на непреключени хранителни заявки</h2>
+        <div>
+            @* <h4>Приключени поръчки:</h4> *@
+            @*  <a asp-controller="Home" asp-action="StaffDone" class="btn btn-secondary">Приключени поръчки</a> *@
+        </div>
+        <div class="search-bar">
+            <input type="text" id="search-input" class="form-control" placeholder="Търсене по...">
+        </div>
+        <div class="table-responsive">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Потребител</th>
+                        <th>Акаунт на потребител</th>
+                        <th>Поръчано меню</th>
+                        <th>Дата за обяд</th>
+                        <th>Дата на направената поръчка</th>
+                        <th>Консумирано</th>
+                        <th>Сума на менюто</th>
+                        <th>Действия</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var orders in Model.Where(orders => !orders.IsEaten))
+                    {
+                        <tr>
+                            @{
+                                orders.CustomerFirstName = char.ToUpper(orders.CustomerFirstName[0]) + orders.CustomerFirstName.Substring(1);
+                                orders.CustomerLastName = char.ToUpper(orders.CustomerLastName[0]) + orders.CustomerLastName.Substring(1);
+                            }
+
+                            <td class="word">@orders.CustomerFirstName @orders.CustomerLastName</td>
+                            <td class="word">@orders.CustomerUsername</td>
+                            <td class="word">@orders.OrderName</td>
+                            <td class="word">@orders.LunchDate.ToString("dd-MM-yyyy")</td>
+                            <td class="word">@orders.DateOrderCreated.ToString("dd-MM-yyyy")</td>
+                            @if (@orders.IsEaten)
+                            {
+                                <td class="word">Консумирано</td>
+                            }
+                            else
+                            {
+                                <td class="word">Не е консумирано</td>
+                            }
+                            <td class="word">@orders.TotalPrice</td>
+                            <td>
+                                <form asp-controller="Staff" asp-action="OrderView" method="post">
+                                    <input type="hidden" name="id" value="@orders.MenuToOrderId" />
+                                    <input type="hidden" name="userId" value="@orders.CustomerIdentifier" />
+                                    <input type="hidden" name="date" value="@orders.LunchDate" />
+                                    <button type="submit" class="btn btn-secondary">Детайли</button>
+                                </form>
+                                @*                                 <a asp-controller="Staff" asp-action="Delete" asp-route-id="@orders.MenuToOrderId" class="btn btn-secondary">Приключи</a> *@
+                            </td>
+
+                        </tr>
+                    }
+                </tbody>
+            </table>
+            <div id="mobile-view">
+                @foreach (var orders in Model.Where(orders => !orders.IsEaten))
+                {
+                    <p>
+
+
+                        @{
+                            orders.CustomerFirstName = char.ToUpper(orders.CustomerFirstName[0]) + orders.CustomerFirstName.Substring(1);
+                            orders.CustomerLastName = char.ToUpper(orders.CustomerLastName[0]) + orders.CustomerLastName.Substring(1);
+                        }
+                    </p>
+                    <div class="user-card">
+                        <div class="user-header">
+                            <h3>Потребителско име: @orders.CustomerUsername</h3>
+                            <i class="toggle-icon fas fa-chevron-down"></i>
+                        </div>
+                        <div class="user-details" style="display: none;">
+                            <p class="word">@orders.CustomerFirstName @orders.CustomerLastName </p>
+                            <p class="word">@orders.CustomerLastName</p>
+                            <p class="word">@orders.OrderName</p>
+                            <p class="word">@orders.LunchDate.ToString("dd-MM-yyyy")</p>
+                            <p class="word">@orders.DateOrderCreated.ToString("dd-MM-yyyy")</p>
+
+                            @if (@orders.IsEaten)
+                            {
+                                <p class="word">Консумирано</p>
+                            }
+                            else
+                            {
+                                <p class="word">Не е консумирано</p>
+                            }
+                            <p class="word"> @orders.TotalPrice </p>
+                        </div>
+                    </div>
+                    @*    <form asp-controller="Staff" asp-action="OrderView" method="post">
+                <input type="hidden" name="id" value="@orders.MenuToOrderId" />
+                <input type="hidden" name="userId" value="@orders.CustomerIdentifier" />
+                <input type="hidden" name="date" value="@orders.LunchDate" />
+                <button type="submit" class="btn btn-secondary">Детайли</button>
+                </form> *@
+                    @*                                 <a asp-controller="Staff" asp-action="Delete" asp-route-id="@orders.MenuToOrderId" class="btn btn-secondary">Приключи</a> *@
+                }
+            </div>
+
+
+        </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popperjs/core@2.0.7/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+</body>
+</html>
+<script>
+    $(document).ready(function () {
+        $('#search-input').on('input', function () {
+            var searchText = $(this).val().toLowerCase();
+
+            $('tbody tr').filter(function () {
+                var rowText = $(this).text().toLowerCase();
+                return rowText.indexOf(searchText) !== -1;
+            }).show();
+
+            $('tbody tr').not(function () {
+                var rowText = $(this).text().toLowerCase();
+                return rowText.indexOf(searchText) !== -1;
+            }).hide();
+        });
+        $('.user-header').click(function () {
+
+            $('.user-details').not($(this).siblings('.user-details')).hide();
+
+            $(this).siblings('.user-details').toggle();
+        });
+
+
+        $('.user-card').click(function (event) {
+            event.stopPropagation();
+        });
+    });
+</script>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
