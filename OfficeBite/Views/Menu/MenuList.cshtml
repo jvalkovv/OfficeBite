@@ -1,0 +1,66 @@
+﻿@model OfficeBite.Core.Models.MenuModels.MenuViewModel
+
+@{
+    ViewBag.Title = "Меню";
+}
+<link rel="stylesheet" href="~/customcss/menu/menulist.css" />
+
+<section id="menu" class="menu section-bg">
+    <div class="container" data-aos="fade-up">
+
+        <div class="section-title">
+            <h2>Меню</h2>
+            <p>Разгледайте нашето меню</p>
+        </div>
+
+        <div class="row" data-aos="fade-up" data-aos-delay="100">
+            <div class="col-lg-12 d-flex justify-content-center">
+                <ul id="menu-flters">
+                    <li>Всички</li>
+                    @foreach (var category in Model.Categories)
+                    {
+                        <li value="@category.Id">@category.Name</li>
+                    }
+                </ul>
+            </div>
+        </div>
+        <div class="row menu-container" data-aos="fade-up" data-aos-delay="200">
+            @foreach (var dish in Model.Dishes)
+            {
+                @foreach (var currCategory in Model.Categories
+               .Where(c => c.Id == @dish.CategoryId))
+                {
+                    <div class="col-lg-6 menu-item @currCategory.Name">
+                        <img src="@dish.ImageUrl" class="menu-img" alt="">
+                        <div class="menu-content">
+                            <p class="dish-name">@dish.DishName</p><span>@dish.DishPrice лв.</span>
+                        </div>
+                        <div class="menu-ingredients">
+                            @dish.Description
+                        </div>
+                    </div>
+
+                }
+            }
+        </div>
+    </div>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            $('#menu-flters li').on('click', function () {
+                var activeCategoryName = $(this).text().trim(); 
+                console.log("Active Category Name:", activeCategoryName);
+                $('.menu-item').each(function () {
+                    var dishCategoryDishId = $(this).attr('class').split(' ')[2]; 
+                    console.log("Dish Category ID:", dishCategoryDishId);
+                    if (activeCategoryName === "Всички" || activeCategoryName === dishCategoryDishId) {
+                        $(this).show();
+                    } else {
+                        $(this).hide();
+                    }
+                });
+            });
+        });
+    </script>
+
+</section>
