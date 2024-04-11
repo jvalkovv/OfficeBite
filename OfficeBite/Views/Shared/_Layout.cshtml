@@ -6,7 +6,7 @@
     <title>@ViewData["Title"] - OfficeBite</title>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
-    <link rel="stylesheet" href="~/OfficeBite.styles.css" asp-append-version="true" />
+
 </head>
 <body>
     <header>
@@ -23,8 +23,16 @@
                             <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+                            <a class="nav-link text-dark" asp-area="" asp-controller="Menu" asp-action="MenuList">Нашето меню</a>
                         </li>
+                        @if (User.IsInRole("Staff") || User.IsInRole("Admin") || User.IsInRole("Manager") || User.IsInRole("Employee"))
+                        {
+
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-area="" asp-controller="Menu" asp-action="MenuDailyList">Заяви меню</a>
+                            </li>
+
+                        }
                         @if (User.IsInRole("Admin"))
                         {
                             <li class="nav-item">
@@ -35,15 +43,28 @@
                         {
                             <li class="nav-item dropdown">
                                 <a class="nav-link dropdown-toggle text-dark" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                    Персонал
+                                    Управление на менюто
                                 </a>
                                 <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
                                     <li><a class="dropdown-item" asp-area="" asp-controller="Dish" asp-action="AddDish">Добави ястие</a></li>
+                                    <li><a class="dropdown-item" asp-area="" asp-controller="Menu" asp-action="AddDishToMenu">Добавяне на ястие към меню</a></li>
                                     <li><a class="dropdown-item" asp-area="" asp-controller="Dish" asp-action="AllDishes">Всички ястия</a></li>
                                     <li><a class="dropdown-item" asp-area="" asp-controller="Dish" asp-action="AllHiddenDishes">Всички скрити ястия</a></li>
-
                                 </ul>
                             </li>
+                        }
+                        @if (User.IsInRole("Staff"))
+                        {
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle text-dark" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                    Справки
+                                </a>
+                                <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                                    <li><a class="dropdown-item" asp-area="" asp-controller="Staff" asp-action="AllOrders">Всички заявки</a></li>
+                               
+                                </ul>
+                            </li>
+
                         }
                     </ul>
                     <partial name="_LoginPartial" />
@@ -58,8 +79,13 @@
     </div>
 
     <footer class="border-top footer text-muted">
-        <div class="container">
-            &copy; 2024 - OfficeBite - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+        <div class="container" style="cursor:default">
+            <span class="footer-p">&copy; 04/2024 - @DateTime.Today.Month.ToString("00")/@DateTime.Today.Year</span>
+            <span class="footer-p">
+                <a href="https://github.com/jvalkovv/OfficeBite" target="_blank">OfficeBite</a> -
+                <a href="https://github.com/jvalkovv" target="_blank">Yordan Valkov</a>
+            </span>
+            <span class="footer-p"> All rights reserved.</span>
         </div>
     </footer>
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
