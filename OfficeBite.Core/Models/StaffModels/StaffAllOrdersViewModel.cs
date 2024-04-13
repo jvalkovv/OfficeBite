@@ -1,11 +1,4 @@
-﻿using OfficeBite.Core.Models.DishModels;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace OfficeBite.Core.Models.StaffModels
+﻿namespace OfficeBite.Core.Models.StaffModels
 {
     public class StaffAllOrdersViewModel
     {
