@@ -1,6 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
-
-namespace OfficeBite.Core.Models.AdminModels
+﻿namespace OfficeBite.Core.Models.AdminModels
 {
     public class UsersViewModel
     {

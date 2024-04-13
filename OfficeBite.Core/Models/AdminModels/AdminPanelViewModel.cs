@@ -1,6 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
-
-namespace OfficeBite.Core.Models.AdminModels
+﻿namespace OfficeBite.Core.Models.AdminModels
 {
     public class AdminPanelViewModel
     {
@@ -14,8 +12,8 @@ namespace OfficeBite.Core.Models.AdminModels
 
         public string UserId { get; set; } = string.Empty;
 
-        public IEnumerable<RoleViewModel> AllRoles { get; set; } = new List<RoleViewModel>();
+        public List<RoleViewModel> AllRoles { get; set; } = new List<RoleViewModel>();
 
-        public IEnumerable<UsersViewModel> AllUsers { get; set; } = new List<UsersViewModel>();
+        public List<UsersViewModel> AllUsers { get; set; } = new List<UsersViewModel>();
     }
 }
