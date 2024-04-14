@@ -6,8 +6,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using OfficeBite.Extensions.Interfaces;
 using OfficeBite.Infrastructure.Data;
-using System.ComponentModel.DataAnnotations;
 using OfficeBite.Infrastructure.Data.Models;
+using System.ComponentModel.DataAnnotations;
 
 namespace OfficeBite.Areas.Identity.Pages.Account
 {

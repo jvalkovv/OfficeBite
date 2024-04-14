@@ -1,28 +1,25 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using OfficeBite.Core.Models.DishModels;
-using OfficeBite.Core.Models.MenuModels;
 using OfficeBite.Core.Models.StaffModels;
-using OfficeBite.Extensions;
 using OfficeBite.Infrastructure.Data;
-using OfficeBite.Infrastructure.Data.Models;
 
 namespace OfficeBite.Controllers
 {
+    [Authorize(Roles = "Staff")]
     public class StaffController : Controller
     {
         private readonly OfficeBiteDbContext dbContext;
-        private readonly HelperMethods helperMethods;
 
-        public StaffController(OfficeBiteDbContext _dbContext, HelperMethods _helperMethods)
+        public StaffController(OfficeBiteDbContext _dbContext)
         {
             this.dbContext = _dbContext;
-            this.helperMethods = _helperMethods;
         }
-
         [HttpGet]
         public async Task<IActionResult> AllOrders()
         {
+
             var model = await dbContext.Orders
                 .Include(user => user.UserAgent)
                 .AsNoTracking()
@@ -75,6 +72,11 @@ namespace OfficeBite.Controllers
         [HttpPost]
         public async Task<IActionResult> OrderView(int id, string userId, DateTime date)
         {
+            var isAuthorized = User.IsInRole("Staff");
+            if (!isAuthorized)
+            {
+                return Unauthorized();
+            }
             var orders = await dbContext.Orders
                 .Include(order => order.UserAgent)
                 .Include(order => order.MenuInOrder)
@@ -93,7 +95,7 @@ namespace OfficeBite.Controllers
                         {
                             DishName = d.Dish.DishName,
                             DishPrice = d.Dish.Price,
-                            
+
                         })
                 })
                 .FirstOrDefaultAsync();

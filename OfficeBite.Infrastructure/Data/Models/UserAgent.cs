@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Identity;
-using System.ComponentModel.DataAnnotations.Schema;
-using System.ComponentModel.DataAnnotations;
 using Microsoft.EntityFrameworkCore;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace OfficeBite.Infrastructure.Data.Models
 {
@@ -30,8 +30,6 @@ namespace OfficeBite.Infrastructure.Data.Models
 
         [ForeignKey(nameof(UserId))]
         public IdentityUser IdentityUser { get; set; } = null!;
-
-        public ICollection<OrderHistory> OrderHistories { get; set; } = new List<OrderHistory>();
 
     }
 }

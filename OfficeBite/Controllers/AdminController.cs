@@ -13,41 +13,42 @@ namespace OfficeBite.Controllers
         private readonly UserManager<IdentityUser> _userManager;
         private readonly RoleManager<IdentityRole> _roleManager;
         private readonly OfficeBiteDbContext _dbContext;
-        public AdminController(UserManager<IdentityUser> userManager, RoleManager<IdentityRole> roleManager, OfficeBiteDbContext dbContext)
+
+
+        public AdminController(UserManager<IdentityUser> userManager,
+            RoleManager<IdentityRole> roleManager, OfficeBiteDbContext dbContext)
         {
             _userManager = userManager;
             _roleManager = roleManager;
             _dbContext = dbContext;
         }
+
         public async Task<List<RoleViewModel>> GetRoleAsync()
         {
-            return await _roleManager.Roles
-                .AsNoTracking()
-                .Select(c => new RoleViewModel
+            var roles = await _dbContext.Roles
+                .Select(r => new RoleViewModel
                 {
-                    Id = c.Id,
-                    Name = c.Name
+                    Id = r.Id,
+                    Name = r.Name
                 })
                 .ToListAsync();
+
+            return roles;
         }
 
 
         public async Task<List<UsersViewModel>> GetUsersAsync()
         {
-            var users = await _userManager.Users.ToListAsync();
-
-            var userInBase = _dbContext.UserAgents;
+            var users = _userManager.Users.ToList();
+            var userInBase = _dbContext.UserAgents.ToList();
             var usersData = new List<UsersViewModel>();
-
-
             foreach (var user in users)
             {
                 var currUser = userInBase.FirstOrDefault(u => u.UserId == user.Id);
                 var roles = await _userManager.GetRolesAsync(user);
-
                 var roleNames = roles.ToList();
-
                 if (currUser != null)
+                {
                     usersData.Add(new UsersViewModel
                     {
                         UserId = user.Id,
@@ -56,14 +57,22 @@ namespace OfficeBite.Controllers
                         Email = user.Email,
                         RoleName = string.Join(", ", roleNames)
                     });
+                }
             }
-
             return usersData;
         }
 
         [HttpGet]
         public async Task<IActionResult> Admin()
         {
+            var isAuthorizedAdmin = User.IsInRole("Admin");
+            var isAuthorizedManager = User.IsInRole("Manager");
+
+            if (!(isAuthorizedAdmin) && !(isAuthorizedManager))
+            {
+                return Unauthorized();
+            }
+
             var model = new AdminPanelViewModel();
             model.AllRoles = await GetRoleAsync();
             model.AllUsers = await GetUsersAsync();

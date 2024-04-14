@@ -26,7 +26,7 @@ namespace OfficeBite.Controllers
             return User.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? string.Empty;
         }
 
-      
+
         [HttpGet]
         public async Task<IActionResult> AllDishes()
         {
@@ -50,7 +50,7 @@ namespace OfficeBite.Controllers
             return View(model);
         }
 
-       
+
         [HttpGet]
         public async Task<IActionResult> AllHiddenDishes()
         {
@@ -74,7 +74,7 @@ namespace OfficeBite.Controllers
             return View(model);
         }
 
-    
+
         [HttpGet]
         public async Task<IActionResult> HideDish(int id)
         {
@@ -128,7 +128,7 @@ namespace OfficeBite.Controllers
             return RedirectToAction(nameof(AllDishes));
         }
 
-      
+
         [HttpGet]
         public async Task<IActionResult> UnHideDish(int dishId)
         {
@@ -151,7 +151,7 @@ namespace OfficeBite.Controllers
             return View(dishToUnHide);
         }
 
-        
+
         [HttpPost]
         public async Task<IActionResult> UnHideDishConfirm(int dishId)
         {
@@ -185,7 +185,7 @@ namespace OfficeBite.Controllers
             return RedirectToAction(nameof(AllDishes));
         }
 
-    
+        // TODO...  Dereference of a possibly null reference.
         [HttpGet]
         public async Task<IActionResult> EditDish(int id)
         {
@@ -204,7 +204,7 @@ namespace OfficeBite.Controllers
             return View(model);
         }
 
-        
+
         [HttpPost]
         public async Task<IActionResult> EditDish(AllDishesViewModel model, int dishId)
         {
@@ -212,14 +212,13 @@ namespace OfficeBite.Controllers
 
             if (ModelState.IsValid)
             {
-
+                // TODO...  Dereference of a possibly null reference.
                 var menuOrders = await dbContext.MenuOrders
                     .Where(m => dbContext.DishesInMenus
                         .Any(d => d.RequestMenuNumber == m.RequestMenuNumber &&
                                   d.DishId == dish.Id))
                     .ToListAsync();
 
-                // Променете общата цена на всяка поръчка за менюто
                 foreach (var menuOrder in menuOrders)
                 {
                     menuOrder.TotalPrice = menuOrder.TotalPrice - dish.Price + model.DishPrice;
@@ -271,7 +270,7 @@ namespace OfficeBite.Controllers
 
         }
 
-        
+
         [HttpGet]
         public async Task<IActionResult> AddDish()
         {
@@ -289,13 +288,13 @@ namespace OfficeBite.Controllers
             var model = new AllDishesViewModel();
             model.Categories = await helperMethods.GetCategoryAsync();
             model.Dishes = await helperMethods.GetDishesAsync();
-            
+
 
             return View(model);
         }
 
         [HttpPost]
-        public async Task<IActionResult> AddDish(AllDishesViewModel model) 
+        public async Task<IActionResult> AddDish(AllDishesViewModel model)
         {
             if (model.ImageFile.Length > 0)
             {
@@ -359,7 +358,7 @@ namespace OfficeBite.Controllers
             return View(model);
         }
 
-        
+
         [HttpGet]
         public async Task<IActionResult> DeleteDish(int dishId)
         {

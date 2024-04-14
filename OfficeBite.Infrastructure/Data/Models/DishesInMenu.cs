@@ -19,7 +19,7 @@ namespace OfficeBite.Infrastructure.Data.Models
 
         public int DishId { get; set; }
 
-        [ForeignKey(nameof(DishId))] 
+        [ForeignKey(nameof(DishId))]
         public Dish Dish { get; set; } = null!;
 
         [Comment("Menu identifier")]

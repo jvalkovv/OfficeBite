@@ -1,12 +1,12 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using OfficeBite.Extensions;
-using OfficeBite.Infrastructure.Data;
-using System.Security.Claims;
 using Microsoft.EntityFrameworkCore;
 using OfficeBite.Core.Models.DishModels;
 using OfficeBite.Core.Models.MenuModels;
+using OfficeBite.Extensions;
+using OfficeBite.Infrastructure.Data;
 using OfficeBite.Infrastructure.Data.Models;
+using System.Security.Claims;
 
 namespace OfficeBite.Controllers
 {
@@ -59,7 +59,7 @@ namespace OfficeBite.Controllers
             {
                 ViewData["OrderExistsError"] = TempData["OrderExistsError"];
             }
-            var model = new DailyMenuViewModel();
+            var model = new MenuDailyViewModel();
 
             model.Dishes = await helperMethods.GetDishesAsync();
             model.Categories = await helperMethods.GetCategoryAsync();
@@ -69,8 +69,9 @@ namespace OfficeBite.Controllers
             return View(model);
         }
 
+        //TODO... Error when is selected more than one date 
         [HttpPost]
-        public async Task<IActionResult> MenuDailyList(DailyMenuViewModel model)
+        public async Task<IActionResult> MenuDailyList(MenuDailyViewModel model)
         {
             var selectedDate = model.SelectedDate;
             var currDateTime = DateTime.Now;
@@ -117,7 +118,7 @@ namespace OfficeBite.Controllers
                     .ToListAsync();
 
 
-                var viewModel = new DailyMenuViewModel
+                var viewModel = new MenuDailyViewModel
                 {
                     SelectedDate = selectedDate,
                     GroupDishes = groupedDishes,

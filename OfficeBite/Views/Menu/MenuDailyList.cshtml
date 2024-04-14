@@ -1,108 +1,108 @@
-﻿@model OfficeBite.Core.Models.MenuModels.MenuDailyViewModel
-@using Microsoft.AspNetCore.Mvc.TagHelpers
+﻿    @model OfficeBite.Core.Models.MenuModels.MenuDailyViewModel
+    @using Microsoft.AspNetCore.Mvc.TagHelpers
 
-@{
-    ViewData["Title"] = "Избрано меню";
-}
-<style>
+    @{
+        ViewData["Title"] = "Избрано меню";
+    }
+    <style>
 
-</style>
+    </style>
 
-<h1>Разгледай седмичното ни меню</h1>
+    <h1>Разгледай седмичното ни меню</h1>
 
-<link rel="stylesheet" href="~/customcss/menu/menudaily.css" />
+    <link rel="stylesheet" href="~/customcss/menu/menudaily.css" />
 
-<form method="post" id="dateForm">
-    <div class="mb-3">
+    <form method="post" id="dateForm">
+        <div class="mb-3">
 
-        <label class="form-label-add-edit">Изберете дата за обяд</label>
-        <input type="hidden" asp-for="SelectedDate" id="SelectedDate" />
-        <div class="d-flex flex-wrap">
+            <label class="form-label-add-edit">Изберете дата за обяд</label>
+            <input type="hidden" asp-for="SelectedDate" id="SelectedDate" />
+            <div class="d-flex flex-wrap">
 
-            @for (DateTime date = DateTime.Now; date <= DateTime.Today.AddDays(5); date = date.AddDays(1))
-            {
-                <label class="btn btn-warning mb-2 me-3 p-3 fw-bold date-label" onclick="" data-date="@date.ToString("yyyy-MM-dd")">
+                @for (DateTime date = DateTime.Now; date <= DateTime.Today.AddDays(5); date = date.AddDays(1))
+                {
+                    <label class="btn btn-warning mb-2 me-3 p-3 fw-bold date-label" onclick="" data-date="@date.ToString("yyyy-MM-dd")">
 
-                    @date.ToString("dd-MM-yyyy") @date.ToString("dddd", new System.Globalization.CultureInfo("bg-BG")).ToUpper()
-                </label>
-            }
+                        @date.ToString("dd-MM-yyyy") @date.ToString("dddd", new System.Globalization.CultureInfo("bg-BG")).ToUpper()
+                    </label>
+                }
+            </div>
+
         </div>
 
-    </div>
+    </form>
 
-</form>
+    @if (ViewData["OrderExistsError"] != null)
+    {
+        <div class="alert alert-danger">@ViewData["OrderExistsError"]</div>
+    }
+    else
+    {
+        <div id="menuContainerParent">
 
-@if (ViewData["OrderExistsError"] != null)
-{
-    <div class="alert alert-danger">@ViewData["OrderExistsError"]</div>
-}
-else
-{
-    <div id="menuContainerParent">
+            <div id="menuContainer" class="menu-container">
 
-        <div id="menuContainer" class="menu-container">
-
-            @foreach (var group in Model.GroupDishes)
-            {
-                <form method="post" action="@Url.Action("AddToOrder", "Order")">
-                    <input type="hidden" name="selectedDate" id="selectedDate" />
-                    <div class="menu-card">
-                        <h2>Номер на менюто: @group.Key</h2>
-                        @foreach (var item in @Model.MenuForDateViewModels.Where(m => m.RequestMenuNumber == group.Key))
-                        {
-
-                            @foreach (var menuItem in group)
+                @foreach (var group in Model.GroupDishes)
+                {
+                    <form method="post" action="@Url.Action("AddToOrder", "Order")">
+                        <input type="hidden" name="selectedDate" id="selectedDate" />
+                        <div class="menu-card">
+                            <h2>Номер на менюто: @group.Key</h2>
+                            @foreach (var item in @Model.MenuForDateViewModels.Where(m => m.RequestMenuNumber == group.Key))
                             {
-                                <div class="menu-details">
-                                    @if (!string.IsNullOrEmpty(menuItem.ImageUrl))
-                                    {
-                                        <img class="menu-image" src="@menuItem.ImageUrl" alt="Menu Image" />
-                                    }
 
-                                    <div class="menu-name">@menuItem.DishName</div>
-                                    <div class="menu-description">@menuItem.Description</div>
+                                @foreach (var menuItem in group)
+                                {
+                                    <div class="menu-details">
+                                        @if (!string.IsNullOrEmpty(menuItem.ImageUrl))
+                                        {
+                                            <img class="menu-image" src="@menuItem.ImageUrl" alt="Menu Image" />
+                                        }
+
+                                        <div class="menu-name">@menuItem.DishName</div>
+                                        <div class="menu-description">@menuItem.Description</div>
+                                    </div>
+                                }
+
+                                <div class="menu-price">
+                                    <label>Цена: @item.TotalPrice лв.</label>
                                 </div>
+
                             }
-
-                            <div class="menu-price">
-                                <label>Цена: @item.TotalPrice лв.</label>
-                            </div>
-
-                        }
-                        <input type="hidden" name="requestMenuNumber" value="@group.Key" />
-                        <input type="submit" class="btn btn-warning mb-2 w-100 p-3 fw-bold" value="Добави ястие">
-                    </div>
-                </form>
-            }
+                            <input type="hidden" name="requestMenuNumber" value="@group.Key" />
+                            <input type="submit" class="btn btn-warning mb-2 w-100 p-3 fw-bold" value="Добави ястие">
+                        </div>
+                    </form>
+                }
+            </div>
         </div>
-    </div>
-}
+    }
 
 
 
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 
-<script>
-    $(document).ready(function () {
+    <script>
+        $(document).ready(function () {
 
-        var selectedDate = localStorage.getItem('selectedDate');
-        if (selectedDate) {
-            $('.date-label[data-date="' + selectedDate + '"]').addClass('selected');
-        }
+            var selectedDate = localStorage.getItem('selectedDate');
+            if (selectedDate) {
+                $('.date-label[data-date="' + selectedDate + '"]').addClass('selected');
+            }
 
 
-        $('.date-label').click(function () {
-            var selectedDate = $(this).data('date');
-            $('#SelectedDate').val(selectedDate);
-            $('#selectedDate').val(selectedDate);
+            $('.date-label').click(function () {
+                var selectedDate = $(this).data('date');
+                $('#SelectedDate').val(selectedDate);
+                $('#selectedDate').val(selectedDate);
 
-            localStorage.setItem('selectedDate', selectedDate);
+                localStorage.setItem('selectedDate', selectedDate);
 
-            $('.date-label').removeClass('selected');
-            $(this).addClass('selected');
+                $('.date-label').removeClass('selected');
+                $(this).addClass('selected');
 
-            $('#dateForm').submit();
-            $('#menuContainerParent').show();
+                $('#dateForm').submit();
+                $('#menuContainerParent').show();
+            });
         });
-    });
-</script>
+    </script>

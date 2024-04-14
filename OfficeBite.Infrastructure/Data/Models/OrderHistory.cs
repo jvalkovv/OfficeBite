@@ -6,9 +6,13 @@ namespace OfficeBite.Infrastructure.Data.Models
 {
     public class OrderHistory
     {
-        [Comment("Order history identifier")]
+        [Comment("Order History identifier")]
         [Key]
         public int Id { get; set; }
+
+        [Comment("User identifier")]
+        public string UserAgentId { get; set; } = string.Empty;
+        public int MenuOrderRequestNumber { get; set; }
 
         [Comment("Order id")]
         [Required]
@@ -17,5 +21,7 @@ namespace OfficeBite.Infrastructure.Data.Models
         [Comment("Connection with Id from Order table")]
         [ForeignKey(nameof(OrderId))]
         public Order Order { get; set; } = null!;
+
+
     }
 }
