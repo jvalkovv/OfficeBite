@@ -9,7 +9,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OfficeBite.Infrastructure",
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OfficeBite.Core", "OfficeBite.Core\OfficeBite.Core.csproj", "{45C041B6-7B3C-4BCD-8B5F-AAB87D29BDBF}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OfficeBiteTests", "..\OfficeBiteControllerTests\OfficeBiteTests.csproj", "{45E7CED0-8992-4601-A554-F73A0C6F67AB}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OfficeBiteTests", "OfficeBiteTests\OfficeBiteTests.csproj", "{E064B8E1-57F8-4BF3-8465-B7C6D5C7DE1E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -29,10 +29,10 @@ Global
 		{45C041B6-7B3C-4BCD-8B5F-AAB87D29BDBF}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{45C041B6-7B3C-4BCD-8B5F-AAB87D29BDBF}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{45C041B6-7B3C-4BCD-8B5F-AAB87D29BDBF}.Release|Any CPU.Build.0 = Release|Any CPU
-		{45E7CED0-8992-4601-A554-F73A0C6F67AB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{45E7CED0-8992-4601-A554-F73A0C6F67AB}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{45E7CED0-8992-4601-A554-F73A0C6F67AB}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{45E7CED0-8992-4601-A554-F73A0C6F67AB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E064B8E1-57F8-4BF3-8465-B7C6D5C7DE1E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E064B8E1-57F8-4BF3-8465-B7C6D5C7DE1E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E064B8E1-57F8-4BF3-8465-B7C6D5C7DE1E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E064B8E1-57F8-4BF3-8465-B7C6D5C7DE1E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
