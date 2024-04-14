@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using static OfficeBite.Infrastructure.Data.Constant.DishConstants.DishConstants;
 
 namespace OfficeBite.Infrastructure.Data.Models
 {
@@ -13,16 +14,17 @@ namespace OfficeBite.Infrastructure.Data.Models
 
         [Comment("Name of dish")]
         [Required]
-
+        [MaxLength(DishNameMaximumLength)]
         public string DishName { get; set; } = string.Empty;
 
         [Comment("Price of dish")]
         [Required]
-
+        [MaxLength(DishPriceMaximumValue)]
         public decimal Price { get; set; }
 
         [Comment("Description of dish")]
         [Required]
+        [MaxLength(DishDescriptionMaximumLength)]
         public string Description { get; set; } = string.Empty;
 
         [Comment("Image of dish")]
