@@ -32,9 +32,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\OfficeBite\OfficeBite.Core\OfficeBite.Core.csproj" />
-    <ProjectReference Include="..\OfficeBite\OfficeBite.Infrastructure\OfficeBite.Infrastructure.csproj" />
-    <ProjectReference Include="..\OfficeBite\OfficeBite\OfficeBite.csproj" />
+    <ProjectReference Include="..\OfficeBite.Core\OfficeBite.Core.csproj" />
+    <ProjectReference Include="..\OfficeBite.Infrastructure\OfficeBite.Infrastructure.csproj" />
+    <ProjectReference Include="..\OfficeBite.csproj" />
   </ItemGroup>
 
 </Project>
