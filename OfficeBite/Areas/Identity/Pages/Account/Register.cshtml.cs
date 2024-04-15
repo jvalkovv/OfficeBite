@@ -4,10 +4,10 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using OfficeBite.Extensions.Interfaces;
 using OfficeBite.Infrastructure.Data;
 using OfficeBite.Infrastructure.Data.Models;
 using System.ComponentModel.DataAnnotations;
+using OfficeBite.Infrastructure.Extensions.Interfaces;
 
 namespace OfficeBite.Areas.Identity.Pages.Account
 {
