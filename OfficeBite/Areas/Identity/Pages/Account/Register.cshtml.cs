@@ -102,7 +102,10 @@ namespace OfficeBite.Areas.Identity.Pages.Account
 
         public Task<IActionResult> OnGetAsync(string returnUrl = null)
         {
-
+            if (User.Identity.IsAuthenticated && User?.Identity != null)
+            {
+                return Task.FromResult<IActionResult>(RedirectToPage("/Home"));
+            }
 
             ReturnUrl = returnUrl;
             return Task.FromResult<IActionResult>(Page());
@@ -110,6 +113,10 @@ namespace OfficeBite.Areas.Identity.Pages.Account
 
         public async Task<IActionResult> OnPostAsync(string returnUrl = null)
         {
+            if (User.Identity.IsAuthenticated)
+            {
+                return Redirect("/Home");
+            }
 
             returnUrl ??= Url.Content("~/");
             if (ModelState.IsValid)
