@@ -6,16 +6,17 @@ using OfficeBite.Extensions;
 using OfficeBite.Infrastructure.Data;
 using OfficeBite.Infrastructure.Data.Models;
 using System.Security.Claims;
+using OfficeBite.Extensions.Interfaces;
 
 namespace OfficeBite.Controllers
 {
     [Authorize(Roles = "Admin, Manager, Staff")]
     public class DishController : Controller
     {
-        private readonly HelperMethods helperMethods;
+        private readonly IHelperMethods helperMethods;
         private readonly OfficeBiteDbContext dbContext;
 
-        public DishController(HelperMethods _helperMethods, OfficeBiteDbContext context)
+        public DishController(IHelperMethods _helperMethods, OfficeBiteDbContext context)
         {
             helperMethods = _helperMethods;
             dbContext = context;
