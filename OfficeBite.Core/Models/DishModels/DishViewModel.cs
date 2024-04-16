@@ -15,7 +15,9 @@ namespace OfficeBite.Core.Models.DishModels
         public string DishName { get; set; } = string.Empty;
 
         [Required(ErrorMessage = IsRequireErrorMessage)]
-        [Range(DishPriceMinimumValue, DishPriceMaximumValue, ErrorMessage = PriceValueErrorMessage)]
+        [DataType(DataType.Currency)]
+        [Range((double)DishPriceMinimumValue, (double)DishPriceMaximumValue,
+            ErrorMessage = PriceValueErrorMessage)]
 
         public decimal DishPrice { get; set; }
 

@@ -20,7 +20,9 @@ namespace OfficeBite.Core.Models.DishModels
 
         [Display(Name = "Продажна цена на ястието")]
         [Required(ErrorMessage = IsRequireErrorMessage)]
-        [Range(DishPriceMinimumValue, DishPriceMaximumValue, ErrorMessage = PriceValueErrorMessage)]
+        [DataType(DataType.Currency)]
+        [Range((double)DishPriceMinimumValue, (double)DishPriceMaximumValue,
+            ErrorMessage = PriceValueErrorMessage)]
         public decimal DishPrice { get; set; }
 
 
@@ -32,6 +34,7 @@ namespace OfficeBite.Core.Models.DishModels
         public string Description { get; set; } = string.Empty;
 
         [Display(Name = "Изберете категория на ястието")]
+        [Required(ErrorMessage = IsRequireErrorMessage)]
         public int CategoryId { get; set; }
 
         public bool IsVisible { get; set; }
