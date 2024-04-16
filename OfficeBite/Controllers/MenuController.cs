@@ -3,10 +3,12 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using OfficeBite.Core.Models.DishModels;
 using OfficeBite.Core.Models.MenuModels;
-using OfficeBite.Extensions;
+using OfficeBite.Extensions.Interfaces;
 using OfficeBite.Infrastructure.Data;
 using OfficeBite.Infrastructure.Data.Models;
+using OfficeBite.Infrastructure.Extensions.InterfaceForTest;
 using System.Security.Claims;
+
 
 namespace OfficeBite.Controllers
 {
@@ -14,9 +16,17 @@ namespace OfficeBite.Controllers
     public class MenuController : Controller
     {
         private readonly OfficeBiteDbContext dbContext;
-        private readonly HelperMethods helperMethods;
-
-        public MenuController(OfficeBiteDbContext _dbContext, HelperMethods _helperMethods)
+        private readonly IHelperMethods helperMethods;
+        private IDateTimeNowWrapper _dateTimeWrapper;
+        public void SetDateTimeWrapper(IDateTimeNowWrapper dateTimeWrapper)
+        {
+            _dateTimeWrapper = dateTimeWrapper;
+        }
+        public DateTime GetCurrentDateTime()
+        {
+            return _dateTimeWrapper?.Now ?? DateTime.Now;
+        }
+        public MenuController(OfficeBiteDbContext _dbContext, IHelperMethods _helperMethods)
         {
             this.dbContext = _dbContext;
             this.helperMethods = _helperMethods;
@@ -69,19 +79,20 @@ namespace OfficeBite.Controllers
             return View(model);
         }
 
-        //TODO... Error when is selected more than one date 
+        //TODO... Trow exception if is not time for order ? 
         [HttpPost]
         public async Task<IActionResult> MenuDailyList(MenuDailyViewModel model)
         {
             var selectedDate = model.SelectedDate;
-            var currDateTime = DateTime.Now;
+            var currDateTime = GetCurrentDateTime();
 
             if (!ModelState.IsValid)
             {
                 return BadRequest("Invalid");
             }
 
-            if (currDateTime.Hour < 11 || currDateTime < selectedDate)
+            if (currDateTime.Date == selectedDate.Date && currDateTime.Hour < 11 ||
+                currDateTime < selectedDate)
             {
                 var dishInOrder = await dbContext.DishesInMenus
                     .Include(m => m.MenuOrder)
@@ -114,6 +125,8 @@ namespace OfficeBite.Controllers
                         RequestMenuNumber = p.RequestMenuNumber,
                         TotalPrice = p.TotalPrice,
                         Description = p.Description,
+                        MenuName = p.MenuName
+
                     })
                     .ToListAsync();
 
@@ -123,6 +136,7 @@ namespace OfficeBite.Controllers
                     SelectedDate = selectedDate,
                     GroupDishes = groupedDishes,
                     MenuForDateViewModels = priceInOrder
+
                 };
 
                 return View(viewModel);
@@ -144,68 +158,80 @@ namespace OfficeBite.Controllers
             model.AllDishes = await helperMethods.GetDishForMenuAsync();
             model.AllMenuTypes = await helperMethods.GetMenuTypesAsync();
 
-            model.RequestMenuNumber = await GeneratеRequestMenuNumberAsync();
+
             return View(model);
         }
 
         [HttpPost]
         public async Task<IActionResult> AddDishToMenu(AddDishToMenuViewModel model)
         {
-            var orderMenuId = await GeneratеRequestMenuNumberAsync();
-            var totalPrice = 0m;
-            var description = string.Empty;
-            var selectedDishesIds = model.SelectedDishes;
 
+            var selectedDatesStrings = model.SelectedDates;
+
+            if (selectedDatesStrings == null)
+            {
+                model.AllDishes = await helperMethods.GetDishForMenuAsync();
+                model.AllMenuTypes = await helperMethods.GetMenuTypesAsync();
+                return View(model);
+            }
             if (ModelState.IsValid)
             {
-                foreach (var date in model.SelectedDates)
-                {
-                    foreach (var dishId in selectedDishesIds)
-                    {
-                        var dish = await dbContext.Dishes.FindAsync(dishId);
-                        var menuType = await dbContext.MenuTypes.FindAsync(model.MenuTypeId);
 
-                        if (dish != null && menuType != null)
+                if (selectedDatesStrings.Any(date => !string.IsNullOrWhiteSpace(date)))
+                {
+                    var totalPrice = 0m;
+
+
+                    foreach (var dateStr in model.SelectedDates)
+                    {
+                        var dates = dateStr.Split(',').Select(DateTime.Parse);
+
+                        foreach (var date in dates)
                         {
-                            var dishMenuToOrder = new DishesInMenu
+                            var orderMenuId = await GeneratеRequestMenuNumberAsync();
+
+
+                            foreach (var dishId in model.SelectedDishes)
                             {
+                                var dish = await dbContext.Dishes.FindAsync(dishId);
+                                var menuType = await dbContext.MenuTypes.FindAsync(model.MenuTypeId);
+
+                                if (dish != null && menuType != null)
+                                {
+                                    var dishMenuToOrder = new DishesInMenu
+                                    {
+                                        IsVisible = true,
+                                        DishId = dish.Id,
+                                        RequestMenuNumber = orderMenuId
+                                    };
+
+                                    await dbContext.DishesInMenus.AddAsync(dishMenuToOrder);
+
+                                    totalPrice += dish.Price;
+                                }
+                            }
+                            var menuOrder = new MenuOrder
+                            {
+                                RequestMenuNumber = orderMenuId,
+                                MenuName = model.MenuName,
+                                Description = model.Description,
+                                TotalPrice = totalPrice,
                                 IsVisible = true,
-                                DishId = dish.Id,
-                                RequestMenuNumber = orderMenuId
+                                MenuTypeId = model.MenuTypeId,
+                                SelectedMenuDate = date
                             };
 
-                            await dbContext.DishesInMenus.AddAsync(dishMenuToOrder);
-
-                            description += $" '{dish.Description}'; ";
-                            totalPrice += dish.Price;
+                            await dbContext.MenuOrders.AddAsync(menuOrder);
+                            await dbContext.SaveChangesAsync();
+                            totalPrice = 0;
                         }
 
                     }
 
+
+                    return RedirectToAction("AllDishes", "Dish");
                 }
 
-                var selectedDates = model.SelectedDates;
-                foreach (var date in selectedDates)
-                {
-                    var menuOrder = new MenuOrder
-                    {
-                        RequestMenuNumber = orderMenuId,
-                        SelectedMenuDate = date,
-                        TotalPrice = totalPrice,
-                        Description = description,
-                        IsVisible = true,
-                        MenuTypeId = model.MenuTypeId
-                    };
-                    await dbContext.MenuOrders.AddAsync(menuOrder);
-
-                }
-
-                await dbContext.SaveChangesAsync();
-
-                model.AllDishes = await helperMethods.GetDishForMenuAsync();
-                model.AllMenuTypes = await helperMethods.GetMenuTypesAsync();
-
-                return View(model);
             }
 
             model.AllDishes = await helperMethods.GetDishForMenuAsync();
@@ -213,6 +239,7 @@ namespace OfficeBite.Controllers
 
             return View(model);
         }
+
 
     }
 }
