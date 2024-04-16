@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-
+using static OfficeBite.Infrastructure.Data.Constant.MenuConstants.MenuConstants;
 namespace OfficeBite.Infrastructure.Data.Models
 {
     public class MenuOrder
@@ -11,6 +11,9 @@ namespace OfficeBite.Infrastructure.Data.Models
         [Key]
         public int Id { get; set; }
 
+        [Comment("Menu name")]
+        [MaxLength(MenuOrderNameMaximumLength)]
+        public string MenuName { get; set; } = string.Empty;
 
         [Comment("Menu order Identifier with other tables")]
         [Required]
@@ -25,6 +28,7 @@ namespace OfficeBite.Infrastructure.Data.Models
         public decimal TotalPrice { get; set; }
 
         [Comment("Description of selected menu")]
+        [MaxLength(MenuOrderDescriptionMaximumLength)]
         public string Description { get; set; } = string.Empty;
 
         [Comment("Visibility  of menu")]

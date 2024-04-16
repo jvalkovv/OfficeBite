@@ -10,9 +10,7 @@ namespace OfficeBite.Infrastructure.Data.Models
         [Comment("Dishes In Menu Identifier")]
         [Key]
         public int Id { get; set; }
-
-        //public bool IsPreOrder { get; set; }
-
+        
         [Comment("Visibility  of dishes")]
         [Required]
         public bool IsVisible { get; set; } = true;
@@ -21,6 +19,7 @@ namespace OfficeBite.Infrastructure.Data.Models
 
         [ForeignKey(nameof(DishId))]
         public Dish Dish { get; set; } = null!;
+
 
         [Comment("Menu identifier")]
         [Required]

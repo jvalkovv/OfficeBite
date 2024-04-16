@@ -19,7 +19,6 @@ namespace OfficeBite.Infrastructure.Data.Models
 
         [Comment("Price of dish")]
         [Required]
-        [MaxLength(DishPriceMaximumValue)]
         public decimal Price { get; set; }
 
         [Comment("Description of dish")]

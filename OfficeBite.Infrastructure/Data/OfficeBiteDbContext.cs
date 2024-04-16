@@ -20,9 +20,6 @@ namespace OfficeBite.Infrastructure.Data
                 .HasPrincipalKey(m => m.RequestMenuNumber)
                 .OnDelete(DeleteBehavior.Cascade);
 
-
-
-
             base.OnModelCreating(builder);
         }
 
