@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using OfficeBite.Core.Models.OrderModels;
-using OfficeBite.Extensions;
+using OfficeBite.Extensions.Interfaces;
 using OfficeBite.Infrastructure.Data;
 using OfficeBite.Infrastructure.Data.Models;
 using System.Security.Claims;
@@ -13,9 +13,9 @@ namespace OfficeBite.Controllers
     public class OrderController : Controller
     {
         private readonly OfficeBiteDbContext dbContext;
-        private readonly HelperMethods helperMethods;
+        private readonly IHelperMethods helperMethods;
 
-        public OrderController(OfficeBiteDbContext _dbContext, HelperMethods _helperMethods)
+        public OrderController(OfficeBiteDbContext _dbContext, IHelperMethods _helperMethods)
         {
             this.dbContext = _dbContext;
             this.helperMethods = _helperMethods;
