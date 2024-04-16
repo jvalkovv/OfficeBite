@@ -33,7 +33,7 @@ namespace OfficeBite.Controllers
                     CustomerLastName = o.UserAgent.LastName,
                     LunchDate = o.SelectedDate,
                     DateOrderCreated = o.OrderPlacedOnDate,
-                    IsEaten = false
+                    IsEaten = o.IsEaten
                 })
                 .ToListAsync();
 
@@ -90,6 +90,7 @@ namespace OfficeBite.Controllers
                     SelectedDate = ov.SelectedDate,
                     TotalSum = ov.MenuOrder.TotalPrice,
                     CustomerIdentifier = ov.UserAgentId,
+                    RequestMenuNumber = ov.MenuOrderRequestNumber,
                     MenuItems = ov.MenuOrder.DishesInMenus
                         .Select(d => new DishViewModel
                         {
@@ -103,5 +104,67 @@ namespace OfficeBite.Controllers
 
             return View(orders);
         }
+
+        //TODO... eventually to implement functionality that staff to can delete order .
+        //var orderToComplete = await dbContext.Orders
+        //        .Where(order => order.SelectedDate == selectedDate && order.UserAgent.Username == username && order.UserAgentId == userId)
+        //        .AsNoTracking()
+        //        .Select(o => new StaffAllOrdersViewModel
+        //        {
+        //            OrderId = o.Id,
+        //            OrderName = o.Name,
+        //            CustomerFirstName = o.UserAgent.FirstName,
+        //            CustomerLastName = o.UserAgent.LastName,
+        //            CustomerUsername = o.UserAgent.Username,
+        //            TotalPrice = o.MenuOrder.TotalPrice,
+        //            LunchDate = o.SelectedDate,
+        //            DateOrderCreated = o.OrderPlacedOnDate,
+        //            IsEaten = o.IsEaten
+        //        })
+        //        .ToListAsync();
+
+
+        //    return View(orderToComplete);
+
+        [HttpGet]
+        public async Task<IActionResult> OrderComplete(DateTime selectedDate, string username, string userId, int orderId)
+        {
+            var orderToComplete = await dbContext.Orders
+                    .Where(order => order.SelectedDate == selectedDate && order.UserAgent.Username == username && order.UserAgentId == userId)
+                    .AsNoTracking()
+                    .Select(o => new StaffAllOrdersViewModel
+                    {
+                        OrderId = o.Id,
+                        OrderName = o.Name,
+                        CustomerFirstName = o.UserAgent.FirstName,
+                        CustomerLastName = o.UserAgent.LastName,
+                        CustomerUsername = o.UserAgent.Username,
+                        TotalPrice = o.MenuOrder.TotalPrice,
+                        LunchDate = o.SelectedDate,
+                        DateOrderCreated = o.OrderPlacedOnDate,
+                        IsEaten = o.IsEaten
+                    })
+                    .FirstOrDefaultAsync();
+
+
+            return View(orderToComplete);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> CompleteOrderConfirm(DateTime selectedDate, string username, string userId)
+        {
+            var orderToCompleteConfirm = await dbContext.Orders.Where(o =>
+                o.SelectedDate == selectedDate && o.UserAgent.Username == username && o.UserAgentId == userId).ToListAsync();
+
+            foreach (var lineOrder in orderToCompleteConfirm)
+            {
+                lineOrder.IsEaten = true;
+            }
+
+            await dbContext.SaveChangesAsync();
+
+            return RedirectToAction(nameof(AllOrders));
+        }
     }
+
 }
