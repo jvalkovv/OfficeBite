@@ -2,11 +2,12 @@
 using OfficeBite.Core.Models.CategoryModels;
 using OfficeBite.Core.Models.DishModels;
 using OfficeBite.Core.Models.MenuModels;
+using OfficeBite.Extensions.Interfaces;
 using OfficeBite.Infrastructure.Data;
 
 namespace OfficeBite.Extensions
 {
-    public class HelperMethods
+    public class HelperMethods : IHelperMethods
     {
         private readonly OfficeBiteDbContext dbContext;
 

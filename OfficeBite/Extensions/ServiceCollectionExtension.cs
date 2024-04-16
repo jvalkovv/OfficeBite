@@ -1,10 +1,11 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
-using OfficeBite.Extensions.Interfaces;
 using OfficeBite.Infrastructure.Data;
 using OfficeBite.Infrastructure.Data.Seeds;
 using OfficeBite.Infrastructure.Data.Seeds.Interfaces;
+using OfficeBite.Infrastructure.Extensions;
+using OfficeBite.Infrastructure.Extensions.Interfaces;
 
 namespace OfficeBite.Extensions
 {
@@ -21,8 +22,14 @@ namespace OfficeBite.Extensions
             var connectionString = config.GetConnectionString("DefaultConnection");
 
             services.AddDbContext<OfficeBiteDbContext>(options =>
-                options.UseSqlServer(connectionString));
-
+            {
+                options.UseSqlServer(connectionString,
+                    options =>
+                    {
+                        options.EnableRetryOnFailure(maxRetryCount: 5, maxRetryDelay: TimeSpan.FromSeconds(30),
+                            errorNumbersToAdd: null);
+                    });
+            });
             services.AddDatabaseDeveloperPageExceptionFilter();
 
             return services;
@@ -67,12 +74,28 @@ namespace OfficeBite.Extensions
                 options.Cookie.Name = "OfficeBiteCookies";
                 options.Cookie.SameSite = SameSiteMode.Strict;
                 options.Cookie.HttpOnly = true;
-                options.ExpireTimeSpan = TimeSpan.FromMinutes(30);
+                options.ExpireTimeSpan = TimeSpan.FromMinutes(10);
                 options.LoginPath = "/Identity/Account/AccessDenied";
                 options.SlidingExpiration = true;
             });
 
             return services;
         }
+
+        //public static IServiceCollection ConfigureCustomRoutes(this IServiceCollection services)
+        //{
+        //    services.AddRouting(options =>
+        //    {
+        //        options.LowercaseUrls = true; // Optional: Ensure lowercase URLs
+        //    });
+
+        //    services.Configure<RouteOptions>(options =>
+        //    {
+        //        options.AppendTrailingSlash = false; // Optional: Remove trailing slashes
+        //        options.LowercaseQueryStrings = true; // Optional: Ensure lowercase query strings
+        //    });
+
+        //    return services;
+        //}
     }
 }
