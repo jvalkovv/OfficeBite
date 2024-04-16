@@ -8,7 +8,7 @@
         public const int DishDescriptionMinimumLength = 10;
         public const int DishDescriptionMaximumLength = 500;
 
-        public const int DishPriceMinimumValue = 1;
-        public const int DishPriceMaximumValue = 50;
+        public const decimal DishPriceMinimumValue = 1.00m;
+        public const decimal DishPriceMaximumValue = 3.00m;
     }
 }
