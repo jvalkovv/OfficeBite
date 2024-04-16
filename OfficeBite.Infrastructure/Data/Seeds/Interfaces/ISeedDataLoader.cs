@@ -2,6 +2,6 @@
 {
     public interface ISeedDataLoader
     {
-        void InitializeSeedData();
+        Task InitializeSeedData();
     }
 }
