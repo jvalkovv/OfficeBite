@@ -96,7 +96,7 @@ namespace OfficeBiteTests.AdminControllerTests
         [Test]
         public async Task RoleToUser_AddSuccessfullyRoleAssignRole()
         {
-            // Arrange
+           
             var newUser = _dbContext.Users.First(u => u.Id == "newuserId");
             var newRole = _dbContext.Roles.First(r => r.Id == "NewRoleId");
 
@@ -110,14 +110,35 @@ namespace OfficeBiteTests.AdminControllerTests
                 .ReturnsAsync(IdentityResult.Success);
             _userManagerMock.Setup(u => u.GetRolesAsync(It.IsAny<IdentityUser>()))
                 .ReturnsAsync(new List<string> { "NewRoleId", "ManagerRole" });
-            // Act
+       
             var result = await _controller.AssignRole(new AdminPanelViewModel { UserId = newUser.Id, RoleId = newRole.Id });
 
-            // Assert
+       
             Assert.That(result, Is.InstanceOf<RedirectToActionResult>());
             var redirectResult = result as RedirectToActionResult;
             Assert.That(redirectResult.ActionName, Is.EqualTo("Admin"));
             _userManagerMock.Verify(u => u.AddToRoleAsync(newUser, newRole.Name), Times.Once);
+        }
+
+
+        [Test]
+        public async Task AssignRole_ReturnsBadRequest_WhenAddToRoleFails()
+        {
+            var model = new AdminPanelViewModel();
+            var user = new IdentityUser { Id = "userId" };
+            var role = new IdentityRole { Id = "roleId", Name = "RoleName" };
+
+            _userManagerMock.Setup(u => u.FindByIdAsync(It.IsAny<string>())).ReturnsAsync(user);
+            _roleManagerMock.Setup(r => r.FindByIdAsync(It.IsAny<string>())).ReturnsAsync(role);
+
+            var failedResult = IdentityResult.Failed(new IdentityError { Description = "Failed to assign role." });
+            _userManagerMock.Setup(um => um.AddToRoleAsync(user, role.Name)).ReturnsAsync(failedResult);
+
+           
+            var actionResult = await _controller.AssignRole(model);
+
+
+            Assert.That(actionResult, Is.InstanceOf<BadRequestObjectResult>());
         }
 
         [Test]
@@ -140,7 +161,7 @@ namespace OfficeBiteTests.AdminControllerTests
 
             var result = await _controller.Admin();
 
-            // Assert - Check if the result is an UnauthorizedResult
+         
             Assert.That(result, Is.InstanceOf<UnauthorizedResult>());
         }
 
@@ -151,7 +172,7 @@ namespace OfficeBiteTests.AdminControllerTests
             var adminRole = _dbContext.Roles.First(r => r.Name == "Admin");
             var userAgent = _dbContext.UserAgents.First(u => u.IdentityUser.Id == "adminuserId");
 
-            // Create identity for the user with the found role
+          
             var user = new ClaimsPrincipal(new ClaimsIdentity(new Claim[]
             {
                 new Claim(ClaimTypes.Name, adminUser.UserName),
@@ -171,7 +192,6 @@ namespace OfficeBiteTests.AdminControllerTests
 
             var result = await _controller.Admin();
 
-            // Assert - Check if the result is an AuthorizedResult
             Assert.That(result, Is.InstanceOf<ViewResult>());
         }
 
@@ -182,7 +202,16 @@ namespace OfficeBiteTests.AdminControllerTests
 
             var result = await _controller.AssignRole(model);
 
-            // Assert - Check if the result is a NotFoundResult
+            Assert.That(result, Is.InstanceOf<NotFoundResult>());
+        }
+
+        [Test]
+        public async Task AssignRole_ReturnsNotFoundIfRoleNotFound()
+        {
+            var model = new AdminPanelViewModel { UserId = "adminuserId", RoleId = "" };
+
+            var result = await _controller.AssignRole(model);
+
             Assert.That(result, Is.InstanceOf<NotFoundResult>());
         }
     }
