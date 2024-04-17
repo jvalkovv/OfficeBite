@@ -3,6 +3,7 @@
 @{
     ViewBag.Title = "Меню";
 }
+
 <link rel="stylesheet" href="~/customcss/menu/menulist.css" />
 
 <section id="menu" class="menu section-bg">
@@ -48,10 +49,10 @@
     <script>
         $(document).ready(function () {
             $('#menu-flters li').on('click', function () {
-                var activeCategoryName = $(this).text().trim(); 
+                var activeCategoryName = $(this).text().trim();
                 console.log("Active Category Name:", activeCategoryName);
                 $('.menu-item').each(function () {
-                    var dishCategoryDishId = $(this).attr('class').split(' ')[2]; 
+                    var dishCategoryDishId = $(this).attr('class').split(' ')[2];
                     console.log("Dish Category ID:", dishCategoryDishId);
                     if (activeCategoryName === "Всички" || activeCategoryName === dishCategoryDishId) {
                         $(this).show();
