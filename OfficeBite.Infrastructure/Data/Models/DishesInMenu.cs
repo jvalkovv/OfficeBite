@@ -4,7 +4,6 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace OfficeBite.Infrastructure.Data.Models
 {
-    //TODO.. Data validation range
     public class DishesInMenu
     {
         [Comment("Dishes In Menu Identifier")]
