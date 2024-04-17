@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using OfficeBite.Infrastructure.Data;
 
@@ -11,9 +12,10 @@ using OfficeBite.Infrastructure.Data;
 namespace OfficeBite.Data.Migrations
 {
     [DbContext(typeof(OfficeBiteDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240416121105_EditValidationofMenuOrdrer")]
+    partial class EditValidationofMenuOrdrer
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -333,19 +335,13 @@ namespace OfficeBite.Data.Migrations
 
                     b.Property<string>("Description")
                         .IsRequired()
-                        .HasMaxLength(500)
-                        .HasColumnType("nvarchar(500)")
+                        .HasMaxLength(5000)
+                        .HasColumnType("nvarchar(max)")
                         .HasComment("Description of selected menu");
 
                     b.Property<bool>("IsVisible")
                         .HasColumnType("bit")
                         .HasComment("Visibility  of menu");
-
-                    b.Property<string>("MenuName")
-                        .IsRequired()
-                        .HasMaxLength(500)
-                        .HasColumnType("nvarchar(500)")
-                        .HasComment("Menu name");
 
                     b.Property<int>("MenuTypeId")
                         .HasColumnType("int")
