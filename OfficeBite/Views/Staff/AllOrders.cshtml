@@ -11,11 +11,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    <link rel="stylesheet" href="~/css/site.css"/>
+    <link rel="stylesheet" href="~/css/site.css" />
     <style>
         @@media screen and (max-width: 767px) {
             div.container:nth-child(6) {
-               display:flex;s
+                display: flex;
+                s
             }
 
             .user-card {
@@ -117,7 +118,7 @@
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach (var orders in Model.Where(orders => !orders.IsEaten))
+                    @foreach (var orders in Model)
                     {
                         <tr>
                             @{
@@ -130,7 +131,7 @@
                             <td class="word">@orders.OrderName</td>
                             <td class="word">@orders.LunchDate.ToString("dd-MM-yyyy")</td>
                             <td class="word">@orders.DateOrderCreated.ToString("dd-MM-yyyy")</td>
-                            @if (@orders.IsEaten)
+                            @if (@orders.IsEaten == true)
                             {
                                 <td class="word">Консумирано</td>
                             }
@@ -146,7 +147,6 @@
                                     <input type="hidden" name="date" value="@orders.LunchDate" />
                                     <button type="submit" class="btn btn-secondary">Детайли</button>
                                 </form>
-                                @*                                 <a asp-controller="Staff" asp-action="Delete" asp-route-id="@orders.MenuToOrderId" class="btn btn-secondary">Приключи</a> *@
                             </td>
 
                         </tr>
@@ -154,11 +154,9 @@
                 </tbody>
             </table>
             <div id="mobile-view">
-                @foreach (var orders in Model.Where(orders => !orders.IsEaten))
+                @foreach (var orders in Model)
                 {
                     <p>
-
-
                         @{
                             orders.CustomerFirstName = char.ToUpper(orders.CustomerFirstName[0]) + orders.CustomerFirstName.Substring(1);
                             orders.CustomerLastName = char.ToUpper(orders.CustomerLastName[0]) + orders.CustomerLastName.Substring(1);
@@ -175,24 +173,25 @@
                             <p class="word">@orders.OrderName</p>
                             <p class="word">@orders.LunchDate.ToString("dd-MM-yyyy")</p>
                             <p class="word">@orders.DateOrderCreated.ToString("dd-MM-yyyy")</p>
-
-                            @if (@orders.IsEaten)
-                            {
-                                <p class="word">Консумирано</p>
-                            }
-                            else
-                            {
-                                <p class="word">Не е консумирано</p>
+                            @{
+                                if (@orders.IsEaten)
+                                {
+                                    <p class="word">Консумирано</p>
+                                }
+                                else
+                                {
+                                    <p class="word">Не е консумирано</p>
+                                }
                             }
                             <p class="word"> @orders.TotalPrice </p>
                         </div>
                     </div>
-                    @*    <form asp-controller="Staff" asp-action="OrderView" method="post">
-                <input type="hidden" name="id" value="@orders.MenuToOrderId" />
-                <input type="hidden" name="userId" value="@orders.CustomerIdentifier" />
-                <input type="hidden" name="date" value="@orders.LunchDate" />
-                <button type="submit" class="btn btn-secondary">Детайли</button>
-                </form> *@
+                    <form asp-controller="Staff" asp-action="OrderView" method="post">
+                        <input type="hidden" name="id" value="@orders.MenuToOrderId" />
+                        <input type="hidden" name="userId" value="@orders.CustomerIdentifier" />
+                        <input type="hidden" name="date" value="@orders.LunchDate" />
+                        <button type="submit" class="btn btn-secondary">Детайли</button>
+                    </form>
                     @*                                 <a asp-controller="Staff" asp-action="Delete" asp-route-id="@orders.MenuToOrderId" class="btn btn-secondary">Приключи</a> *@
                 }
             </div>

@@ -1,0 +1,47 @@
+﻿@model OfficeBite.Core.Models.StaffModels.StaffAllOrdersViewModel
+@{
+    ViewBag.Title = "Приключване на поръчката";
+}
+
+<style>
+    .card {
+        display: flex;
+    }
+
+    .card-body {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex-direction: column;
+    }
+</style>
+
+
+<h2 class="text-center">@ViewBag.Title</h2>
+<hr />
+
+<div class="row justify-content-center">
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-body">
+                <h3 class="card-title text-center">Първо име: @Model.CustomerFirstName</h3>
+                <h4 class="card-title text-center">Фамилия: @Model.CustomerLastName</h4>
+                <h5 class="card-title text-center">Потребителско име: @Model.CustomerUsername</h5>
+                <h6 class="card-title text-center">Създадена на: @Model.DateOrderCreated</h6>
+                <h6 class="card-title text-center">Консумирана на: @Model.LunchDate</h6>
+                <p class="text-danger mt-3">"Сигурни ли сте, че искате, да приключите поръчката?"</p>
+            </div>
+            <div class="card-footer">
+                <form asp-action="CompleteOrderConfirm" method="post">
+                    <input type="hidden" name="selectedDate" value="@Model.LunchDate" />
+                    <input type="hidden" name="username" value="@Model.CustomerUsername" />
+                    <input type="hidden" name="userId" value="@Model.CustomerIdentifier" />
+                    <button type="submit" class="btn btn-danger">Приключи поръчката</button>
+                </form>
+                <form asp-action="AllOrders" method="post">
+                    <a asp-controller="Staff" asp-action="AllOrders" class="btn btn-secondary">Откажи</a>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
