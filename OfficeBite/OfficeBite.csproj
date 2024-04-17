@@ -37,10 +37,6 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<ProjectReference Include="..\OfficeBite.Core\OfficeBite.Core.csproj" />
-	</ItemGroup>
-
-	<ItemGroup>
 		<UpToDateCheckInput Remove="Views\Dish\HideDish.cshtml" />
 	</ItemGroup>
 
@@ -51,6 +47,10 @@
 
 	<ItemGroup>
 		<UpToDateCheckInput Remove="Views\Dish\AllHiddenDishes.cshtml" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <ProjectReference Include="..\OfficeBite.Core\OfficeBite.Core.csproj" />
 	</ItemGroup>
 
 </Project>

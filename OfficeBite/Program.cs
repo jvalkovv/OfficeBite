@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Localization;
 using OfficeBite.Extensions;
+using OfficeBite.Extensions.Interfaces;
 using OfficeBite.Infrastructure.Data.Seeds.Interfaces;
 using System.Globalization;
 
@@ -9,9 +10,10 @@ builder.Services.AddOfficeBiteDbContext(builder.Configuration);
 builder.Services.AddOfficeBiteServices();
 builder.Services.AddApplicationIdentity(builder.Configuration);
 builder.Services.AddSeedDataLoader();
-builder.Services.AddScoped<HelperMethods>();
+builder.Services.AddScoped<IHelperMethods, HelperMethods>();
 builder.Services.AddControllersWithViews();
 builder.Services.ConfigureCookie(builder.Configuration);
+
 
 var app = builder.Build();
 
@@ -20,7 +22,7 @@ using (var scope = app.Services.CreateScope())
 {
     var serviceProvider = scope.ServiceProvider;
     var seedDataLoader = serviceProvider.GetRequiredService<ISeedDataLoader>();
-    seedDataLoader.InitializeSeedData();
+    await seedDataLoader.InitializeSeedData();
 }
 
 
