@@ -76,6 +76,7 @@ namespace OfficeBiteTests.MenuControllerTests
                 new DishViewModel { DishId = 4, DishName = "Mock Dish 2", DishPrice = 15 }
             });
             helperMethodsMock.Setup(m => m.GetCategoryAsync()).ReturnsAsync(categories.Select(c => new CategoryViewModel { Id = c.Id, Name = c.Name }));
+
             helperMethodsMock.Setup(m => m.GetMenuTypesAsync())
                 .ReturnsAsync(menuTypes.Select(m => new MenuTypeViewModel { MenuTypeId = m.Id, MenuName = m.Name }).ToList());
 
