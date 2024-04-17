@@ -25,6 +25,12 @@ body {
     white-space: nowrap;
     line-height: 60px;
 }
+.footer-p {
+    color: black;
+    font-size: 14px;
+    font-weight: 600;
+    letter-spacing: .2rem;
+}
 
 @media (max-width: 421px) {
     .footer-p {
