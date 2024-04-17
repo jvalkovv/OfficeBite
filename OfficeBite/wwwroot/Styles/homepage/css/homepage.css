@@ -1,0 +1,120 @@
+﻿body, html {
+    height: 100%;
+    margin: 0;
+    background-image: linear-gradient(rgba(255, 255, 255, 0.5), rgba(255, 255, 255, 0.6)), url('/Styles/homepage/hero-bg.jpg');
+    height: 100%;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+}
+
+.navbar {
+    background-image: linear-gradient(rgba(255, 255, 255, 0.9), rgba(255, 255, 255, 0.9)), url('/Styles/homepage/hero-bg.jpg');
+}
+
+#hero h1 {
+    margin: 0;
+    font-size: 42px;
+    font-weight: 500;
+    line-height: 56px;
+    color: black;
+    font-family: "Poppins", sans-serif;
+    letter-spacing: .2rem;
+}
+
+    #hero h1 span {
+        color: black;
+        font-size: 48px;
+        font-weight: 500;
+        letter-spacing: .4rem;
+    }
+
+#hero h2 {
+    color: #534938;
+    margin-bottom: 5px 0 0 0;
+    font-size: 24px;
+    font-weight: 600;
+    letter-spacing: .2rem;
+}
+
+#hero .btns {
+    margin-top: 30px;
+}
+
+#hero .btn-menu, #hero .btn-book {
+    font-weight: 600;
+    font-size: 20px;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    display: inline-block;
+    padding: 12px 30px;
+    border-radius: 50px;
+    transition: 0.3s;
+    line-height: 1;
+    color: white;
+    background-color: #534938;
+    border: 2px solid #cda45e;
+    text-decoration: none;
+}
+
+
+    #hero .btn-menu:hover, #hero .btn-book:hover {
+        background: #cda45e;
+        color: #fff;
+    }
+
+#hero .btn-book {
+    margin-left: 15px;
+}
+
+
+/**
+   * Preloader style
+   */
+
+#preloader {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 9999;
+    overflow: hidden;
+    background: #1a1814;
+}
+
+    #preloader:before {
+        content: "";
+        position: fixed;
+        top: calc(50% - 30px);
+        left: calc(50% - 30px);
+        border: 6px solid #1a1814;
+        border-top-color: #cda45e;
+        border-bottom-color: #cda45e;
+        border-radius: 50%;
+        width: 60px;
+        height: 60px;
+        -webkit-animation: animate-preloader 1s linear infinite;
+        animation: animate-preloader 1s linear infinite;
+    }
+
+@-webkit-keyframes animate-preloader {
+    0% {
+        transform: rotate(0deg);
+    }
+
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+@keyframes animate-preloader {
+    0% {
+        transform: rotate(0deg);
+    }
+
+    100% {
+        transform: rotate(360deg);
+    }
+}
