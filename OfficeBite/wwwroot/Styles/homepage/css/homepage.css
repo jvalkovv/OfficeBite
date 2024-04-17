@@ -118,3 +118,15 @@
         transform: rotate(360deg);
     }
 }
+
+
+@media (max-width: 650px) {
+    .btn-menu {
+        width: 100%;
+    }
+
+    #hero .btn-book {
+        margin-left: 0px;
+        width: 100%;
+    }
+}
