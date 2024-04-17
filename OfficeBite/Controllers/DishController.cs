@@ -2,11 +2,11 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using OfficeBite.Core.Models.DishModels;
-using OfficeBite.Extensions;
+using OfficeBite.Extensions.Interfaces;
 using OfficeBite.Infrastructure.Data;
 using OfficeBite.Infrastructure.Data.Models;
+using OfficeBite.Infrastructure.Extensions.InterfaceForTest;
 using System.Security.Claims;
-using OfficeBite.Extensions.Interfaces;
 
 namespace OfficeBite.Controllers
 {
@@ -107,7 +107,9 @@ namespace OfficeBite.Controllers
             }
 
             dishToHide.IsVisible = false;
+
             var allDishInOrders = dbContext.DishesInMenus.Where(d => d.DishId == dishToHide.Id);
+
             foreach (var currDish in allDishInOrders)
             {
                 currDish.IsVisible = false;
@@ -186,7 +188,7 @@ namespace OfficeBite.Controllers
             return RedirectToAction(nameof(AllDishes));
         }
 
-        // TODO...  Dereference of a possibly null reference.
+
         [HttpGet]
         public async Task<IActionResult> EditDish(int id)
         {
@@ -194,6 +196,7 @@ namespace OfficeBite.Controllers
 
             var model = new AllDishesViewModel()
             {
+                DishId = dish.Id,
                 DishName = dish.DishName,
                 DishPrice = dish.Price,
                 Description = dish.Description,
@@ -211,9 +214,14 @@ namespace OfficeBite.Controllers
         {
             var dish = await dbContext.Dishes.FindAsync(dishId);
 
+            if (dish == null)
+            {
+                model.Categories = await helperMethods.GetCategoryAsync();
+                model.Dishes = await helperMethods.GetDishesAsync();
+                return View(model);
+            }
             if (ModelState.IsValid)
             {
-                // TODO...  Dereference of a possibly null reference.
                 var menuOrders = await dbContext.MenuOrders
                     .Where(m => dbContext.DishesInMenus
                         .Any(d => d.RequestMenuNumber == m.RequestMenuNumber &&
@@ -234,19 +242,29 @@ namespace OfficeBite.Controllers
                 if (model.ImageFile.Length > 0)
                 {
                     var allowedExtensions = new[] { ".jpg", ".jpeg", ".png" };
-                    var fileExtension = Path.GetExtension(model.ImageFile.FileName).ToLower();
+                    var fileExtension = System.IO.Path.GetExtension(model.ImageFile.FileName).ToLower();
 
                     if (allowedExtensions.Contains(fileExtension))
                     {
                         var fileName = model.ImageFile.FileName;
                         var filePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "img", fileName);
 
-                        using (var stream = new FileStream(filePath, FileMode.Create))
+                        if (filePath != null)
                         {
-                            await model.ImageFile.CopyToAsync(stream);
+                            using (var stream = new FileStream(filePath, FileMode.Create))
+                            {
+                                await model.ImageFile.CopyToAsync(stream);
+                            }
+
+                            dish.ImageUrl = "/img/" + fileName;
+                        }
+                        else
+                        {
+                            model.Categories = await helperMethods.GetCategoryAsync();
+                            model.Dishes = await helperMethods.GetDishesAsync();
+                            return View(model);
                         }
 
-                        dish.ImageUrl = "/img/" + fileName;
                     }
                     else
                     {
@@ -256,12 +274,12 @@ namespace OfficeBite.Controllers
                         model.Dishes = await helperMethods.GetDishesAsync();
                         return View(model);
                     }
+
+                    await dbContext.SaveChangesAsync();
+
+                    return RedirectToAction(nameof(AllDishes));
                 }
 
-
-                await dbContext.SaveChangesAsync();
-
-                return RedirectToAction(nameof(AllDishes));
             }
 
 
@@ -300,7 +318,7 @@ namespace OfficeBite.Controllers
             if (model.ImageFile.Length > 0)
             {
                 var allowedExtensions = new[] { ".jpg", ".jpeg", ".png" };
-                var fileExtension = Path.GetExtension(model.ImageFile.FileName).ToLower();
+                var fileExtension = System.IO.Path.GetExtension(model.ImageFile.FileName).ToLower();
 
                 if (!allowedExtensions.Contains(fileExtension))
                 {
@@ -325,7 +343,7 @@ namespace OfficeBite.Controllers
                 if (model.ImageFile.Length > 0)
                 {
                     var allowedExtensions = new[] { ".jpg", ".jpeg", ".png" };
-                    var fileExtension = Path.GetExtension(model.ImageFile.FileName).ToLower();
+                    var fileExtension = System.IO.Path.GetExtension(model.ImageFile.FileName).ToLower();
 
                     if (allowedExtensions.Contains(fileExtension))
                     {
