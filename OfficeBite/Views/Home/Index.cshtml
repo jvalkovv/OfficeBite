@@ -2,7 +2,37 @@
     ViewData["Title"] = "Home Page";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
-</div>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="Styles/homepage/css/homepage.css" rel="stylesheet">
+    <link href="Styles/homepage/aos/aos.css" rel="stylesheet">
+</head>
+<body>
+    <div class="bg"></div>
+    <section id="hero" class="d-flex align-items-center">
+        <div class="container position-relative text-center text-lg-start" data-aos="zoom-in" data-aos-delay="100">
+            <div class="row">
+                <div class="col-lg-8">
+                    <h1>Добре дошли в <span>OfficeBite</span></h1>
+                    <h2>Вашето любимо офис обяд приложение</h2>
+                    <div class="btns">
+                        <a asp-controller="Menu" asp-action="MenuList" class="btn-menu">Нашето меню</a>
+                        <a href="../../Identity/Account/Register" class="btn-book">Създай профил</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <div id="preloader"></div>
+    <a href="#" class="back-to-top d-flex align-items-center justify-content-center">
+        <i class="bi bi-arrow-up-short"></i>
+    </a>
+
+
+
+    <script src="Styles/homepage/aos/aos.js"></script>
+    <script src="Styles/homepage/js/homepage.js"></script>
+</body>
+</html>
