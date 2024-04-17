@@ -2,7 +2,7 @@
 @model LoginModel
 
 @{
-    ViewData["Title"] = "Log in";
+    ViewData["Title"] = "Вход";
 }
 <link rel="stylesheet" href="~/Styles/StyleSheet.css" />
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
@@ -12,8 +12,6 @@
         <div class="front">
             <img src="~/Styles/gallery-1.jpg" alt="">
             <div class="text">
-                <span class="text-1">Every new friend is a <br> new adventure</span>
-                <span class="text-2">Let's get connected</span>
             </div>
         </div>
     </div>
@@ -22,29 +20,27 @@
         <div class="form-content">
             <div class="login-form">
                 <div asp-validation-summary="ModelOnly" class="validate-form"></div>
-                <div class="title">LOGIN</div>
+                <div class="title">Вход</div>
                 <form id="account" method="post">
                     <div class="input-boxes">
                         <div class="input-box">
                             <i class="fas fa-envelope"></i>
-                            <input asp-for="Input.Username" class="form-control" autocomplete="Username" placeholder="Username/Email" aria-required="true" />
+                            <input asp-for="Input.Username" class="form-control" autocomplete="Username" placeholder="Потребителско име/Email" aria-required="true" />
                         </div>
                         <span asp-validation-for="Input.Username" class="text-danger"></span>
                         <div class="input-box">
                             <i class="fas fa-lock"></i>
-                            <input asp-for="Input.Password" class="form-control" autocomplete="current-password" placeholder="Password" aria-required="true" />
+                            <input asp-for="Input.Password" class="form-control" autocomplete="current-password" placeholder="Парола" aria-required="true" />
                         </div>
                         <span asp-validation-for="Input.Password" class="text-danger"></span>
                         <div class="button input-box">
-                            <input id="login-submit" type="submit" value="Submit">
+                            <input id="login-submit" type="submit" value="Вход">
                         </div>
-                   @*      <div class="checkbox">
-                            <label asp-for="Input.RememberMe" class="form-label">
-                                <input class="form-check-input" asp-for="Input.RememberMe" />
-                                @Html.DisplayNameFor(m => m.Input.RememberMe)
-                            </label>
-                        </div> *@
-                        <div class="text sign-up-text">Don't have an account? <a asp-area="Identity" asp-page="/Account/Register">Sign Up now</a></div>
+                        <div class="sign-form">
+                            <div id="sign-in" class="text sign-up-text">Нямаш акаунт?</div>
+                            <a  asp-area="Identity" asp-page="/Account/Register">Регистрирай се!</a>
+
+                        </div>
                     </div>
                 </form>
             </div>
