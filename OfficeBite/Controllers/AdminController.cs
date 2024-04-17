@@ -106,7 +106,7 @@ namespace OfficeBite.Controllers
 
             if (!result.Succeeded)
             {
-                return BadRequest();
+                return BadRequest("Failed to assign role to user.");
             }
             return RedirectToAction("Admin");
 
