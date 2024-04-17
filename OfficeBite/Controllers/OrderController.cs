@@ -39,7 +39,7 @@ namespace OfficeBite.Controllers
 
         }
 
-        // TODO... Redirect when it is successful 
+        
         [HttpPost]
         public async Task<IActionResult> AddToOrder(int requestMenuNumber)
         {
@@ -50,6 +50,10 @@ namespace OfficeBite.Controllers
                 .Include(dishMenuToOrder => dishMenuToOrder.MenuOrder.MenuType)
                 .ToListAsync();
 
+            if (currOrder==null || currOrder.Count<=0)
+            {
+                return BadRequest("Model is not valid");
+            }
             var dishMenu = await dbContext.DishesInMenus.Where(d => d.RequestMenuNumber == requestMenuNumber)
                 .FirstOrDefaultAsync();
 
@@ -116,6 +120,7 @@ namespace OfficeBite.Controllers
 
                         return RedirectToAction("MenuDailyList", "Menu");
                     }
+
                     return RedirectToPage("/Areas/Identity/Pages/Account/AccessDenied");
                 }
                 return BadRequest("Model is not valid");
