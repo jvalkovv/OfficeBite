@@ -142,7 +142,8 @@ namespace OfficeBite.Controllers
                         TotalPrice = o.MenuOrder.TotalPrice,
                         LunchDate = o.SelectedDate,
                         DateOrderCreated = o.OrderPlacedOnDate,
-                        IsEaten = o.IsEaten
+                        IsEaten = o.IsEaten,
+                        MenuToOrderId = o.MenuOrderRequestNumber
                     })
                     .FirstOrDefaultAsync();
 
@@ -151,10 +152,10 @@ namespace OfficeBite.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> CompleteOrderConfirm(DateTime selectedDate, string username, string userId)
+        public async Task<IActionResult> CompleteOrderConfirm(DateTime selectedDate, int orderId)
         {
             var orderToCompleteConfirm = await dbContext.Orders.Where(o =>
-                o.SelectedDate == selectedDate && o.UserAgent.Username == username && o.UserAgentId == userId).ToListAsync();
+                o.SelectedDate == selectedDate && o.MenuOrderRequestNumber == orderId).ToListAsync();
 
             foreach (var lineOrder in orderToCompleteConfirm)
             {
