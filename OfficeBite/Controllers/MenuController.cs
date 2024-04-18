@@ -18,6 +18,7 @@ namespace OfficeBite.Controllers
         private readonly OfficeBiteDbContext dbContext;
         private readonly IHelperMethods helperMethods;
         private IDateTimeNowWrapper _dateTimeWrapper;
+        const int alaminutTypeId = 4;
         public void SetDateTimeWrapper(IDateTimeNowWrapper dateTimeWrapper)
         {
             _dateTimeWrapper = dateTimeWrapper;
@@ -79,7 +80,7 @@ namespace OfficeBite.Controllers
             return View(model);
         }
 
-        //TODO... Trow exception if is not time for order ? 
+      
         [HttpPost]
         public async Task<IActionResult> MenuDailyList(MenuDailyViewModel model)
         {
@@ -143,7 +144,53 @@ namespace OfficeBite.Controllers
             }
             if (currDateTime.Hour > 10 && currDateTime.Date == selectedDate.Date)
             {
-                return Json("Менюто е АЛАМИНУТ");
+              
+                var dishInOrder = await dbContext.DishesInMenus
+                    .Include(m => m.MenuOrder)
+                    .Include(t => t.MenuOrder.MenuType)
+                    .Include(d => d.Dish)
+                    .Where(d => d.MenuOrder.SelectedMenuDate == selectedDate && d.IsVisible == true && d.MenuOrder.MenuTypeId==alaminutTypeId)
+                    .Join(
+                        dbContext.Dishes,
+                        dishToOrder => dishToOrder.DishId,
+                        dish => dish.Id,
+                        (dishToOrder, dish) => new DishViewModel
+                        {
+                            DishName = dish.DishName,
+                            DishPrice = dish.Price,
+                            Description = dish.Description,
+                            ImageUrl = dish.ImageUrl,
+                            MenuTypeId = dishToOrder.MenuOrder.MenuTypeId,
+                            RequestMenuNumber = dishToOrder.RequestMenuNumber
+                        })
+                    .ToListAsync();
+
+
+
+                var groupedDishes = dishInOrder.GroupBy(d => d.RequestMenuNumber);
+
+
+                var priceInOrder = await dbContext.MenuOrders
+                    .Select(p => new MenuForDateViewModel
+                    {
+                        RequestMenuNumber = p.RequestMenuNumber,
+                        TotalPrice = p.TotalPrice,
+                        Description = p.Description,
+                        MenuName = p.MenuName
+
+                    })
+                    .ToListAsync();
+
+
+                var viewModel = new MenuDailyViewModel
+                {
+                    SelectedDate = selectedDate,
+                    GroupDishes = groupedDishes,
+                    MenuForDateViewModels = priceInOrder
+
+                };
+
+                return View(viewModel);
             }
 
             return BadRequest("Invalid date for order");
