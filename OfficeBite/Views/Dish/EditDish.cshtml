@@ -10,18 +10,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>@ViewData["Title"]</title>
-    <style>
-        .card-header {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .form-group {
-            justify-content: center;
-            margin-bottom: 5px;
-        }
-    </style>
+    <link rel="stylesheet" href="~/customcss/dishes/adddish.css" />
 </head>
 <body>
     <div class="scroll-container">
@@ -66,8 +55,8 @@
                                 } *@
 
                                 <div class="form-group">
-                                    <label asp-for="ImageFile" class="form-label">Качете нова снимка на ястието</label>
-                                    <input asp-for="ImageFile" type="file" class="form-control-file">
+                                    <label asp-for="ImageFile" class="form-label">Качете снимка на ястието:</label>
+                                    <input asp-for="ImageFile" type="file" class="form-control-file" style="overflow:hidden" oninput="validateFile(this)" required="">
                                     <span asp-validation-for="ImageFile" class="text-danger"></span>
                                 </div>
 
@@ -97,3 +86,19 @@
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
 }
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script>
+    function validateFile(input) {
+        var file = input.files[0];
+        var allowedExtensions = [".jpg", ".jpeg", ".png"];
+        var fileExtension = file.name.substring(file.name.lastIndexOf('.')).toLowerCase();
+
+        if (allowedExtensions.indexOf(fileExtension) === -1) {
+            input.setCustomValidity("Моля, качете изображение във формат .jpg, .jpeg или .png");
+            $(input).next('.text-danger').html("Моля, качете изображение във формат .jpg, .jpeg или .png");
+        } else {
+            input.setCustomValidity("");
+            $(input).next('.text-danger').html("");
+        }
+    }
+</script>
