@@ -1,133 +1,48 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using OfficeBite.Core.Models.OrderModels;
-using OfficeBite.Extensions.Interfaces;
-using OfficeBite.Infrastructure.Data;
-using OfficeBite.Infrastructure.Data.Models;
-using System.Security.Claims;
+using OfficeBite.Core.Services.Contracts;
 
 namespace OfficeBite.Controllers
 {
     [Authorize(Roles = "Admin, Manager, Staff, Employee")]
     public class OrderController : Controller
     {
-        private readonly OfficeBiteDbContext dbContext;
-        private readonly IHelperMethods helperMethods;
+        private readonly IOrderService orderService;
 
-        public OrderController(OfficeBiteDbContext _dbContext, IHelperMethods _helperMethods)
+        public OrderController(IOrderService _orderService)
         {
-            this.dbContext = _dbContext;
-            this.helperMethods = _helperMethods;
+            orderService = _orderService;
         }
-        private string GetUserId()
-        {
-            return User.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? string.Empty;
-        }
-
 
         [HttpGet]
 
         public async Task<IActionResult> AddToOrder()
         {
-            var model = new AddOrderViewModel();
-            model.AllDishes = await helperMethods.GetDishForMenuAsync();
-            model.AllMenuTypes = await helperMethods.GetMenuTypesAsync();
-
-
+            var model = await orderService.AddToOrder();
             return View(model);
-
         }
 
-        
         [HttpPost]
         public async Task<IActionResult> AddToOrder(int requestMenuNumber)
         {
-            var currOrder = await dbContext.DishesInMenus
-                .Where(i => i.MenuOrder.RequestMenuNumber == requestMenuNumber)
-                .Include(m => m.MenuOrder)
-                .Include(d => d.Dish)
-                .Include(dishMenuToOrder => dishMenuToOrder.MenuOrder.MenuType)
-                .ToListAsync();
-
-            if (currOrder==null || currOrder.Count<=0)
+            try
             {
-                return BadRequest("Model is not valid");
+                await orderService.AddToOrder(requestMenuNumber);
+                return RedirectToAction("MenuDailyList", "Menu");
             }
-            var dishMenu = await dbContext.DishesInMenus.Where(d => d.RequestMenuNumber == requestMenuNumber)
-                .FirstOrDefaultAsync();
-
-            var orderDates = await dbContext.Orders.ToListAsync();
-
-            if (dishMenu != null)
+            catch (InvalidOperationException ex)
             {
-                var selectedDate = dishMenu.MenuOrder.SelectedMenuDate.Date;
-
-                var currUser = GetUserId();
-
-                var isUserExist = await dbContext.UserAgents
-                    .FirstOrDefaultAsync(u => u.UserId == currUser);
-
-                if (ModelState.IsValid)
+                if (ex.Message == "Invalid date")
                 {
-                    if (isUserExist != null)
-                    {
-                        var requestForDate = await dbContext.Orders
-                            .AnyAsync(o => o.UserAgentId == currUser && o.SelectedDate == selectedDate);
-
-
-                        if (requestForDate)
-                        {
-                            TempData["OrderExistsError"] = "Потребителят вече има поръчка за тази дата.";
-                        }
-                        else
-                        {
-                            foreach (var dish in currOrder)
-                            {
-                                var orderEntity = new Order
-                                {
-                                    Name = $"{dish.MenuOrder.MenuType.Name} Номер на менюто - {dish.RequestMenuNumber}",
-                                    SelectedDate = dish.MenuOrder.SelectedMenuDate,
-                                    OrderPlacedOnDate = DateTime.Now,
-                                    IsEaten = false,
-                                    Details = dish.Dish.Description,
-                                    UserAgentId = currUser,
-                                    MenuOrderRequestNumber = dish.RequestMenuNumber
-
-                                };
-
-                                await dbContext.Orders.AddAsync(orderEntity);
-                            }
-                            await dbContext.SaveChangesAsync();
-
-
-                            var orders = await dbContext.Orders
-                                .Where(o => o.UserAgentId == currUser && o.SelectedDate == selectedDate)
-                                .ToListAsync();
-                            foreach (var order in orders)
-                            {
-                                var orderHistory = new OrderHistory
-                                {
-                                    UserAgentId = currUser,
-                                    MenuOrderRequestNumber = order.MenuOrderRequestNumber,
-                                    OrderId = order.Id
-                                };
-                                await dbContext.OrderHistories.AddAsync(orderHistory);
-                            }
-
-                            await dbContext.SaveChangesAsync();
-                        }
-
-                        return RedirectToAction("MenuDailyList", "Menu");
-                    }
-
+                    TempData["OrderExistsError"] = "Потребителят вече има поръчка за тази дата.";
+                }
+                else if (ex.Message == "Invalid order")
+                {
                     return RedirectToPage("/Areas/Identity/Pages/Account/AccessDenied");
                 }
-                return BadRequest("Model is not valid");
             }
 
-            return RedirectToPage("/Areas/Identity/Pages/Account/AccessDenied");
+            return RedirectToAction("MenuDailyList", "Menu");
         }
-
     }
 }
