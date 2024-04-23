@@ -1,0 +1,45 @@
+﻿@{
+    ViewData["Title"] = "Страницата не бе намерена";
+}
+<style>
+    .body {
+        display: flex;
+        flex-direction: column;
+        margin: 0;
+    }
+
+
+    footer {
+        display: flex;
+        flex-direction: column;
+        flex-wrap: wrap;
+        width: 100%;
+    }
+
+    img {
+        width: 900px;
+        height: 55vh;
+    }
+
+    @@media screen and (max-width: 768px) {
+        img {
+            width: 100%;
+            height: auto;
+        }
+    }
+</style>
+
+<div class="body">
+    <div class="error404">
+        <h1 class="text-danger">Страницата не бе намерена</h1>
+        <h5 class="text-danger">Страницата, която търсите, не съществува.</h5>
+        <p><a href="/">Върнете се към началната страница</a></p>
+        <div style="text-align: center;">
+            <img src="~/error/notfound_404.jpg" alt="Not Found">
+        </div>
+    </div>
+</div>
+<footer>
+    <a href="https://www.freepik.com/free-vector/404-error-with-person-looking-concept-illustration_20824298.htm#query=404&position=25&from_view=author&uuid=fdef657b-f99d-4a9a-b45f-6f685134f1fb">Image by storyset on Freepik</a>
+</footer>
+
