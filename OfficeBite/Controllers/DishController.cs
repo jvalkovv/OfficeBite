@@ -61,7 +61,7 @@ namespace OfficeBite.Controllers
         public async Task<IActionResult> UnHideDishConfirm(int dishId)
         {
             await dishService.UnHideDishConfirm(dishId);
-            return RedirectToAction(nameof(AllDishes));
+            return RedirectToAction(nameof(AllHiddenDishes));
         }
 
 
