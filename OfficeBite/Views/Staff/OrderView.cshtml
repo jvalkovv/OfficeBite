@@ -39,13 +39,13 @@
         <hr />
 
         <hr />
-        <form asp-controller="Staff" asp-action="OrderComplete" method="get">
+        <form asp-controller="Staff" asp-action="OrderComplete" method="post">
             <input type="hidden" name="selectedDate" value="@Model.SelectedDate" />
             <input type="hidden" name="username" value="@Model.CustomerUsername" />
             <input type="hidden" name="userId" value="@Model.CustomerIdentifier" />
             <input type="hidden" name="orderId" value="@Model.RequestMenuNumber" />
             <button type="submit" class="btn btn-secondary">Прключи</button>
         </form>
-        @*         <a asp-controller="Staff" asp-action="Delete" asp-route-id="@Model.Id" class="btn btn-secondary">Изтри</a> *@
+        @*         <a asp-controller="Staff" asp-action="Delete" asp-route-id="@Model.Id" class="btn btn-secondary">Изтрий</a> *@
     </div>
 </div>
