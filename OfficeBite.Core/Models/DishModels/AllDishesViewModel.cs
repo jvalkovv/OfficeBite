@@ -41,7 +41,6 @@ namespace OfficeBite.Core.Models.DishModels
 
         [Display(Name = "Качете снимка на ястието")]
         [Required(ErrorMessage = IsRequireErrorMessage)]
-
         public IFormFile ImageFile { get; set; } = null!;
 
         public IEnumerable<CategoryViewModel> Categories { get; set; } = new List<CategoryViewModel>();
