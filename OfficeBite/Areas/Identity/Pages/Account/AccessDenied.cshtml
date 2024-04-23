@@ -1,19 +1,65 @@
 ﻿@page
 @model AccessDeniedModel
 @{
-    ViewData["Title"] = "Access denied";
+    ViewData["Title"] = "Достъпът е отказан";
 }
 
-<header>
+<style>
+    .body {
+        display: flex;
+        flex-direction: column;
+        margin: 0;
+    }
+
+
+    footer {
+        display: flex;
+        flex-direction: column;
+        flex-wrap: wrap;
+        width: 100%;
+    }
+
+    img {
+        width: 600px;
+        height: auto;
+    }
+
+    @@media screen and (max-width: 768px) {
+        img {
+            width: 100%;
+            height: auto;
+        }
+    }
+
+</style>
+<div class="body">
     <h1 class="text-danger">@ViewData["Title"]</h1>
+
     @if (!User.Identity!.IsAuthenticated)
     {
-        <p class="text-danger">You need to <a asp-page="/Account/Login">log in</a> first.</p>
+        <div class="error401">
+            <p class="text-danger">Трябва да <a asp-page="/Account/Login">влезете в профила си</a> първо.</p>
+            <div style="text-align: center;">
+                <img src="~/error/unauthorized_401.jpg" alt="Unauthorized Access">
+            </div>
+        </div>
+
     }
     else
     {
-        <p class="text-danger">You do not have permission to access this page.</p>
-        <p class="text-danger">Please contact your Administrator to request access.</p>
-         <a asp-page="/Home">Return to the Home Page</a>
+        <div class="error403">
+            <p class="text-danger">Нямате разрешение да достъпите тази страница.</p>
+            <p class="text-danger">Моля, свържете се с вашия администратор, за да поискате достъп.</p>
+            <a asp-page="/Home">Върнете се към началната страница</a>
+            <div style="text-align: center;">
+                <img src="~/error/unauthorized_403.jpg" alt="Unauthorized Access">
+            </div>
+        </div>
+
     }
-</header>
+</div>
+<footer>
+    <a href="https://www.freepik.com/free-vector/403-error-forbidden-with-police-concept-illustration_7906226.htm#fromView=search&page=1&position=3&uuid=d600e816-dd39-41f1-b1a6-693a7500831e">Image by storyset on Freepik</a>
+    <a href="https://www.freepik.com/free-vector/401-error-unauthorized-concept-illustration_7906232.htm#fromView=search&page=1&position=1&uuid=8fd261ee-6553-4eda-8d17-4b0708317c74">Image by storyset on Freepik</a>
+
+</footer>
