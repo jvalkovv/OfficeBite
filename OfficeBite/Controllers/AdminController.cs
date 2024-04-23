@@ -1,115 +1,49 @@
 ﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using OfficeBite.Core.Models.AdminModels;
-using OfficeBite.Infrastructure.Data;
+using OfficeBite.Core.Services.Contracts;
 
 namespace OfficeBite.Controllers
 {
-    [Authorize(Roles = "Admin, Manager")]
+    [Authorize(Roles = "Admin")]
     public class AdminController : Controller
     {
-        private readonly UserManager<IdentityUser> _userManager;
-        private readonly RoleManager<IdentityRole> _roleManager;
-        private readonly OfficeBiteDbContext _dbContext;
-
-
-        public AdminController(UserManager<IdentityUser> userManager,
-            RoleManager<IdentityRole> roleManager, OfficeBiteDbContext dbContext)
+        private readonly IAdminService adminService;
+        public AdminController(IAdminService adminService)
         {
-            _userManager = userManager;
-            _roleManager = roleManager;
-            _dbContext = dbContext;
+            this.adminService = adminService;
         }
 
+        [HttpGet]
         public async Task<List<RoleViewModel>> GetRoleAsync()
         {
-            var roles = await _dbContext.Roles
-                .Select(r => new RoleViewModel
-                {
-                    Id = r.Id,
-                    Name = r.Name
-                })
-                .ToListAsync();
+            var roles = await adminService.GetUserRoles();
 
             return roles;
         }
 
-
+        [HttpGet]
         public async Task<List<UsersViewModel>> GetUsersAsync()
         {
-            var users = _userManager.Users.ToList();
-            var userInBase = _dbContext.UserAgents.ToList();
-            var usersData = new List<UsersViewModel>();
-            foreach (var user in users)
-            {
-                var currUser = userInBase.FirstOrDefault(u => u.UserId == user.Id);
-                var roles = await _userManager.GetRolesAsync(user);
-                var roleNames = roles.ToList();
-                if (currUser != null)
-                {
-                    usersData.Add(new UsersViewModel
-                    {
-                        UserId = user.Id,
-                        UserName = user.UserName,
-                        FullName = $"{currUser.FirstName} {currUser.LastName}",
-                        Email = user.Email,
-                        RoleName = string.Join(", ", roleNames)
-                    });
-                }
-            }
+            var usersData = await adminService.GetUsers();
+
             return usersData;
         }
 
         [HttpGet]
         public async Task<IActionResult> Admin()
         {
-            var isAuthorizedAdmin = User.IsInRole("Admin");
-            var isAuthorizedManager = User.IsInRole("Manager");
+            var result = await adminService.Admin()!;
 
-            if (!(isAuthorizedAdmin) && !(isAuthorizedManager))
-            {
-                return Unauthorized();
-            }
-
-            var model = new AdminPanelViewModel();
-            model.AllRoles = await GetRoleAsync();
-            model.AllUsers = await GetUsersAsync();
-
-            return View(model);
+            return View(result);
         }
 
         [HttpPost]
         public async Task<IActionResult> AssignRole(AdminPanelViewModel model)
         {
-            var roleId = model.RoleId;
-            var userId = model.UserId;
+            await adminService.AssignRole(model);
 
-            var user = await _userManager.FindByIdAsync(userId);
-
-            if (user == null)
-            {
-                return NotFound();
-            }
-
-            var role = await _roleManager.FindByIdAsync(roleId);
-
-            if (role == null)
-            {
-                return NotFound();
-            }
-
-            var currentRoles = await _userManager.GetRolesAsync(user);
-            await _userManager.RemoveFromRolesAsync(user, currentRoles.ToArray());
-            var result = await _userManager.AddToRoleAsync(user, role.Name);
-
-            if (!result.Succeeded)
-            {
-                return BadRequest("Failed to assign role to user.");
-            }
-            return RedirectToAction("Admin");
-
+            return RedirectToAction(nameof(Admin));
         }
     }
 }
