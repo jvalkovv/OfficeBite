@@ -1,5 +1,5 @@
 ﻿@{
-    ViewData["Title"] = "Home Page";
+    ViewData["Title"] = "Начало";
 }
 
 <html>
@@ -7,8 +7,15 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link href="Styles/homepage/css/homepage.css" rel="stylesheet">
     <link href="Styles/homepage/aos/aos.css" rel="stylesheet">
+
+    <script src="service-worker.js"></script>
 </head>
 <body>
+    <div id="install-banner" style="display: none;">
+        <p>Инсталирайте приложението OfficeBite на вашия домашен екран за бърз достъп!</p>
+        <button id="install-button">Инсталирайте сега</button>
+        <button id="dismiss-button">Затвори</button>
+    </div>
     <div class="bg"></div>
     <section id="hero" class="d-flex align-items-center">
         <div class="container position-relative text-center text-lg-start" data-aos="zoom-in" data-aos-delay="100">
@@ -29,10 +36,45 @@
     <a href="#" class="back-to-top d-flex align-items-center justify-content-center">
         <i class="bi bi-arrow-up-short"></i>
     </a>
-
-
-
-    <script src="Styles/homepage/aos/aos.js"></script>
-    <script src="Styles/homepage/js/homepage.js"></script>
 </body>
 </html>
+
+<script src="Styles/homepage/aos/aos.js"></script>
+<script src="Styles/homepage/js/homepage.js"></script>
+<script>
+    window.addEventListener('load', () => {
+        let deferredPrompt;
+        const installBanner = document.getElementById('install-banner');
+        const installButton = document.getElementById('install-button');
+        const dismissButton = document.getElementById('dismiss-button');
+
+        window.addEventListener('beforeinstallprompt', (e) => {
+
+            e.preventDefault();
+            deferredPrompt = e;
+
+
+            installBanner.style.display = 'block';
+        });
+
+        installButton.addEventListener('click', () => {
+
+            if (deferredPrompt) {
+                deferredPrompt.prompt();
+                deferredPrompt.userChoice.then((choiceResult) => {
+                    if (choiceResult.outcome === 'accepted') {
+                        console.log('Потребителят е инсталирал приложението');
+                    }
+                    deferredPrompt = null;
+                    installBanner.style.display = 'none';
+                });
+            }
+        });
+
+        dismissButton.addEventListener('click', () => {
+
+            installBanner.style.display = 'none';
+        });
+    });
+
+</script>

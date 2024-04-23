@@ -31,8 +31,6 @@
                         <h5 class="card-title dish-name">@dish.DishName</h5>
                         <p class="card-text dish-price">@dish.DishPrice лв.</p>
                         <p class="card-text dish-description">@dish.Description</p>
-                        <p class="card-text dish-description">@dish.DishId</p>
-
                         <div>
                             <p class="card-text dish-status">
                                 @if (dish.IsVisible)
@@ -46,14 +44,14 @@
                             </p>
                             <div class="buttons-action">
                                 <a asp-controller="Dish" asp-action="EditDish" asp-route-dishId="@dish.DishId" class="btn btn-secondary">Редактирай</a>
-                              @if (dish.IsVisible)
+                                @if (dish.IsVisible)
                                 {
                                     <a asp-controller="Dish" asp-action="HideDish" asp-route-dishId="@dish.DishId" class="btn btn-secondary">Скрий</a>
                                 }
-                              else
-                              {
+                                else
+                                {
                                     <a id="unHide" asp-controller="Dish" asp-action="UnHideDish" asp-route-dishId="@dish.DishId" class="btn btn-secondary">Покажи</a>
-                              }
+                                }
                             </div>
                         </div>
                     </div>
