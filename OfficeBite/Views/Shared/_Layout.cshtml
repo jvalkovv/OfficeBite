@@ -6,6 +6,8 @@
     <title>@ViewData["Title"] - OfficeBite</title>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="manifest" href="/manifest.json" />
+    <script src="service-worker.js"></script>
 
 </head>
 <body>
@@ -61,7 +63,7 @@
                                 </a>
                                 <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
                                     <li><a class="dropdown-item" asp-area="" asp-controller="Staff" asp-action="AllOrders">Всички заявки</a></li>
-                               
+
                                 </ul>
                             </li>
 

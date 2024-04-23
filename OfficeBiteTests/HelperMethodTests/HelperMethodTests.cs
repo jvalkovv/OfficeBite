@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using NUnit.Framework.Legacy;
-using OfficeBite.Extensions;
+using OfficeBite.Core.Extensions;
 using OfficeBite.Infrastructure.Data;
 using OfficeBite.Infrastructure.Data.Models;
 
