@@ -76,6 +76,10 @@ namespace OfficeBite.Infrastructure.Data.Seeds
 
                             dbContext.UserAgents.Add(userAgent);
                         }
+                        else
+                        {
+                            // Handle creation failure if needed
+                        }
                     }
 
                     await dbContext.SaveChangesAsync();
