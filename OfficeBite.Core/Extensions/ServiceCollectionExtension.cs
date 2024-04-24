@@ -98,6 +98,21 @@ namespace OfficeBite.Core.Extensions
             return services;
         }
 
+        public static IServiceCollection AddApplicationExternalFbIdentity(this IServiceCollection services, IConfiguration config)
+        {
+            services.AddAuthentication()
+                .AddFacebook(options =>
+                {
+                    IConfigurationSection fbAuthNSection =
+                        config.GetSection("Authentication:FB");
+                    options.AppId = config["Authentication:Facebook:AppId"];
+                    options.AppSecret = config["Authentication:Facebook:AppSecret"];
+                });
+
+            return services;
+
+        }
+
         //public static IServiceCollection ConfigureCustomRoutes(this IServiceCollection services)
         //{
         //    services.AddRouting(options =>

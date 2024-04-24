@@ -9,6 +9,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddOfficeBiteDbContext(builder.Configuration);
 builder.Services.AddOfficeBiteServices();
 builder.Services.AddApplicationIdentity(builder.Configuration);
+builder.Services.AddApplicationExternalFbIdentity(builder.Configuration);
 builder.Services.AddSeedDataLoader();
 builder.Services.AddScoped<IHelperMethods, HelperMethods>();
 builder.Services.AddControllersWithViews();
