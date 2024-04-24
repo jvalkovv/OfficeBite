@@ -315,7 +315,7 @@ namespace OfficeBiteTests.DishControllerTests
         }
 
         [Test]
-        public async Task UnHideDishConfirmReturnDishNotFound()
+        public async Task AddDish_ShouldReturnAllDishesViewModel()
         {
             var dishId = 3;
             var result = await _controller.UnHideDishConfirm(dishId);
