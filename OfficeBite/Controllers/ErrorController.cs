@@ -9,5 +9,15 @@ namespace OfficeBite.Controllers
         {
             return View("NotFound");
         }
+        [Route("/error/500")]
+        public IActionResult Error500()
+        {
+            return View("InternalServerError");
+        }
+        public Task<IActionResult> TestError500()
+        {
+
+            throw new Exception("Грешка: това е симулирана грешка 500.");
+        }
     }
 }
