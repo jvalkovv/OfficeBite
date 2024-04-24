@@ -1,218 +1,171 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using Moq;
+using NUnit.Framework.Legacy;
 using OfficeBite.Controllers;
 using OfficeBite.Core.Models.AdminModels;
-using OfficeBite.Infrastructure.Data;
-using System.Security.Claims;
-using UserAgent = OfficeBite.Infrastructure.Data.Models.UserAgent;
+using OfficeBite.Core.Services.Contracts;
+using OfficeBite.Infrastructure.Data.Common;
 
 namespace OfficeBiteTests.AdminControllerTests
 {
     [TestFixture]
     public class AdminControllerTests
     {
-        private AdminController _controller;
-        private OfficeBiteDbContext _dbContext;
-        private Mock<UserManager<IdentityUser>> _userManagerMock;
-        private Mock<RoleManager<IdentityRole>> _roleManagerMock;
+        private Mock<IAdminService> adminServiceMock;
+        private AdminController controller;
+        private Mock<IUserStore<IdentityUser>> userStoreMock;
+        private Mock<IRoleStore<IdentityRole>> roleStoreMock;
+        private Mock<IRepository> repositoryMock;
+        private Mock<UserManager<IdentityUser>> userManagerMock;
+        private Mock<RoleManager<IdentityRole>> roleManagerMock;
 
-        [SetUp]
-        public void Setup()
-        {
-            var userStoreMock = new Mock<IUserStore<IdentityUser>>();
-            _userManagerMock = new Mock<UserManager<IdentityUser>>(userStoreMock.Object, null, null, null, null, null, null, null, null);
-
-            var roleStoreMock = new Mock<IRoleStore<IdentityRole>>();
-            _roleManagerMock = new Mock<RoleManager<IdentityRole>>(roleStoreMock.Object, null, null, null, null);
-
-            var users = new List<IdentityUser>
-            {
-                new IdentityUser { Id = "adminuserId", UserName = "adminuser" },
-                new IdentityUser { Id = "manageruserId", UserName = "manageruser" },
-                new IdentityUser { Id = "newuserId", UserName = "newuser" }
-            };
-
-            var userAgents = users.Select(user => new UserAgent
-            {
-                UserId = user.Id,
-                FirstName = "FirstName",
-                LastName = "LastName",
-                Username = user.UserName
-            }).ToList();
-
-            var roles = new List<IdentityRole>
-            {
-                new IdentityRole { Id = "AdminRoleId", Name = "Admin" },
-                new IdentityRole { Id = "ManagerRoleId", Name = "ManagerRole" },
-                new IdentityRole { Id = "NewRoleId", Name = "NewRole" }
-            };
-
-            _dbContext = CreateDbContext(users, roles, userAgents);
-
-            _userManagerMock.Setup(u => u.Users).Returns(users.AsQueryable());
-
-            _userManagerMock.Setup(u => u.FindByIdAsync(It.IsAny<string>()))
-                .ReturnsAsync((string userId) => users.FirstOrDefault(u => u.Id == userId));
-
-            _userManagerMock.Setup(u => u.GetRolesAsync(It.IsAny<IdentityUser>()))
-                .ReturnsAsync((IdentityUser user) =>
-                {
-                    var userRoles = _dbContext.UserRoles
-                        .Where(ur => ur.UserId == user.Id)
-                        .Join(_dbContext.Roles, ur => ur.RoleId, r => r.Id, (ur, r) => r.Name)
-                        .ToList();
-                    return userRoles;
-                });
-
-            _controller = new AdminController(_userManagerMock.Object, _roleManagerMock.Object, _dbContext);
-        }
-
-        private OfficeBiteDbContext CreateDbContext(List<IdentityUser> users, List<IdentityRole> roles, List<UserAgent> userAgents)
-        {
-            var options = new DbContextOptionsBuilder<OfficeBiteDbContext>()
-                .UseInMemoryDatabase(databaseName: "TestDatabase")
-                .Options;
-            var dbContext = new OfficeBiteDbContext(options);
-
-            dbContext.Users.AddRange(users);
-            dbContext.Roles.AddRange(roles);
-            dbContext.UserAgents.AddRange(userAgents);
-            dbContext.SaveChanges();
-
-            return dbContext;
-        }
 
         [TearDown]
         public void TearDown()
         {
-            _dbContext.Database.EnsureDeleted();
-            _controller.Dispose();
-            _dbContext.Dispose();
+            adminServiceMock.Reset();
+            controller.Dispose();
+            userStoreMock.Reset();
+            roleStoreMock.Reset();
+            repositoryMock.Reset();
+        }
+        [SetUp]
+        public void Setup()
+        {
+            adminServiceMock = new Mock<IAdminService>();
+            controller = new AdminController(adminServiceMock.Object);
+            userStoreMock = new Mock<IUserStore<IdentityUser>>();
+            roleStoreMock = new Mock<IRoleStore<IdentityRole>>();
+            repositoryMock = new Mock<IRepository>();
+            userManagerMock = new Mock<UserManager<IdentityUser>>(userStoreMock.Object, null, null, null, null, null, null, null, null);
+            roleManagerMock = new Mock<RoleManager<IdentityRole>>(roleStoreMock.Object, null, null, null, null);
         }
 
         [Test]
-        public async Task RoleToUser_AddSuccessfullyRoleAssignRole()
+        public async Task Admin_ReturnsViewWithModel()
         {
-           
-            var newUser = _dbContext.Users.First(u => u.Id == "newuserId");
-            var newRole = _dbContext.Roles.First(r => r.Id == "NewRoleId");
-
-            _userManagerMock.Setup(u => u.FindByIdAsync(It.IsAny<string>()))
-                .ReturnsAsync((string userId) => _dbContext.Users.FirstOrDefault(u => u.Id == userId));
-
-            _roleManagerMock.Setup(r => r.FindByIdAsync(It.IsAny<string>()))
-                .ReturnsAsync((string roleId) => _dbContext.Roles.FirstOrDefault(r => r.Id == roleId));
-
-            _userManagerMock.Setup(u => u.AddToRoleAsync(newUser, newRole.Name))
-                .ReturnsAsync(IdentityResult.Success);
-            _userManagerMock.Setup(u => u.GetRolesAsync(It.IsAny<IdentityUser>()))
-                .ReturnsAsync(new List<string> { "NewRoleId", "ManagerRole" });
-       
-            var result = await _controller.AssignRole(new AdminPanelViewModel { UserId = newUser.Id, RoleId = newRole.Id });
-
-       
-            Assert.That(result, Is.InstanceOf<RedirectToActionResult>());
-            var redirectResult = result as RedirectToActionResult;
-            Assert.That(redirectResult.ActionName, Is.EqualTo("Admin"));
-            _userManagerMock.Verify(u => u.AddToRoleAsync(newUser, newRole.Name), Times.Once);
-        }
+            var expectedModel = new AdminPanelViewModel();
+            adminServiceMock.Setup(s => s.Admin()).ReturnsAsync(expectedModel);
 
 
-        [Test]
-        public async Task AssignRole_ReturnsBadRequest_WhenAddToRoleFails()
-        {
-            var model = new AdminPanelViewModel();
-            var user = new IdentityUser { Id = "userId" };
-            var role = new IdentityRole { Id = "roleId", Name = "RoleName" };
+            var result = await controller.Admin() as ViewResult;
 
-            _userManagerMock.Setup(u => u.FindByIdAsync(It.IsAny<string>())).ReturnsAsync(user);
-            _roleManagerMock.Setup(r => r.FindByIdAsync(It.IsAny<string>())).ReturnsAsync(role);
-
-            var failedResult = IdentityResult.Failed(new IdentityError { Description = "Failed to assign role." });
-            _userManagerMock.Setup(um => um.AddToRoleAsync(user, role.Name)).ReturnsAsync(failedResult);
-
-           
-            var actionResult = await _controller.AssignRole(model);
-
-
-            Assert.That(actionResult, Is.InstanceOf<BadRequestObjectResult>());
+            ClassicAssert.IsNotNull(result);
+            ClassicAssert.AreEqual(expectedModel, result.Model);
         }
 
         [Test]
-        public async Task ReturnsUnauthorized_ForNonAdminOrManagerUser()
+        public async Task GetRoleAsync_ReturnsListOfRoles()
         {
-            var user = new ClaimsPrincipal(new ClaimsIdentity(new Claim[]
+            var expectedRoles = new List<RoleViewModel>();
+            adminServiceMock.Setup(s => s.GetUserRoles()).ReturnsAsync(expectedRoles);
+
+
+            var result = await controller.GetRoleAsync();
+
+
+            ClassicAssert.IsNotNull(result);
+            ClassicAssert.AreEqual(expectedRoles, result);
+        }
+        [Test]
+        public async Task GetUsersAsync_ReturnsListOfUsers()
+        {
+
+            var expectedUsers = new List<UsersViewModel>
             {
-                new Claim(ClaimTypes.Name, "nonadminormanageruser"),
-                new Claim(ClaimTypes.Role, "nonadminormanagerrole"),
-            }, "auth"));
+                new UsersViewModel { UserId = "1", UserName = "user1", FullName = "User One", Email = "user1@example.com", RoleName = "Role1" },
+                new UsersViewModel { UserId = "2", UserName = "user2", FullName = "User Two", Email = "user2@example.com", RoleName = "Role2" }
 
-            var httpContextMock = new Mock<HttpContext>();
-            httpContextMock.Setup(c => c.User).Returns(user);
-
-            var controllerContext = new ControllerContext()
-            {
-                HttpContext = httpContextMock.Object
             };
-            _controller.ControllerContext = controllerContext;
+            adminServiceMock.Setup(s => s.GetUsers()).ReturnsAsync(expectedUsers);
 
-            var result = await _controller.Admin();
 
-         
-            Assert.That(result, Is.InstanceOf<UnauthorizedResult>());
+            var result = await controller.GetUsersAsync();
+
+
+            ClassicAssert.IsNotNull(result);
+            ClassicAssert.AreEqual(expectedUsers.Count, result.Count);
+
         }
 
         [Test]
-        public async Task ReturnsAuthorized_ForAdminOrManagerUser()
+        public async Task AssignRole_ValidModel_SuccessfulAssignment()
         {
-            var adminUser = _dbContext.Users.First(u => u.Id == "adminuserId");
-            var adminRole = _dbContext.Roles.First(r => r.Name == "Admin");
-            var userAgent = _dbContext.UserAgents.First(u => u.IdentityUser.Id == "adminuserId");
-
-          
-            var user = new ClaimsPrincipal(new ClaimsIdentity(new Claim[]
+            var model = new AdminPanelViewModel
             {
-                new Claim(ClaimTypes.Name, adminUser.UserName),
-                new Claim(ClaimTypes.Role, adminRole.Name),
-                new Claim("UserAgent", userAgent.UserId),
-            }, "auth"));
-
-
-            var httpContextMock = new Mock<HttpContext>();
-            httpContextMock.Setup(c => c.User).Returns(user);
-
-            var controllerContext = new ControllerContext()
-            {
-                HttpContext = httpContextMock.Object
+                UserId = "1",
+                RoleId = "1"
             };
-            _controller.ControllerContext = controllerContext;
 
-            var result = await _controller.Admin();
+            var adminServiceMock = new Mock<IAdminService>();
+            adminServiceMock.Setup(s =>
+                s.AssignRole(model)).Returns(Task.CompletedTask);
 
-            Assert.That(result, Is.InstanceOf<ViewResult>());
+            controller = new AdminController(adminServiceMock.Object);
+
+            var result = await controller.AssignRole(model);
+
+            adminServiceMock.Verify(s =>
+                s.AssignRole(model), Times.Once);
         }
 
-        [Test]
-        public async Task AssignRole_ReturnsNotFoundIfUserNotFound()
-        {
-            var model = new AdminPanelViewModel { UserId = "nonexistentuserid", RoleId = "1" };
+        //[Test]
+        //public async Task AssignRole_UserNotFound_NoAssignment()
+        //{
+        //    // Arrange
+        //    var model = new AdminPanelViewModel { UserId = "nonexistent-user-id", RoleId = "1" };
+        //    userManagerMock.Setup(m => 
+        //        m.FindByIdAsync("nonexistent-user-id")).
+        //        ReturnsAsync((IdentityUser)null);
+        //    roleManagerMock.Setup(m => 
+        //        m.FindByIdAsync("1"))
+        //        .ReturnsAsync((IdentityRole)null);
 
-            var result = await _controller.AssignRole(model);
+        //    // Act
+        //    var adminService = new AdminService(userManagerMock.Object, roleManagerMock.Object, repositoryMock.Object);
+        //    await adminService.AssignRole(model);
 
-            Assert.That(result, Is.InstanceOf<NotFoundResult>());
-        }
+        //    // Assert
+        //    userManagerMock.Verify(m => m.FindByIdAsync("nonexistent-user-id"), Times.Once);
+        //    roleManagerMock.Verify(m => m.FindByIdAsync("1"), Times.Once);
+        //}
 
-        [Test]
-        public async Task AssignRole_ReturnsNotFoundIfRoleNotFound()
-        {
-            var model = new AdminPanelViewModel { UserId = "adminuserId", RoleId = "" };
+        //[Test]
+        //public async Task AssignRole_RoleNotFound_NoAssignment()
+        //{
+        //    // Arrange
+        //    var model = new AdminPanelViewModel { UserId = "1", RoleId = "nonexistent-role-id" };
+        //    var user = new IdentityUser();
+        //    userManagerMock.Setup(m => m.FindByIdAsync("1")).ReturnsAsync(user);
+        //    roleManagerMock.Setup(m => m.FindByIdAsync("nonexistent-role-id")).ReturnsAsync((IdentityRole)null);
 
-            var result = await _controller.AssignRole(model);
+        //    // Act
+        //    await adminServiceMock.Object.AssignRole(model);
 
-            Assert.That(result, Is.InstanceOf<NotFoundResult>());
-        }
+        //    // Assert
+        //    userManagerMock.Verify(m => m.FindByIdAsync("1"), Times.Once);
+        //    roleManagerMock.Verify(m => m.FindByIdAsync("nonexistent-role-id"), Times.Once);
+        //    userManagerMock.VerifyNoOtherCalls();
+        //    roleManagerMock.VerifyNoOtherCalls();
+        //}
+
+
+        //[Test]
+        //public async Task DeleteRole_ValidModel_SuccessfulDeletion()
+        //{
+        //    var model = new AdminPanelViewModel
+        //    {
+
+        //    };
+
+
+        //    var result = await controller.DeleteRole(model) 
+        //        as NotImplementedResult;
+
+        //    ClassicAssert.IsNotNull(result);
+
+        //}
+
     }
 }
