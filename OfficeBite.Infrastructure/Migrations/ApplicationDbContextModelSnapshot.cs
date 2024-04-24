@@ -266,7 +266,7 @@ namespace OfficeBite.Data.Migrations
 
                     b.HasIndex("CategoryId");
 
-                    b.ToTable("Dishes");
+                    b.ToTable("Dishes", (string)null);
                 });
 
             modelBuilder.Entity("OfficeBite.Infrastructure.Data.Models.DishCategory", b =>
@@ -285,7 +285,7 @@ namespace OfficeBite.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("DishCategories");
+                    b.ToTable("DishCategories", (string)null);
                 });
 
             modelBuilder.Entity("OfficeBite.Infrastructure.Data.Models.DishesInMenu", b =>
@@ -319,7 +319,7 @@ namespace OfficeBite.Data.Migrations
 
                     b.HasIndex("RequestMenuNumber");
 
-                    b.ToTable("DishesInMenus");
+                    b.ToTable("DishesInMenus", (string)null);
                 });
 
             modelBuilder.Entity("OfficeBite.Infrastructure.Data.Models.MenuOrder", b =>
@@ -372,7 +372,7 @@ namespace OfficeBite.Data.Migrations
 
                     b.HasIndex("OrderId");
 
-                    b.ToTable("MenuOrders");
+                    b.ToTable("MenuOrders", (string)null);
                 });
 
             modelBuilder.Entity("OfficeBite.Infrastructure.Data.Models.MenuType", b =>
@@ -391,7 +391,7 @@ namespace OfficeBite.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("MenuTypes");
+                    b.ToTable("MenuTypes", (string)null);
                 });
 
             modelBuilder.Entity("OfficeBite.Infrastructure.Data.Models.Order", b =>
@@ -432,7 +432,7 @@ namespace OfficeBite.Data.Migrations
 
                     b.HasIndex("UserAgentId");
 
-                    b.ToTable("Orders");
+                    b.ToTable("Orders", (string)null);
                 });
 
             modelBuilder.Entity("OfficeBite.Infrastructure.Data.Models.OrderHistory", b =>
@@ -460,7 +460,7 @@ namespace OfficeBite.Data.Migrations
 
                     b.HasIndex("OrderId");
 
-                    b.ToTable("OrderHistories");
+                    b.ToTable("OrderHistories", (string)null);
                 });
 
             modelBuilder.Entity("OfficeBite.Infrastructure.Data.Models.UserAgent", b =>
@@ -486,7 +486,7 @@ namespace OfficeBite.Data.Migrations
 
                     b.HasKey("UserId");
 
-                    b.ToTable("UserAgents");
+                    b.ToTable("UserAgents", (string)null);
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
