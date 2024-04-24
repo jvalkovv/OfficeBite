@@ -38,7 +38,7 @@ namespace OfficeBite.Core.Extensions
                 options.UseSqlServer(connectionString,
                     options =>
                     {
-                        options.EnableRetryOnFailure(maxRetryCount: 5, maxRetryDelay: TimeSpan.FromSeconds(30),
+                        options.EnableRetryOnFailure(maxRetryCount: 1, maxRetryDelay: TimeSpan.FromSeconds(30),
                             errorNumbersToAdd: null);
                     });
             });

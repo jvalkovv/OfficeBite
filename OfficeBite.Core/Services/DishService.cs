@@ -78,9 +78,11 @@ namespace OfficeBite.Core.Services
                 .ToListAsync();
 
 
+
             foreach (var menuOrder in menuOrders)
             {
                 menuOrder.IsVisible = false;
+                menuOrder.TotalPrice -= dishToHide.Price;
             }
 
             await repository.SaveChangesAsync();
@@ -129,6 +131,7 @@ namespace OfficeBite.Core.Services
             foreach (var menuOrder in menuOrders)
             {
                 menuOrder.IsVisible = true;
+                menuOrder.TotalPrice += dishToUnHide.Price;
             }
 
             await repository.SaveChangesAsync();
