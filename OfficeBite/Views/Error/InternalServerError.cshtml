@@ -1,0 +1,45 @@
+﻿@{
+    ViewData["Title"] = "Грешка 500 - Вътрешна грешка на сървъра";
+}
+<style>
+    .body {
+        display: flex;
+        flex-direction: column;
+        margin: 0;
+    }
+
+
+    footer {
+        display: flex;
+        flex-direction: column;
+        flex-wrap: wrap;
+        width: 100%;
+    }
+
+    img {
+        width: 900px;
+        height: 55vh;
+    }
+
+    @@media screen and (max-width: 768px) {
+        img {
+            width: 100%;
+            height: auto;
+        }
+    }
+</style>
+
+<div class="body">
+    <div class="error500">
+        <h1 class="text-danger">Вътрешна грешка на сървъра</h1>
+        <h5 class="text-danger">Възникна вътрешна грешка при заявката към сървъра.</h5>
+        <p>Моля, опитайте отново по-късно.</p>
+        <div style="text-align: center;">
+            <img src="~/error/internalServerError_500.jpg" alt="Not Found">
+        </div>
+    </div>
+</div>
+<footer>
+    <a href="https://www.freepik.com/free-vector/500-internal-server-error-concept-illustration_7906229.htm#query=500&position=0&from_view=author&uuid=9aad0ad4-418d-45fb-99a7-fb2be4b16934">Image by storyset on Freepik</a>
+</footer>
+
