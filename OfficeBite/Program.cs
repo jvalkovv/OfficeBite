@@ -1,8 +1,8 @@
 ﻿using Microsoft.AspNetCore.Localization;
-using OfficeBite.Infrastructure.Data.Seeds.Interfaces;
-using System.Globalization;
 using OfficeBite.Core.Extensions;
 using OfficeBite.Core.Extensions.Interfaces;
+using OfficeBite.Infrastructure.Data.Seeds.Interfaces;
+using System.Globalization;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -14,7 +14,7 @@ builder.Services.AddScoped<IHelperMethods, HelperMethods>();
 builder.Services.AddControllersWithViews();
 builder.Services.ConfigureCookie(builder.Configuration);
 builder.Services.AddMvc();
-
+builder.Services.AddProgressiveWebApp();
 
 var app = builder.Build();
 
@@ -48,8 +48,10 @@ else
 {
     app.UseExceptionHandler("/Home/Error");
     app.UseHsts();
-}
 
+}
+app.UseStatusCodePagesWithReExecute("/error/{0}");
+app.UseExceptionHandler("/error/500");
 app.UseHttpsRedirection();
 app.UseStaticFiles();
 
