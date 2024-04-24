@@ -1,13 +1,14 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ViewFeatures;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 using Moq;
 using NUnit.Framework.Legacy;
 using OfficeBite.Controllers;
-using OfficeBite.Core.Models.CategoryModels;
-using OfficeBite.Core.Models.DishModels;
+using OfficeBite.Core.Extensions.Interfaces;
 using OfficeBite.Core.Models.OrderModels;
-using OfficeBite.Extensions.Interfaces;
+using OfficeBite.Core.Services.Contracts;
 using OfficeBite.Infrastructure.Data;
 using OfficeBite.Infrastructure.Data.Models;
 
@@ -15,84 +16,46 @@ namespace OfficeBiteTests.OrderControllerTests
 {
     public class OrderControllerTests
     {
-        private OrderController? _controller;
+        private OrderController _controller;
         private Mock<IHelperMethods> _helperMethodsMock;
+        private Mock<IOrderService> _orderServiceMock;
         private OfficeBiteDbContext _dbContext;
 
         [SetUp]
         public void Setup()
         {
-
             _helperMethodsMock = new Mock<IHelperMethods>();
+            _orderServiceMock = new Mock<IOrderService>();
+
+            var dishes = new List<Dish>
+            {
+                new Dish { Id = 6, DishName = "Dish 6", Price = 10 },
+                new Dish { Id = 7, DishName = "Dish 7", Price = 15 }
+            };
 
             var categories = new List<DishCategory>
             {
-                new DishCategory { Id = 1, Name = "Category 1" },
-                new DishCategory { Id = 2, Name = "Category 2" }
-            };
-            var dishes = new List<Dish>
-            {
-                new Dish { Id = 1, DishName = "Dish 1", Price = 10, CategoryId = 1 },
-                new Dish { Id = 2, DishName = "Dish 2", Price = 15, CategoryId = 2 }
-            };
-            var menuTypes = new List<MenuType>
-            {
-                new MenuType { Id = 1, Name = "Type 1" },
-                new MenuType { Id = 2, Name = "Type 2" }
-            };
-            var menuOrder = new List<MenuOrder>
-            {
-                new MenuOrder { Id = 1, RequestMenuNumber = 1 },
-                new MenuOrder { Id = 2, RequestMenuNumber = 2 }
+                new DishCategory { Id = 6, Name = "Category 6" },
+                new DishCategory { Id = 7, Name = "Category 7" }
             };
 
-            var users = new List<IdentityUser>
-            {
-                new IdentityUser { Id = "adminuserId", UserName = "adminuser" },
-                new IdentityUser { Id = "manageruserId", UserName = "manageruser" },
-                new IdentityUser { Id = "newuserId", UserName = "newuser" }
-            };
-
-            var userAgents = users.Select(user => new UserAgent
-            {
-                UserId = user.Id,
-                FirstName = "FirstName",
-                LastName = "LastName",
-                Username = user.UserName
-            }).ToList();
-
-            _helperMethodsMock = new Mock<IHelperMethods>();
-            _helperMethodsMock.Setup(m => m.GetDishesAsync()).ReturnsAsync(new List<DishViewModel>
-            {
-                new DishViewModel { DishId = 3, DishName = "Mock Dish 1", DishPrice = 10 },
-                new DishViewModel { DishId = 4, DishName = "Mock Dish 2", DishPrice = 15 }
-            });
-            _helperMethodsMock.Setup(m => m.GetCategoryAsync()).ReturnsAsync(categories.Select(c => new CategoryViewModel { Id = c.Id, Name = c.Name }));
-
-            _dbContext = CreateDbContext(dishes, categories, menuOrder, menuTypes, userAgents, users);
-
-            _controller = new OrderController(_dbContext, _helperMethodsMock.Object);
-
-        }
-
-        private OfficeBiteDbContext CreateDbContext(List<Dish> dishes, List<DishCategory> categories, List<MenuOrder> menuOrders, List<MenuType> menuTypes,
-            List<UserAgent> userAgents, List<IdentityUser> users)
-        {
             var options = new DbContextOptionsBuilder<OfficeBiteDbContext>()
                 .UseInMemoryDatabase(databaseName: "TestDatabase")
                 .Options;
-            var dbContext = new OfficeBiteDbContext(options);
+            _dbContext = new OfficeBiteDbContext(options);
 
-            dbContext.Dishes.AddRange(dishes);
-            dbContext.DishCategories.AddRange(categories);
-            dbContext.UserAgents.AddRange(userAgents);
-            dbContext.MenuOrders.AddRange(menuOrders);
-            dbContext.Users.AddRange(users);
-            dbContext.MenuTypes.AddRange(menuTypes);
-            dbContext.SaveChanges();
+            _dbContext.Dishes.AddRange(dishes);
+            _dbContext.DishCategories.AddRange(categories);
+            _dbContext.SaveChanges();
 
-            return dbContext;
+            var httpContext = new DefaultHttpContext();
+            httpContext.RequestServices = new ServiceCollection().BuildServiceProvider();
+            _controller = new OrderController(_orderServiceMock.Object)
+            {
+                TempData = new TempDataDictionary(httpContext, Mock.Of<ITempDataProvider>())
+            };
         }
+
         [TearDown]
         public void TearDown()
         {
@@ -104,34 +67,90 @@ namespace OfficeBiteTests.OrderControllerTests
         [Test]
         public async Task AddToOrder_Get_ReturnsViewWithCorrectModel()
         {
-            // Act
-            var result = await _controller.AddToOrder() as ViewResult;
+            var model = new AddOrderViewModel { };
 
-            // Assert
+            _helperMethodsMock.Setup(m =>
+                m.GetDishesAsync()).ReturnsAsync(model.AllDishes);
+
+
+            var result = await _controller.AddToOrder();
+
+
+            ClassicAssert.IsInstanceOf<ViewResult>(result);
+        }
+
+        [Test]
+        public async Task AddToOrder_OrderRedirectToAction()
+        {
+
+            var userId = "adminuserId";
+            var menuOrder = new MenuOrder { RequestMenuNumber = 1 };
+
+            _orderServiceMock
+                .Setup(o => o.AddToOrder(It.IsAny<int>()))
+                .Returns(Task.FromResult(menuOrder));
+
+            var result = await _controller.AddToOrder(01);
+
             ClassicAssert.IsNotNull(result);
-            ClassicAssert.IsInstanceOf<AddOrderViewModel>(result.Model);
+            ClassicAssert.IsInstanceOf<RedirectToActionResult>(result);
+        }
+
+        [Test]
+        public async Task AddToOrder_ServiceThrowsInvalidOrder_RedirectsToAccessDeniedPage()
+        {
+
+            _orderServiceMock
+               .Setup(o => o.AddToOrder(It.IsAny<int>()))
+               .ThrowsAsync(new InvalidOperationException("Invalid order"));
+
+            // Act
+            var result = await _controller.AddToOrder(1);
+
+
+            ClassicAssert.IsInstanceOf<RedirectToPageResult>(result);
+            var redirectResult = result as RedirectToPageResult;
+            ClassicAssert.AreEqual("/Areas/Identity/Pages/Account/AccessDenied", redirectResult.PageName);
+        }
+
+        [Test]
+        public async Task AddToOrder_ServiceThrowsInvalidDate_SetsTempDataAndRedirectsToMenuDailyList()
+        {
+            _orderServiceMock
+                .Setup(o => o.AddToOrder(It.IsAny<int>()))
+                .ThrowsAsync(new InvalidOperationException("Invalid date"));
+
+            var tempData = new TempDataDictionary(new DefaultHttpContext(), Mock.Of<ITempDataProvider>());
+
+
+            var result = await _controller.AddToOrder(1);
+
+
+            ClassicAssert.IsInstanceOf<RedirectToActionResult>(result);
+            var redirectResult = result as RedirectToActionResult;
+            ClassicAssert.AreEqual("MenuDailyList", redirectResult.ActionName);
+            ClassicAssert.AreEqual("Menu", redirectResult.ControllerName);
+            ClassicAssert.AreEqual("Потребителят вече има поръчка за тази дата.", _controller.TempData["OrderExistsError"]);
         }
 
 
         [Test]
-        public async Task AddToOrder_OrderCountLessThanZero_BadRequest()
+        public async Task AddToOrder_ValidRequest_RedirectsToMenuDailyList()
         {
 
-            var userId = _dbContext.Users.First(u => u.Id == "adminuserId");
-
-            var dishId = await _dbContext.Dishes.FirstOrDefaultAsync(id => id.Id == 1);
-            var orderId = await _dbContext.MenuOrders.FirstOrDefaultAsync(r => r.RequestMenuNumber == 1);
-
-            var menuOrders = await _dbContext.MenuOrders.FirstOrDefaultAsync(r => r.RequestMenuNumber == 1);
-
-            _dbContext.MenuOrders.AddRange(menuOrders);
+            _orderServiceMock
+                .Setup(o => o.AddToOrder(It.IsAny<int>()))
+                .Returns(Task.CompletedTask);
 
 
             var result = await _controller.AddToOrder(1);
-            // Act
 
-            // Assert
-            ClassicAssert.IsInstanceOf<BadRequestObjectResult>(result);
+
+            ClassicAssert.IsInstanceOf<RedirectToActionResult>(result);
+            var redirectResult = result as RedirectToActionResult;
+            ClassicAssert.AreEqual("MenuDailyList", redirectResult.ActionName);
+            ClassicAssert.AreEqual("Menu", redirectResult.ControllerName);
         }
+
     }
 }
