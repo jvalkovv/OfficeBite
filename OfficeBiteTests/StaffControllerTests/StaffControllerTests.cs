@@ -1,159 +1,167 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using Moq;
-using OfficeBite.Controllers;
+using NUnit.Framework.Legacy;
+using OfficeBite.Core.Services;
+using OfficeBite.Core.Services.Contracts;
 using OfficeBite.Infrastructure.Data;
+using OfficeBite.Infrastructure.Data.Common;
 using OfficeBite.Infrastructure.Data.Models;
-using System.Security.Claims;
-
 
 namespace OfficeBiteTests.StaffControllerTests
 {
     [TestFixture]
     public class StaffControllerTests
     {
-        private StaffController? _controller;
-        private OfficeBiteDbContext _dbContext;
+        private IStaffService staffService;
+        private Mock<IRepository> repositoryMock;
+        private OfficeBiteDbContext dbContext;
 
         [SetUp]
         public void Setup()
         {
+            repositoryMock = new Mock<IRepository>();
+
             var options = new DbContextOptionsBuilder<OfficeBiteDbContext>()
-                .UseInMemoryDatabase(databaseName: "TestDatabase")
+                .UseInMemoryDatabase(databaseName: "Test_Staff_Database")
                 .Options;
-            _dbContext = new OfficeBiteDbContext(options);
-            _controller = new StaffController(_dbContext);
+
+            dbContext = new OfficeBiteDbContext(options);
+
+            repositoryMock.Setup(repo => repo.AllReadOnly<Order>())
+                .Returns(dbContext.Orders);
+            repositoryMock.Setup(repo => repo.AllReadOnly<MenuOrder>())
+                .Returns(dbContext.MenuOrders);
+            repositoryMock.Setup(repo => repo.AllReadOnly<DishesInMenu>())
+                .Returns(dbContext.DishesInMenus);
+
+            staffService = new StaffService(repositoryMock.Object);
         }
 
         [TearDown]
         public void TearDown()
         {
-            _controller?.Dispose();
-            _dbContext.Dispose();
-        }
-        [Test]
-        public async Task AllOrders_ReturnsUnauthorized_ForNonStaffUser()
-        {
 
-            var user = new ClaimsPrincipal(new ClaimsIdentity(new Claim[]
-            {
-                new Claim(ClaimTypes.Name, "nonstaffuser"),
-            }, "testauthentication"));
+            dbContext.Database.EnsureDeleted();
+            dbContext.Dispose();
 
-            var httpContextMock = new Mock<HttpContext>();
-            httpContextMock.Setup(c => c.User).Returns(user);
-
-            var controllerContext = new ControllerContext()
-            {
-                HttpContext = httpContextMock.Object
-            };
-            _controller.ControllerContext = controllerContext;
-
-
-            var result = await _controller.AllOrders();
-
-
-            Assert.That(result, Is.Not.InstanceOf<UnauthorizedResult>());
-            Assert.That(result, Is.InstanceOf<ViewResult>());
         }
 
         [Test]
-        public async Task AllOrders_ReturnsViewResult_ForStaffUser()
+        public async Task AllOrders_ShouldReturnAllOrdersGroupedAndSortedByDate()
         {
-
-            var user = new ClaimsPrincipal(new ClaimsIdentity(new Claim[]
+            var orders = new List<Order>
             {
-                new Claim(ClaimTypes.Name, "staffuser"),
-                new Claim(ClaimTypes.Role, "Staff"),
-            }, "testauthentication"));
-
-            var httpContextMock = new Mock<HttpContext>();
-            httpContextMock.Setup(c => c.User).Returns(user);
-
-            var controllerContext = new ControllerContext()
-            {
-                HttpContext = httpContextMock.Object
+                new Order { Name = "Order 1", MenuOrderRequestNumber = 1, UserAgentId = "user1",
+                    SelectedDate = DateTime.Now.Date, OrderPlacedOnDate = DateTime.Now, IsEaten = false },
+                new Order { Name = "Order 2", MenuOrderRequestNumber = 2, UserAgentId = "user2",
+                    SelectedDate = DateTime.Now.Date.AddDays(1), OrderPlacedOnDate = DateTime.Now.AddDays(1), IsEaten = false },
+                new Order { Name = "Order 3", MenuOrderRequestNumber = 1, UserAgentId = "user1",
+                    SelectedDate = DateTime.Now.Date, OrderPlacedOnDate = DateTime.Now, IsEaten = false },
             };
-            _controller.ControllerContext = controllerContext;
+            var menuOrders = new List<MenuOrder>
+            {
+                new MenuOrder { RequestMenuNumber = 1, TotalPrice = 10 },
+                new MenuOrder { RequestMenuNumber = 2, TotalPrice = 15 },
+            };
+
+            var userAgents = new List<UserAgent>
+            {
+                new UserAgent { UserId = "user1" },
+                new UserAgent { UserId = "user2" }
+            };
+            await dbContext.UserAgents.AddRangeAsync(userAgents);
+            await dbContext.Orders.AddRangeAsync(orders);
+            await dbContext.MenuOrders.AddRangeAsync(menuOrders);
+            await dbContext.SaveChangesAsync();
 
 
-            var result = await _controller.AllOrders();
+            var result = await staffService.AllOrders();
 
 
-            Assert.That(result, Is.InstanceOf<ViewResult>());
+            ClassicAssert.AreEqual(2, result.Count);
+            ClassicAssert.AreEqual(1, result[0].MenuToOrderId);
+            ClassicAssert.AreEqual(2, result[1].MenuToOrderId);
         }
 
         [Test]
-        public async Task OrderView_ReturnsViewResult_WithOrders()
+        public async Task OrderView_ShouldReturnOrderViewModel()
         {
-            var user = new ClaimsPrincipal(new ClaimsIdentity(new Claim[]
+            var orders = new List<Order>
             {
-                new Claim(ClaimTypes.Name, "staffuser"),
-                new Claim(ClaimTypes.Role, "Staff")
-            }, "testauthentication"));
-
-            var httpContextMock = new Mock<HttpContext>();
-            httpContextMock.Setup(c => c.User).Returns(user);
-
-            var controllerContext = new ControllerContext()
-            {
-                HttpContext = httpContextMock.Object
+                new Order { Name = "Order 1", MenuOrderRequestNumber = 1, UserAgentId = "user1",
+                    SelectedDate = DateTime.Now.Date, OrderPlacedOnDate = DateTime.Now, IsEaten = false },
+                new Order { Name = "Order 2", MenuOrderRequestNumber = 2, UserAgentId = "user2",
+                    SelectedDate = DateTime.Now.Date.AddDays(1), OrderPlacedOnDate = DateTime.Now.AddDays(1), IsEaten = false },
+                new Order { Name = "Order 3", MenuOrderRequestNumber = 1, UserAgentId = "user1",
+                    SelectedDate = DateTime.Now.Date, OrderPlacedOnDate = DateTime.Now, IsEaten = false },
             };
-            _controller.ControllerContext = controllerContext;
-
-            var options = new DbContextOptionsBuilder<OfficeBiteDbContext>()
-                .UseInMemoryDatabase(databaseName: "TestDatabase")
-                .Options;
-
-            using (var dbContext = new OfficeBiteDbContext(options))
+            var menuOrders = new List<MenuOrder>
             {
+                new MenuOrder { RequestMenuNumber = 1, TotalPrice = 10 },
+                new MenuOrder { RequestMenuNumber = 2, TotalPrice = 15 },
+            };
 
-                dbContext.Orders.Add(new Order
-                {
-                    MenuOrderRequestNumber = 1,
-                    UserAgentId = "testUserId",
-                    SelectedDate = new DateTime(2024, 4, 15),
-                    OrderPlacedOnDate = DateTime.Today
-                });
+            var dishesInMenus = new List<DishesInMenu>
+            {
+                new DishesInMenu { Id = 1, IsVisible = true, DishId = 1, RequestMenuNumber = 1 },
+                new DishesInMenu { Id = 2, IsVisible = true, DishId = 2, RequestMenuNumber = 2 },
+            };
+            var userAgents = new List<UserAgent>
+            {
+                new UserAgent { UserId = "user1", FirstName = "John", LastName = "Doe", Username = "johnd"},
+                new UserAgent { UserId = "user2" }
+            };
 
-                await dbContext.SaveChangesAsync();
-            }
+            await dbContext.DishesInMenus.AddRangeAsync(dishesInMenus);
+            await dbContext.UserAgents.AddRangeAsync(userAgents);
+            await dbContext.Orders.AddRangeAsync(orders);
+            await dbContext.MenuOrders.AddRangeAsync(menuOrders);
+            await dbContext.SaveChangesAsync();
 
+            var order = dbContext.Orders.FirstAsync();
+            var user = dbContext.UserAgents.FirstAsync();
+            var date = order.Result.SelectedDate;
+       
+            var result = await staffService.OrderView(order.Result.Id, user.Result.UserId, date);
 
-            var result = await _controller.OrderView(1, "testUserId", new DateTime(2024, 4, 15));
-
-
-            Assert.That(result, Is.InstanceOf<ViewResult>());
+        
+            ClassicAssert.IsNotNull(result);
+            ClassicAssert.AreEqual("John", result.FirstName);
+            ClassicAssert.AreEqual("Doe", result.LastName);
+            ClassicAssert.AreEqual("johnd", result.CustomerUsername);
+            ClassicAssert.AreEqual(date, result.SelectedDate);
+            ClassicAssert.AreEqual(10, result.TotalSum);
+            ClassicAssert.AreEqual(1, result.RequestMenuNumber);
         }
 
         [Test]
-        public async Task OrderView_ReturnsUnauthorized_WhenUserIsNotAuthorized()
+        public async Task OrderComplete_ShouldReturnOrderViewModel()
         {
-            var user = new ClaimsPrincipal(new ClaimsIdentity(new Claim[]
+            var selectedDate = DateTime.Now.Date;
+            var username = "johnd";
+            var userId = "user1";
+            var orderId = 1;
+            var orders = new List<Order>
             {
-                new Claim(ClaimTypes.Name, "staffuser"),
-            }, "testauthentication"));
-            user.AddIdentity(new ClaimsIdentity(new Claim[]
-            {
-                new Claim(ClaimTypes.Role, "nonstaffrole")
-            }));
-
-            var httpContextMock = new Mock<HttpContext>();
-            httpContextMock.Setup(c => c.User).Returns(user);
-
-            var controllerContext = new ControllerContext()
-            {
-                HttpContext = httpContextMock.Object
+                new Order { Id = orderId, Name = "Order 1", UserAgent = new UserAgent { UserId = userId, FirstName = "John", LastName = "Doe", Username = "johnd" }, MenuOrder = new MenuOrder { RequestMenuNumber = 1, TotalPrice = 10 }, SelectedDate = selectedDate, OrderPlacedOnDate = DateTime.Now, IsEaten = false },
             };
-            _controller.ControllerContext = controllerContext;
+            dbContext.Orders.AddRange(orders);
+            dbContext.SaveChanges();
 
+        
+            var result = await staffService.OrderComplete(selectedDate, username, userId, orderId);
 
-            var result = await _controller.OrderView(1, "testUserId", new DateTime(2024, 4, 15));
-
-            Assert.That(result, Is.InstanceOf<UnauthorizedResult>());
+           
+            ClassicAssert.IsNotNull(result);
+            ClassicAssert.AreEqual(orderId, result.OrderId);
+            ClassicAssert.AreEqual("Order 1", result.OrderName);
+            ClassicAssert.AreEqual("John", result.CustomerFirstName);
+            ClassicAssert.AreEqual("Doe", result.CustomerLastName);
+            ClassicAssert.AreEqual("johnd", result.CustomerUsername);
+            ClassicAssert.AreEqual(selectedDate, result.LunchDate);
+            ClassicAssert.AreEqual(10, result.TotalPrice);
+            ClassicAssert.AreEqual(1, result.MenuToOrderId);
         }
-
 
     }
 }
