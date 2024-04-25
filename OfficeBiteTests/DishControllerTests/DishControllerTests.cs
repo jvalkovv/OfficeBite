@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Moq;
+using NUnit.Framework;
 using NUnit.Framework.Legacy;
 using OfficeBite.Core.Extensions.Interfaces;
 using OfficeBite.Core.Models.CategoryModels;

@@ -1,4 +1,5 @@
-﻿using NUnit.Framework.Legacy;
+﻿using NUnit.Framework;
+using NUnit.Framework.Legacy;
 using OfficeBite.Core.Models.DishModels;
 using OfficeBite.Core.Models.MenuModels;
 using OfficeBite.Core.Models.StaffModels;

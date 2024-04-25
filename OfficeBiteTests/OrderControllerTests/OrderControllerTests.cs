@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc.ViewFeatures;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Moq;
+using NUnit.Framework;
 using NUnit.Framework.Legacy;
 using OfficeBite.Controllers;
 using OfficeBite.Core.Extensions.Interfaces;
