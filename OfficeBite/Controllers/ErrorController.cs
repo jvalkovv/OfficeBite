@@ -14,6 +14,12 @@ namespace OfficeBite.Controllers
         {
             return View("InternalServerError");
         }
+
+        [Route("/error/503")]
+        public IActionResult Error503()
+        {
+            return View("ServiceUnavailable");
+        }
         public Task<IActionResult> TestError500()
         {
 
