@@ -9,12 +9,12 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddOfficeBiteDbContext(builder.Configuration);
 builder.Services.AddOfficeBiteServices();
 builder.Services.AddApplicationIdentity(builder.Configuration);
-builder.Services.AddApplicationExternalFbIdentity(builder.Configuration);
 builder.Services.AddSeedDataLoader();
 builder.Services.AddScoped<IHelperMethods, HelperMethods>();
 builder.Services.AddControllersWithViews();
 builder.Services.ConfigureCookie(builder.Configuration);
-builder.Services.AddMvc();
+//builder.Services.AddApplicationExternalFbIdentity(builder.Configuration);
+//builder.Services.AddMvc();
 builder.Services.AddProgressiveWebApp();
 
 var app = builder.Build();
@@ -51,8 +51,18 @@ else
     app.UseHsts();
 
 }
-app.UseStatusCodePagesWithReExecute("/error/{0}");
+
+app.UseExceptionHandler("/error/404");
 app.UseExceptionHandler("/error/500");
+app.UseExceptionHandler("/error/503");
+
+app.Use((httpsScheme, next) =>
+{
+    httpsScheme.Request.Scheme = "https";
+
+    return next();
+});
+
 app.UseHttpsRedirection();
 app.UseStaticFiles();
 
