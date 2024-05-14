@@ -1,0 +1,44 @@
+﻿@{
+    ViewData["Title"] = "503 Service Unavailable";
+}
+<style>
+    .body {
+        display: flex;
+        flex-direction: column;
+        margin: 0;
+    }
+
+
+    footer {
+        display: flex;
+        flex-direction: column;
+        flex-wrap: wrap;
+        width: 100%;
+    }
+
+    img {
+        width: 900px;
+        height: 55vh;
+    }
+
+    @@media screen and (max-width: 768px) {
+        img {
+            width: 100%;
+            height: auto;
+        }
+    }
+</style>
+
+<div class="body">
+    <div class="error500">
+        <h1 class="text-danger">Вътрешна грешка на сървъра</h1>
+        <h5 class="text-danger">В момента услугата е недостъпна.</h5>
+        <p>Моля, опитайте отново по-късно.</p>
+        <div style="text-align: center;">
+            <img src="~/error/service_unavailable_503.jpg" alt="Not Found">
+        </div>
+    </div>
+</div>
+<footer>
+    <a href="https://www.freepik.com/free-vector/503-error-service-unavailable-concept-illustration_7906239.htm#query=503&position=1&from_view=author&uuid=15709c4b-48f7-475b-943a-6c4a2e872455">Image by storyset on Freepik</a>
+</footer>
