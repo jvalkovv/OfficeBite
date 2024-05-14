@@ -38,17 +38,18 @@
                         </div>
                         <div class="sign-form">
                             <div id="sign-in" class="text sign-up-text">Нямаш акаунт?</div>
-                            <a  asp-area="Identity" asp-page="/Account/Register">Регистрирай се!</a>
-
+                            <a asp-area="Identity" asp-page="/Account/Register">Регистрирай се!</a>
                         </div>
                     </div>
                 </form>
                 <form id="external-account" asp-page="./ExternalLogin" asp-route-returnUrl="@Model.ReturnUrl" method="post" class="form-horizontal">
                     <div>
-                        <p>
+                        <p class="ext-login">
                             @foreach (var provider in Model.ExternalLogins!)
                             {
-                                <button type="submit" class="btn btn-primary" name="provider" value="@provider.Name" title="Log in using your @provider.DisplayName account">@provider.DisplayName</button>
+                                <button type="submit" class="btn btn-primary" name="provider" value="@provider.Name" title="Log in using your @provider.DisplayName account">
+                                    <i class="fab fa-facebook-f"></i> <span>Вход чрез @provider.DisplayName</span>
+                                </button>
                             }
                         </p>
                     </div>

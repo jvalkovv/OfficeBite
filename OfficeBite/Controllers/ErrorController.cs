@@ -20,10 +20,5 @@ namespace OfficeBite.Controllers
         {
             return View("ServiceUnavailable");
         }
-        public Task<IActionResult> TestError500()
-        {
-
-            throw new Exception("Грешка: това е симулирана грешка 500.");
-        }
     }
 }
