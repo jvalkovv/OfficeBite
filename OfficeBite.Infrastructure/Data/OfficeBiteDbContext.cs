@@ -34,7 +34,7 @@ namespace OfficeBite.Infrastructure.Data
         public DbSet<MenuType> MenuTypes { get; set; }
 
         public DbSet<DishesInMenu> DishesInMenus { get; set; }
-
+        
         public DbSet<MenuOrder> MenuOrders { get; set; }
 
         public DbSet<OrderHistory> OrderHistories { get; set; }

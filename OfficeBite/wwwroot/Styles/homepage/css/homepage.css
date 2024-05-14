@@ -1,8 +1,7 @@
-﻿body, html {
+﻿body {
     height: 100%;
     margin: 0;
     background-image: linear-gradient(rgba(255, 255, 255, 0.5), rgba(255, 255, 255, 0.6)), url('/Styles/homepage/hero-bg.jpg');
-    height: 100%;
     background-position: center;
     background-repeat: no-repeat;
     background-size: cover;
@@ -58,7 +57,6 @@
     text-decoration: none;
 }
 
-
     #hero .btn-menu:hover, #hero .btn-book:hover {
         background: #cda45e;
         color: #fff;
@@ -67,7 +65,6 @@
 #hero .btn-book {
     margin-left: 15px;
 }
-
 
 /**
    * Preloader style
@@ -100,19 +97,18 @@
     }
 
 #install-banner {
+    padding: 1px;
     position: fixed;
-    bottom: 0;
+    top: 0;
     left: 0;
     width: 100%;
     background-color: #f0f0f0;
-    padding: 10px;
     text-align: center;
 }
 
 #install-button,
 #dismiss-button {
-    margin: 5px;
-    padding: 5px 10px;
+    padding: 0px 10px;
     border: none;
     border-radius: 3px;
     background-color: #007bff;
@@ -155,5 +151,8 @@
     #hero .btn-book {
         margin-left: 0px;
         width: 100%;
+    }
+    .bg{
+        margin-bottom: 50px;
     }
 }

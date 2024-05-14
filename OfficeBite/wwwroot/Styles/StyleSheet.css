@@ -223,8 +223,8 @@
     font-weight: 700;
     letter-spacing: .3rem;
     text-align: center;
-
 }
+
 .sign-form > a {
     width: 100%;
     color: #843ae3;
@@ -233,6 +233,7 @@
     letter-spacing: .3rem;
     text-align: center;
 }
+
 #sign-up {
     width: 100%;
     color: black;
@@ -242,6 +243,32 @@
     text-align: center;
 }
 
+.ext-login {
+    display: flex;
+    justify-content: center;
+}
+
+    .ext-login button {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position: relative;
+    }
+
+        .ext-login button i {
+            position: absolute;
+            left: 0;
+            top: 50%;
+            transform: translateY(-50%);
+            margin-right: 5px;
+            margin-left:5px;
+        }
+
+        .ext-login button span {
+            display: inline-block;
+            vertical-align: middle;
+            margin-left: 10px;
+        }
 
 @media (max-width: 730px) {
     .login-container .cover {
@@ -281,7 +308,4 @@
     .container #flip:checked ~ .forms .login-form {
         display: none;
     }
-
-
-
 }

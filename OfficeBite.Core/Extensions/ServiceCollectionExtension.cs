@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using System.Configuration;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
@@ -76,6 +77,8 @@ namespace OfficeBite.Core.Extensions
                 .AddRoles<IdentityRole>()
                 .AddEntityFrameworkStores<OfficeBiteDbContext>()
                 .AddDefaultTokenProviders();
+
+
 
             services.AddScoped<RoleManager<IdentityRole>>();
 
