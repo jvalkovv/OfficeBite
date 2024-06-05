@@ -42,17 +42,19 @@ pipeline {
             }
         }
 
-        stage('Deploy to IIS') {
-            steps {
-                script {
-                    // Copy published files to IIS directory
-                    def source = ".\\publish"
-                    def destination = "D:\\Applications\\OfficeBite"
-                    bat "xcopy /s /y ${source} ${destination}"
-                }
-            }
+  stage('Deploy to IIS') {
+    steps {
+        script {
+            // Create the destination directory if it doesn't exist
+            def destination = "D:\\Applications\\OfficeBite"
+            bat "mkdir \"${destination}\""
+
+            // Copy published files to IIS directory
+            def source = ".\\publish"
+            bat "xcopy /s /y ${source} ${destination}"
         }
     }
+}
 
     post {
         success {
