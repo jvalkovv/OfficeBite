@@ -12,13 +12,15 @@ pipeline {
 
         stage('Checkout') {
             steps {
+                 // Specify the custom workspace directory here
+                dir("C:\\Applications\\JenkinsWorkspaces\\OfficeBitePipeline") {
                 // Checkout code from GitHub using the specified SSH credentials
                 checkout([$class: 'GitSCM', 
                           branches: [[name: '*/master']], 
                           doGenerateSubmoduleConfigurations: false, 
                           extensions: [], 
                           submoduleCfg: [], 
-                          userRemoteConfigs: [[url: 'git@github.com:jvalkovv/OfficeBite.git']]
+                              userRemoteConfigs: [[url: 'https://github.com/jvalkovv/OfficeBite.git']]
                 ])
             }
         }
