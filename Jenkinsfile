@@ -1,10 +1,10 @@
 pipeline {
-   agent {
+    agent {
         node {
-            customWorkspace 'C:\\Applications\\JenkinsWorkspaces\\OfficeBitePipeline' // Specify the custom workspace directory here
+            customWorkspace 'C:\\Applications\\JenkinsWorkspaces\\OfficeBitePipeline'
         }
-   }
-
+    }
+    
     environment {
         DOTNET_CLI_HOME = "C:\\Program Files\\dotnet"
     }
@@ -18,7 +18,7 @@ pipeline {
                           doGenerateSubmoduleConfigurations: false, 
                           extensions: [], 
                           submoduleCfg: [], 
-                          userRemoteConfigs: [[credentialsId: 'github-ssh-key', url: 'git@github.com:jvalkovv/OfficeBite.git']]
+                          userRemoteConfigs: [[url: 'https://github.com/jvalkovv/OfficeBite.git']]
                 ])
             }
         }
