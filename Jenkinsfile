@@ -2,10 +2,15 @@ pipeline {
     agent any
 
     stages {
-        stage('Stop IIS') {
+      stage('Stop IIS') {
             steps {
                 script {
-                    bat 'net stop w3svc'
+                    // Check if the service is running before attempting to stop it
+                    if (isServiceRunning('W3SVC')) {
+                        bat 'net stop W3SVC'
+                    } else {
+                        echo 'The World Wide Web Publishing Service is not running.'
+                    }
                 }
             }
         }
