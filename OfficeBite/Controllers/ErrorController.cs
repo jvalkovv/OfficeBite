@@ -9,12 +9,12 @@ namespace OfficeBite.Controllers
         {
             return View("NotFound");
         }
+
         [Route("/error/500")]
         public IActionResult Error500()
         {
             return View("InternalServerError");
         }
-
         [Route("/error/503")]
         public IActionResult Error503()
         {
