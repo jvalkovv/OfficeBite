@@ -18,7 +18,7 @@ pipeline {
                           doGenerateSubmoduleConfigurations: false, 
                           extensions: [], 
                           submoduleCfg: [], 
-                          userRemoteConfigs: [[credentialsId: 'github-ssh-key', url: 'git@github.com:jvalkovv/OfficeBite.git']]
+                          userRemoteConfigs: [[url: 'git@github.com:jvalkovv/OfficeBite.git']]
                 ])
             }
         }
