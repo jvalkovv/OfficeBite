@@ -1,8 +1,12 @@
 pipeline {
     agent any
+    
+    environment {
+        DOTNET_CLI_HOME = "C:\\Program Files\\dotnet"
+    }
 
     stages {
-               stage('Checkout') {
+        stage('Checkout') {
             steps {
                 // Specify the custom workspace directory here
                 dir("C:\\Applications\\JenkinsWorkspaces\\OfficeBitePipeline") {
@@ -48,21 +52,21 @@ pipeline {
             }
         }
 
-        stage('Copy Files') {
+        stage('Deploy to IIS') {
             steps {
                 script {
-                    // Stop the service if it's running
-                    if (isServiceRunning('W3SVC')) {
-                        bat 'net stop W3SVC'
+                    // Create the destination directory if it doesn't exist
+                    def destination = "C:\\Applications\\OfficeBiteProd"
+                    if (!fileExists(destination)) {
+                        bat "mkdir \"${destination}\""
                     }
-                    
-                    // Perform the copy operation here using xcopy or robocopy
-                    bat 'xcopy /s /y .\\publish C:\\Applications\\OfficeBiteProd'
+
+                    // Copy published files to IIS directory
+                    def source = ".\\publish"
+                    bat "xcopy /s /y ${source} ${destination}"
                 }
             }
         }
-
-    
     }
 
     post {
@@ -71,3 +75,4 @@ pipeline {
         }
     }
 }
+
