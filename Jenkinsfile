@@ -2,7 +2,7 @@ pipeline {
     agent any
 
     environment {
-        DOTNET_CLI_HOME = "C:\\Program Files\\dotnet"
+        DOTNET_CLI_HOME = "C:\Program Files\dotnet"
     }
 
     stages {
@@ -11,7 +11,7 @@ pipeline {
     agent any
 
     environment {
-        DOTNET_CLI_HOME = "C:\\Program Files\\dotnet"
+        DOTNET_CLI_HOME = "C:\Program Files\dotnet"
     }
 
     stages {
@@ -55,8 +55,8 @@ pipeline {
             steps {
                 script {
                     // Copy published files to IIS directory
-                    def source = ".\\publish"
-                    def destination = "C:\\inetpub\\wwwroot\\OfficeBite"
+                    def source = ".\publish"
+                    def destination = "D:\Applications\OfficeBite"
                     bat "xcopy /s /y ${source} ${destination}"
                 }
             }
