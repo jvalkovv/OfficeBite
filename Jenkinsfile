@@ -2,7 +2,7 @@ pipeline {
     agent any
 
     stages {
-      stage('Stop IIS') {
+        stage('Stop IIS') {
             steps {
                 script {
                     // Check if the service is running before attempting to stop it
@@ -14,20 +14,21 @@ pipeline {
                 }
             }
         }
+
         stage('Checkout') {
             steps {
-                 // Specify the custom workspace directory here
+                // Specify the custom workspace directory here
                 dir("C:\\Applications\\JenkinsWorkspaces\\OfficeBitePipeline") {
-                // Checkout code from GitHub using the specified SSH credentials
-                checkout([$class: 'GitSCM', 
-                          branches: [[name: '*/master']], 
-                          doGenerateSubmoduleConfigurations: false, 
-                          extensions: [], 
-                          submoduleCfg: [], 
+                    // Checkout code from GitHub using the specified SSH credentials
+                    checkout([$class: 'GitSCM', 
+                              branches: [[name: '*/master']], 
+                              doGenerateSubmoduleConfigurations: false, 
+                              extensions: [], 
+                              submoduleCfg: [], 
                               userRemoteConfigs: [[url: 'https://github.com/jvalkovv/OfficeBite.git']]
-                ])
+                    ])
+                }
             }
-        }
         }
 
         stage('Build') {
@@ -63,6 +64,11 @@ pipeline {
         stage('Copy Files') {
             steps {
                 script {
+                    // Stop the service if it's running
+                    if (isServiceRunning('W3SVC')) {
+                        bat 'net stop W3SVC'
+                    }
+                    
                     // Perform the copy operation here using xcopy or robocopy
                     bat 'xcopy /s /y .\\publish C:\\Applications\\OfficeBiteProd'
                 }
@@ -72,7 +78,8 @@ pipeline {
         stage('Start IIS') {
             steps {
                 script {
-                    bat 'net start w3svc'
+                    // Start the service
+                    bat 'net start W3SVC'
                 }
             }
         }
@@ -83,4 +90,9 @@ pipeline {
             echo 'Build, test, publish, and deploy successful!'
         }
     }
+}
+
+def isServiceRunning(serviceName) {
+    def status = bat(script: "sc query ${serviceName} | findstr /C:\"STATE\" /C:\"RUNNING\"", returnStatus: true)
+    return status == 0
 }
