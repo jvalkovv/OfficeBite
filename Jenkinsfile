@@ -9,7 +9,6 @@ pipeline {
                 }
             }
         }
-
         stage('Checkout') {
             steps {
                  // Specify the custom workspace directory here
@@ -23,6 +22,7 @@ pipeline {
                               userRemoteConfigs: [[url: 'https://github.com/jvalkovv/OfficeBite.git']]
                 ])
             }
+        }
         }
 
         stage('Build') {
@@ -78,5 +78,4 @@ pipeline {
             echo 'Build, test, publish, and deploy successful!'
         }
     }
-}
 }
