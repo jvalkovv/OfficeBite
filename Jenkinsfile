@@ -3,6 +3,7 @@ pipeline {
         node {
             customWorkspace 'C:\\Applications\\JenkinsWorkspaces\\OfficeBitePipeline' // Specify the custom workspace directory here
         }
+   }
 
     environment {
         DOTNET_CLI_HOME = "C:\\Program Files\\dotnet"
