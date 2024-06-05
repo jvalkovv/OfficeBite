@@ -93,6 +93,11 @@ pipeline {
 }
 
 def isServiceRunning(serviceName) {
-    def status = bat(script: "sc query ${serviceName} | findstr /C:\"STATE\" /C:\"RUNNING\"", returnStatus: true)
-    return status == 0
+    try {
+        def status = bat(script: "sc query ${serviceName} | findstr /C:\"STATE\" /C:\"RUNNING\"", returnStatus: true)
+        return status == 0
+    } catch (Exception e) {
+        echo "Error occurred while checking service status: ${e.message}"
+        return false
+    }
 }
