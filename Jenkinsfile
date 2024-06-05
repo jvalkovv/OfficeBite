@@ -1,8 +1,9 @@
 pipeline {
-    agent {
-        node {
-            customWorkspace 'C:\\Applications\\JenkinsWorkspaces\\OfficeBitePipeline'
-        }
+    agent any
+    
+    options {
+        // Specify custom workspace directory
+        workspace 'C:\\Applications\\JenkinsWorkspaces\\OfficeBitePipeline'
     }
     
     environment {
