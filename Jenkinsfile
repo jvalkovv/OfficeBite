@@ -67,5 +67,6 @@ pipeline {
 }
 
 def fileExists(filePath) {
-    return file(filePath).exists()
+    def file = new File(filePath)
+    return file.exists()
 }
