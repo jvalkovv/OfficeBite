@@ -56,7 +56,7 @@ pipeline {
                 script {
                     // Copy published files to IIS directory
                     def source = ".\\publish"
-                    def destination = "D:\Applications\OfficeBite"
+                    def destination = "D:\\Applications\\OfficeBite"
                     bat "xcopy /s /y ${source} ${destination}"
                 }
             }
