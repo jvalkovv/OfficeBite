@@ -1,8 +1,6 @@
 pipeline {
-    agent {
-        customWorkspace 'C:\\Applications\\JenkinsWorkspaces\\OfficeBitePipeline'
-    }
-
+    agent any
+    
     environment {
         DOTNET_CLI_HOME = "C:\\Program Files\\dotnet"
     }
@@ -10,14 +8,17 @@ pipeline {
     stages {
         stage('Checkout') {
             steps {
-                // Checkout code from GitHub using the specified SSH credentials
-                checkout([$class: 'GitSCM', 
-                          branches: [[name: '*/master']], 
-                          doGenerateSubmoduleConfigurations: false, 
-                          extensions: [], 
-                          submoduleCfg: [], 
-                          userRemoteConfigs: [[credentialsId: 'github-ssh-key', url: 'git@github.com:jvalkovv/OfficeBite.git']]
-                ])
+                // Specify the custom workspace directory here
+                dir("C:\\Applications\\JenkinsWorkspaces\\OfficeBitePipeline") {
+                    // Checkout code from GitHub using the specified SSH credentials
+                    checkout([$class: 'GitSCM', 
+                              branches: [[name: '*/master']], 
+                              doGenerateSubmoduleConfigurations: false, 
+                              extensions: [], 
+                              submoduleCfg: [], 
+                              userRemoteConfigs: [[url: 'https://github.com/jvalkovv/OfficeBite.git']]
+                    ])
+                }
             }
         }
 
