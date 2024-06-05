@@ -46,7 +46,7 @@ pipeline {
             steps {
                 script {
                     // Create the destination directory if it doesn't exist
-                    def destination = "D:\\Applications\\OfficeBite"
+                    def destination = "D:\\Applications\\OfficeBiteProd"
                     bat "mkdir \"${destination}\""
 
                     // Copy published files to IIS directory
