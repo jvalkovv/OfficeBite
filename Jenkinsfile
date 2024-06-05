@@ -42,19 +42,21 @@ pipeline {
             }
         }
 
-  stage('Deploy to IIS') {
-    steps {
-        script {
-            // Create the destination directory if it doesn't exist
-            def destination = "D:\\Applications\\OfficeBite"
-            bat "mkdir \"${destination}\""
+        stage('Deploy to IIS') {
+            steps {
+                script {
+                    // Create the destination directory if it doesn't exist
+                    def destination = "D:\\Applications\\OfficeBite"
+                    bat "mkdir \"${destination}\""
 
-            // Copy published files to IIS directory
-            def source = ".\\publish"
-            bat "xcopy /s /y ${source} ${destination}"
-        }
-    }
-}
+                    // Copy published files to IIS directory
+                    def source = ".\\publish"
+                    bat "xcopy /s /y ${source} ${destination}"
+                }
+            }
+        } // <--- Added closing curly brace for 'Deploy to IIS' stage
+
+    } // <--- Added closing curly brace for 'stages' section
 
     post {
         success {
