@@ -2,20 +2,7 @@ pipeline {
     agent any
 
     stages {
-        stage('Stop IIS') {
-            steps {
-                script {
-                    // Check if the service is running before attempting to stop it
-                    if (isServiceRunning('W3SVC')) {
-                        bat 'net stop W3SVC'
-                    } else {
-                        echo 'The World Wide Web Publishing Service is not running.'
-                    }
-                }
-            }
-        }
-
-        stage('Checkout') {
+               stage('Checkout') {
             steps {
                 // Specify the custom workspace directory here
                 dir("C:\\Applications\\JenkinsWorkspaces\\OfficeBitePipeline") {
@@ -75,29 +62,12 @@ pipeline {
             }
         }
 
-        stage('Start IIS') {
-            steps {
-                script {
-                    // Start the service
-                    bat 'net start W3SVC'
-                }
-            }
-        }
+    
     }
 
     post {
         success {
             echo 'Build, test, publish, and deploy successful!'
         }
-    }
-}
-
-def isServiceRunning(serviceName) {
-    try {
-        def status = bat(script: "sc query ${serviceName} | findstr /C:\"STATE\" /C:\"RUNNING\"", returnStatus: true)
-        return status == 0
-    } catch (Exception e) {
-        echo "Error occurred while checking service status: ${e.message}"
-        return false
     }
 }
