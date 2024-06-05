@@ -1,5 +1,7 @@
 pipeline {
-    agent any
+    agent {
+        customWorkspace 'C:\\Applications\\JenkinsWorkspaces\\OfficeBitePipeline'
+    }
 
     environment {
         DOTNET_CLI_HOME = "C:\\Program Files\\dotnet"
@@ -8,7 +10,14 @@ pipeline {
     stages {
         stage('Checkout') {
             steps {
-                checkout scm
+                // Checkout code from GitHub using the specified SSH credentials
+                checkout([$class: 'GitSCM', 
+                          branches: [[name: '*/master']], 
+                          doGenerateSubmoduleConfigurations: false, 
+                          extensions: [], 
+                          submoduleCfg: [], 
+                          userRemoteConfigs: [[credentialsId: 'github-ssh-key', url: 'git@github.com:jvalkovv/OfficeBite.git']]
+                ])
             }
         }
 
@@ -46,7 +55,7 @@ pipeline {
             steps {
                 script {
                     // Create the destination directory if it doesn't exist
-                    def destination = "D:\\Applications\\OfficeBiteProd"
+                    def destination = "C:\\Applications\\OfficeBiteProd"
                     if (!fileExists(destination)) {
                         bat "mkdir \"${destination}\""
                     }
