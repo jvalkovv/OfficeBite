@@ -47,20 +47,25 @@ pipeline {
                 script {
                     // Create the destination directory if it doesn't exist
                     def destination = "D:\\Applications\\OfficeBiteProd"
-                    bat "mkdir \"${destination}\""
+                    if (!fileExists(destination)) {
+                        bat "mkdir \"${destination}\""
+                    }
 
                     // Copy published files to IIS directory
                     def source = ".\\publish"
                     bat "xcopy /s /y ${source} ${destination}"
                 }
             }
-        } // <--- Added closing curly brace for 'Deploy to IIS' stage
-
-    } // <--- Added closing curly brace for 'stages' section
+        }
+    }
 
     post {
         success {
             echo 'Build, test, publish, and deploy successful!'
         }
     }
+}
+
+def fileExists(filePath) {
+    return file(filePath).exists()
 }
