@@ -1,11 +1,14 @@
 pipeline {
-    agent any
+    environment {
+        DOTNET_CLI_HOME = "C:\\Program Files\\dotnet"
+    }
 
     stages {
-        stage('Stop Website') {
+
+    stage('Stop Website') {
             steps {
                 script {
-                    // Stop the specific IIS website using PowerShell
+                    // Stop the specific IIS website
                     bat 'C:\\Windows\\System32\\inetsrv\\appcmd stop site /site.name:"OfficeBiteProd"'
 
                        // Stop the application pool
@@ -13,20 +16,16 @@ pipeline {
                 }
             }
         }
-
         stage('Checkout') {
             steps {
-                // Specify the custom workspace directory here
-                dir("C:\\Applications\\JenkinsWorkspaces\\OfficeBitePipeline") {
-                    // Checkout code from GitHub
-                    checkout([$class: 'GitSCM', 
-                              branches: [[name: '*/master']], 
-                              doGenerateSubmoduleConfigurations: false, 
-                              extensions: [], 
-                              submoduleCfg: [], 
-                              userRemoteConfigs: [[url: 'https://github.com/jvalkovv/OfficeBite.git']]
-                    ])
-                }
+                // Checkout code from GitHub using the specified SSH credentials
+                checkout([$class: 'GitSCM', 
+                          branches: [[name: '*/master']], 
+                          doGenerateSubmoduleConfigurations: false, 
+                          extensions: [], 
+                          submoduleCfg: [], 
+                          userRemoteConfigs: [[url: 'https://github.com/jvalkovv/OfficeBite.git']]
+                ])
             }
         }
 
@@ -60,22 +59,10 @@ pipeline {
             }
         }
 
-        stage('Copy Files') {
+             stage('Start Website') {
             steps {
                 script {
-                    // Stop the service if it's running
-                  bat 'C:\\Windows\\System32\\inetsrv\\appcmd stop site /site.name:"OfficeBiteProd"'
-          
-                    // Perform the copy operation here using robocopy
-                    bat 'robocopy .\\publish C:\\Applications\\OfficeBiteProd /MIR /Z /R:10 /W:10'
-                }
-            }
-        }
-
-        stage('Start Website') {
-            steps {
-                script {
-                    // Start the specific IIS website using PowerShell
+                    // Start the specific IIS website
                    bat 'C:\\Windows\\System32\\inetsrv\\appcmd start site /site.name:"OfficeBiteProd"'
 
                           // Start the application pool
@@ -84,6 +71,7 @@ pipeline {
                 }
             }
         }
+        
     }
 
     post {
