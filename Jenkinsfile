@@ -5,8 +5,8 @@ pipeline {
         stage('Stop Website') {
             steps {
                 script {
-                    // Stop the specific IIS website
-                    bat 'C:\\Windows\\System32\\inetsrv\\appcmd stop site /site.name:"OfficeBiteProd"'
+                    // Stop the specific IIS website using PowerShell
+                    powershell 'Stop-WebSite -Name "OfficeBiteProd"'
                 }
             }
         }
@@ -15,7 +15,7 @@ pipeline {
             steps {
                 // Specify the custom workspace directory here
                 dir("C:\\Applications\\JenkinsWorkspaces\\OfficeBitePipeline") {
-                    // Checkout code from GitHub using the specified SSH credentials
+                    // Checkout code from GitHub
                     checkout([$class: 'GitSCM', 
                               branches: [[name: '*/master']], 
                               doGenerateSubmoduleConfigurations: false, 
@@ -60,8 +60,11 @@ pipeline {
         stage('Copy Files') {
             steps {
                 script {
-                    // Perform the copy operation here using xcopy or robocopy
-                    bat 'xcopy /s /y .\\publish C:\\Applications\\OfficeBiteProd'
+                    // Stop the service if it's running
+                    powershell 'Stop-WebSite -Name "OfficeBiteProd"'
+
+                    // Perform the copy operation here using robocopy
+                    bat 'robocopy .\\publish C:\\Applications\\OfficeBiteProd /MIR /Z /R:5 /W:5'
                 }
             }
         }
@@ -69,8 +72,8 @@ pipeline {
         stage('Start Website') {
             steps {
                 script {
-                    // Start the specific IIS website
-                    bat 'C:\\Windows\\System32\\inetsrv\\appcmd start site /site.name:"OfficeBiteProd"'
+                    // Start the specific IIS website using PowerShell
+                    powershell 'Start-WebSite -Name "OfficeBiteProd"'
                 }
             }
         }
