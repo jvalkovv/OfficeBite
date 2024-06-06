@@ -1,11 +1,16 @@
 pipeline {
     agent any
-    
-    environment {
-        DOTNET_CLI_HOME = "C:\\Program Files\\dotnet"
-    }
 
     stages {
+        stage('Stop Website') {
+            steps {
+                script {
+                    // Stop the specific IIS website
+                    bat 'C:\\Windows\\System32\\inetsrv\\appcmd stop site /site.name:"OfficeBiteProd"'
+                }
+            }
+        }
+
         stage('Checkout') {
             steps {
                 // Specify the custom workspace directory here
@@ -52,18 +57,20 @@ pipeline {
             }
         }
 
-        stage('Deploy to IIS') {
+        stage('Copy Files') {
             steps {
                 script {
-                    // Create the destination directory if it doesn't exist
-                    def destination = "C:\\Applications\\OfficeBiteProd"
-                    if (!fileExists(destination)) {
-                        bat "mkdir \"${destination}\""
-                    }
+                    // Perform the copy operation here using xcopy or robocopy
+                    bat 'xcopy /s /y .\\publish C:\\Applications\\OfficeBiteProd'
+                }
+            }
+        }
 
-                    // Copy published files to IIS directory
-                    def source = ".\\publish"
-                    bat "xcopy /s /y ${source} ${destination}"
+        stage('Start Website') {
+            steps {
+                script {
+                    // Start the specific IIS website
+                    bat 'C:\\Windows\\System32\\inetsrv\\appcmd start site /site.name:"OfficeBiteProd"'
                 }
             }
         }
@@ -75,4 +82,3 @@ pipeline {
         }
     }
 }
-
