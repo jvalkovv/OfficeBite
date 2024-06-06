@@ -77,7 +77,7 @@ pipeline {
             steps {
                 script {
                     // Start the specific IIS website using PowerShell
-                   bat 'C:\\Windows\\System32\\inetsrv\\appcmd start site /site.name:"OfficeBiteProd"''
+                   bat 'C:\\Windows\\System32\\inetsrv\\appcmd start site /site.name:"OfficeBiteProd"'
                     bat 'iisreset /start'
                 }
             }
