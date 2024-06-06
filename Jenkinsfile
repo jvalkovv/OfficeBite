@@ -59,7 +59,14 @@ pipeline {
                 }
             }
         }
-
+        stage('Copy Files') {
+            steps {
+                script {
+                    // Perform the copy operation here using xcopy 
+                    bat 'xcopy /s /y .\\publish D:\\Applications\\OfficeBiteProd'
+                }
+            }
+        }
              stage('Start Website') {
             steps {
                 script {
