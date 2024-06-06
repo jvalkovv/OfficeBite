@@ -7,6 +7,9 @@ pipeline {
                 script {
                     // Stop the specific IIS website using PowerShell
                     bat 'C:\\Windows\\System32\\inetsrv\\appcmd stop site /site.name:"OfficeBiteProd"'
+
+                       // Stop the application pool
+                    bat 'C:\\Windows\\System32\\inetsrv\\appcmd stop apppool /apppool.name:"OfficeBiteProd"'
                 }
             }
         }
@@ -74,6 +77,9 @@ pipeline {
                 script {
                     // Start the specific IIS website using PowerShell
                    bat 'C:\\Windows\\System32\\inetsrv\\appcmd start site /site.name:"OfficeBiteProd"'
+
+                          // Start the application pool
+                    bat 'C:\\Windows\\System32\\inetsrv\\appcmd start apppool /apppool.name:"OfficeBiteProd"'
             
                 }
             }
