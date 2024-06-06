@@ -7,6 +7,9 @@ pipeline {
                 script {
                     // Stop the specific IIS website using PowerShell
                     powershell 'Stop-WebSite -Name "OfficeBiteProd"'
+
+                    // Ensure IIS process is stopped
+                    bat 'iisreset /stop'
                 }
             }
         }
@@ -62,9 +65,10 @@ pipeline {
                 script {
                     // Stop the service if it's running
                     powershell 'Stop-WebSite -Name "OfficeBiteProd"'
+                    bat 'iisreset /stop'
 
                     // Perform the copy operation here using robocopy
-                    bat 'robocopy .\\publish C:\\Applications\\OfficeBiteProd /MIR /Z /R:5 /W:5'
+                    bat 'robocopy .\\publish C:\\Applications\\OfficeBiteProd /MIR /Z /R:10 /W:10'
                 }
             }
         }
@@ -74,6 +78,7 @@ pipeline {
                 script {
                     // Start the specific IIS website using PowerShell
                     powershell 'Start-WebSite -Name "OfficeBiteProd"'
+                    bat 'iisreset /start'
                 }
             }
         }
