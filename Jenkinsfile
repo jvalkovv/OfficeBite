@@ -9,11 +9,31 @@ pipeline {
     stage('Stop Website') {
             steps {
                 script {
-                    // Stop the specific IIS website
-                    bat 'C:\\Windows\\System32\\inetsrv\\appcmd stop site /site.name:"OfficeBiteProd"'
+                     // Check if the site is already stopped
+    def siteStatus = bat(
+        script: 'C:\\Windows\\System32\\inetsrv\\appcmd list site "OfficeBiteProd" /text:state',
+        returnStdout: true
+    ).trim()
 
-                       // Stop the application pool
-                    bat 'C:\\Windows\\System32\\inetsrv\\appcmd stop apppool /apppool.name:"OfficeBiteProd"'
+    if (siteStatus == 'Stopped') {
+        echo "The site 'OfficeBiteProd' is already stopped."
+    } else {
+        // Stop the specific IIS website
+        bat 'C:\\Windows\\System32\\inetsrv\\appcmd stop site /site.name:"OfficeBiteProd"'
+    }
+
+    // Check if the application pool is already stopped
+    def appPoolStatus = bat(
+        script: 'C:\\Windows\\System32\\inetsrv\\appcmd list apppool "OfficeBiteProd" /text:state',
+        returnStdout: true
+    ).trim()
+
+    if (appPoolStatus == 'Stopped') {
+        echo "The application pool 'OfficeBiteProd' is already stopped."
+    } else {
+        // Stop the application pool
+        bat 'C:\\Windows\\System32\\inetsrv\\appcmd stop apppool /apppool.name:"OfficeBiteProd"'
+    }
                 }
             }
         }
