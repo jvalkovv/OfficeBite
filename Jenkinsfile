@@ -8,8 +8,9 @@ pipeline {
 
     stage('Stop Website') {
             steps {
+               
                 script {
-                       // Check if the site is already stopped
+    // Check if the site is already stopped
     def siteStatus = bat(
         script: 'C:\\Windows\\System32\\inetsrv\\appcmd list site "OfficeBiteProd" /text:state',
         returnStdout: true
@@ -34,7 +35,7 @@ pipeline {
         // Stop the application pool
         bat 'C:\\Windows\\System32\\inetsrv\\appcmd stop apppool /apppool.name:"OfficeBiteProd"'
     }
-                }
+}
             }
         }
         stage('Checkout') {
