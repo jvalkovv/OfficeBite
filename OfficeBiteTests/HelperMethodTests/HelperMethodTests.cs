@@ -21,7 +21,7 @@ namespace OfficeBiteTests.HelperMethodTests
                 .Options;
             _dbContext = new OfficeBiteDbContext(options);
 
-        
+
             _dbContext.DishCategories.AddRange(new List<DishCategory>
             {
                 new DishCategory { Id = 1, Name = "Category 1" },
@@ -36,38 +36,38 @@ namespace OfficeBiteTests.HelperMethodTests
 
             _dbContext.SaveChanges();
 
-       
+
             _helperMethods = new HelperMethods(_dbContext);
         }
 
         [TearDown]
         public void TearDown()
         {
-       
+
             _dbContext.Dispose();
         }
 
         [Test]
         public async Task GetDishForMenuAsync_ReturnsCorrectDishViewModels()
         {
-       
+
             var result = await _helperMethods.GetDishForMenuAsync();
 
-      
-            ClassicAssert.IsNotNull(result);
-            ClassicAssert.AreEqual(2, result.Count());
+
+            Assert.That(result, Is.Not.Null);
+            Assert.That(result.Count(), Is.EqualTo(2));
 
             var dishViewModel1 = result.FirstOrDefault(d => d.DishId == 1);
             ClassicAssert.IsNotNull(dishViewModel1);
-            ClassicAssert.AreEqual("Dish 1", dishViewModel1.DishName);
-            ClassicAssert.AreEqual(10, dishViewModel1.DishPrice);
-            ClassicAssert.AreEqual(1, dishViewModel1.CategoryId);
+            Assert.That(dishViewModel1.DishName, Is.EqualTo("Dish 1"));
+            Assert.That(dishViewModel1.DishPrice, Is.EqualTo(10));
+            Assert.That(dishViewModel1.CategoryId, Is.EqualTo(1));
 
             var dishViewModel2 = result.FirstOrDefault(d => d.DishId == 2);
             ClassicAssert.IsNotNull(dishViewModel2);
-            ClassicAssert.AreEqual("Dish 2", dishViewModel2.DishName);
-            ClassicAssert.AreEqual(15, dishViewModel2.DishPrice);
-            ClassicAssert.AreEqual(2, dishViewModel2.CategoryId);
+            Assert.That(dishViewModel2.DishName, Is.EqualTo("Dish 2"));
+            Assert.That(dishViewModel2.DishPrice, Is.EqualTo(15));
+            Assert.That(dishViewModel2.CategoryId, Is.EqualTo(2));
         }
     }
 }

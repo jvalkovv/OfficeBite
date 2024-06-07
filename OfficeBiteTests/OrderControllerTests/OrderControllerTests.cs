@@ -111,7 +111,7 @@ namespace OfficeBiteTests.OrderControllerTests
 
             ClassicAssert.IsInstanceOf<RedirectToPageResult>(result);
             var redirectResult = result as RedirectToPageResult;
-            ClassicAssert.AreEqual("/Areas/Identity/Pages/Account/AccessDenied", redirectResult.PageName);
+            Assert.That(redirectResult.PageName, Is.EqualTo("/Areas/Identity/Pages/Account/AccessDenied"));
         }
 
         [Test]
@@ -129,9 +129,9 @@ namespace OfficeBiteTests.OrderControllerTests
 
             ClassicAssert.IsInstanceOf<RedirectToActionResult>(result);
             var redirectResult = result as RedirectToActionResult;
-            ClassicAssert.AreEqual("MenuDailyList", redirectResult.ActionName);
-            ClassicAssert.AreEqual("Menu", redirectResult.ControllerName);
-            ClassicAssert.AreEqual("Потребителят вече има поръчка за тази дата.", _controller.TempData["OrderExistsError"]);
+            Assert.That(redirectResult.ActionName, Is.EqualTo("MenuDailyList"));
+            Assert.That(redirectResult.ControllerName, Is.EqualTo("Menu"));
+            Assert.That(_controller.TempData["OrderExistsError"], Is.EqualTo("Потребителят вече има поръчка за тази дата."));
         }
 
 
@@ -149,8 +149,8 @@ namespace OfficeBiteTests.OrderControllerTests
 
             ClassicAssert.IsInstanceOf<RedirectToActionResult>(result);
             var redirectResult = result as RedirectToActionResult;
-            ClassicAssert.AreEqual("MenuDailyList", redirectResult.ActionName);
-            ClassicAssert.AreEqual("Menu", redirectResult.ControllerName);
+            Assert.That(redirectResult.ActionName, Is.EqualTo("MenuDailyList"));
+            Assert.That(redirectResult.ControllerName, Is.EqualTo("Menu"));
         }
 
     }

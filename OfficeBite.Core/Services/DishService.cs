@@ -63,26 +63,28 @@ namespace OfficeBite.Core.Services
         {
             var dishToHide = await repository.GetByIdAsync<Dish>(dishId);
 
-            dishToHide.IsVisible = false;
-            var allDishInOrders = repository.All<DishesInMenu>()
-                .Where(d => d.DishId == dishToHide.Id);
-
-            foreach (var currDish in allDishInOrders)
+            if (dishToHide != null)
             {
-                currDish.IsVisible = false;
-            }
+                dishToHide.IsVisible = false;
+                var allDishInOrders = repository.All<DishesInMenu>()
+                    .Where(d => d.DishId == dishToHide.Id);
 
-            var menuOrders = await repository.All<MenuOrder>()
-                .Where(m => repository.All<DishesInMenu>()
-                    .Any(d => d.RequestMenuNumber == m.RequestMenuNumber && d.DishId == dishToHide.Id))
-                .ToListAsync();
+                foreach (var currDish in allDishInOrders)
+                {
+                    currDish.IsVisible = false;
+                }
+
+                var menuOrders = await repository.All<MenuOrder>()
+                    .Where(m => repository.All<DishesInMenu>()
+                        .Any(d => d.RequestMenuNumber == m.RequestMenuNumber && d.DishId == dishToHide.Id))
+                    .ToListAsync();
 
 
-
-            foreach (var menuOrder in menuOrders)
-            {
-                menuOrder.IsVisible = false;
-                menuOrder.TotalPrice -= dishToHide.Price;
+                foreach (var menuOrder in menuOrders)
+                {
+                    menuOrder.IsVisible = false;
+                    menuOrder.TotalPrice -= dishToHide.Price;
+                }
             }
 
             await repository.SaveChangesAsync();
@@ -112,26 +114,29 @@ namespace OfficeBite.Core.Services
         {
             var dishToUnHide = await repository.GetByIdAsync<Dish>(dishId);
 
-            dishToUnHide.IsVisible = true;
-            var allDishInOrders = repository.All<DishesInMenu>()
-                .Where(d => d.DishId == dishToUnHide.Id);
-
-            foreach (var currDish in allDishInOrders)
+            if (dishToUnHide != null)
             {
-                currDish.IsVisible = true;
-            }
+                dishToUnHide.IsVisible = true;
+                var allDishInOrders = repository.All<DishesInMenu>()
+                    .Where(d => d.DishId == dishToUnHide.Id);
 
-            var menuOrders = await repository.All<MenuOrder>()
-                .Where(m => repository.All<DishesInMenu>()
-                    .Any(d => d.RequestMenuNumber == m.RequestMenuNumber &&
-                              d.DishId == dishToUnHide.Id))
-                .ToListAsync();
+                foreach (var currDish in allDishInOrders)
+                {
+                    currDish.IsVisible = true;
+                }
+
+                var menuOrders = await repository.All<MenuOrder>()
+                    .Where(m => repository.All<DishesInMenu>()
+                        .Any(d => d.RequestMenuNumber == m.RequestMenuNumber &&
+                                  d.DishId == dishToUnHide.Id))
+                    .ToListAsync();
 
 
-            foreach (var menuOrder in menuOrders)
-            {
-                menuOrder.IsVisible = true;
-                menuOrder.TotalPrice += dishToUnHide.Price;
+                foreach (var menuOrder in menuOrders)
+                {
+                    menuOrder.IsVisible = true;
+                    menuOrder.TotalPrice += dishToUnHide.Price;
+                }
             }
 
             await repository.SaveChangesAsync();
@@ -140,6 +145,7 @@ namespace OfficeBite.Core.Services
         public async Task<AllDishesViewModel> EditDish(int dishId)
         {
             var dish = await repository.GetByIdAsync<Dish>(dishId);
+
 
             var model = new AllDishesViewModel()
             {
@@ -154,6 +160,7 @@ namespace OfficeBite.Core.Services
 
             return model;
         }
+
 
         public async Task<AllDishesViewModel> EditDish(AllDishesViewModel model, int dishId)
         {

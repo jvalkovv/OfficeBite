@@ -40,11 +40,7 @@ namespace OfficeBite.Controllers
         [HttpPost]
         public async Task<IActionResult> HideDishConfirm(int dishId)
         {
-            if (dishId == null)
-            {
-                return NotFound();
-            }
-
+         
             await dishService.HideDishConfirm(dishId);
 
             return RedirectToAction(nameof(AllDishes));

@@ -88,9 +88,9 @@ namespace OfficeBiteTests.DishControllerTests
 
             var result = await dishService.GetAllDishes();
 
-            ClassicAssert.IsNotNull(result);
-            ClassicAssert.AreSame(categories, result.Categories);
-            ClassicAssert.AreSame(dishes, result.Dishes);
+            Assert.That(result,Is.Not.Null);
+            Assert.That(categories, Is.SameAs(result.Categories));
+            Assert.That(dishes, Is.SameAs(result.Dishes));
         }
 
         [Test]
@@ -110,9 +110,9 @@ namespace OfficeBiteTests.DishControllerTests
 
             var result = await dishService.GetAllHiddenDishes();
 
-            ClassicAssert.IsNotNull(result);
-            ClassicAssert.AreEqual(1, result.Dishes.Count());
-            ClassicAssert.IsFalse(result.Dishes.First().IsVisible);
+            Assert.That(result, Is.Not.Null);
+            Assert.That(result.Dishes.Count(), Is.EqualTo(1));
+            Assert.That(result.Dishes.First().IsVisible, Is.False);
         }
 
         [Test]
@@ -136,13 +136,13 @@ namespace OfficeBiteTests.DishControllerTests
 
             var result = await dishService.HideDish(dishId);
 
-            ClassicAssert.IsNotNull(result);
-            ClassicAssert.AreEqual(dishViewModel.DishId, result.DishId);
-            ClassicAssert.AreEqual(dishViewModel.IsVisible, result.IsVisible);
-            ClassicAssert.AreEqual(dishViewModel.DishName, result.DishName);
-            ClassicAssert.AreEqual(dishViewModel.DishPrice, result.DishPrice);
-            ClassicAssert.AreEqual(dishViewModel.Description, result.Description);
-            ClassicAssert.AreEqual(dishViewModel.ImageUrl, result.ImageUrl);
+            Assert.That(result, Is.Not.Null);
+            Assert.That(result.DishId, Is.EqualTo(dishViewModel.DishId));
+            Assert.That(result.IsVisible, Is.EqualTo(dishViewModel.IsVisible));
+            Assert.That(result.DishName, Is.EqualTo(dishViewModel.DishName));
+            Assert.That(result.DishPrice, Is.EqualTo(dishViewModel.DishPrice));
+            Assert.That(result.Description, Is.EqualTo(dishViewModel.Description));
+            Assert.That(result.ImageUrl, Is.EqualTo(dishViewModel.ImageUrl));
         }
 
 
@@ -167,13 +167,13 @@ namespace OfficeBiteTests.DishControllerTests
 
             var result = await dishService.UnHideDish(dishId);
 
-            ClassicAssert.IsNotNull(result);
-            ClassicAssert.AreEqual(dishViewModel.DishId, result.DishId);
-            ClassicAssert.AreEqual(dishViewModel.IsVisible, result.IsVisible);
-            ClassicAssert.AreEqual(dishViewModel.DishName, result.DishName);
-            ClassicAssert.AreEqual(dishViewModel.DishPrice, result.DishPrice);
-            ClassicAssert.AreEqual(dishViewModel.Description, result.Description);
-            ClassicAssert.AreEqual(dishViewModel.ImageUrl, result.ImageUrl);
+            Assert.That(result, Is.Not.Null);
+            Assert.That(result.DishId, Is.EqualTo(dishViewModel.DishId));
+            Assert.That(result.IsVisible, Is.EqualTo(dishViewModel.IsVisible));
+            Assert.That(result.DishName, Is.EqualTo(dishViewModel.DishName));
+            Assert.That(result.DishPrice, Is.EqualTo(dishViewModel.DishPrice));
+            Assert.That(result.Description, Is.EqualTo(dishViewModel.Description));
+            Assert.That(result.ImageUrl, Is.EqualTo(dishViewModel.ImageUrl));
         }
 
         [Test]
@@ -192,12 +192,19 @@ namespace OfficeBiteTests.DishControllerTests
 
             // Assert
             ClassicAssert.IsNotNull(result);
-            ClassicAssert.AreEqual(dish.Id, result.DishId);
-            ClassicAssert.AreEqual(dish.DishName, result.DishName);
-            ClassicAssert.AreEqual(dish.Price, result.DishPrice);
-            ClassicAssert.AreEqual(dish.Description, result.Description);
-            ClassicAssert.AreEqual(dish.CategoryId, result.CategoryId);
-            ClassicAssert.IsNotNull(result.Categories);
+            if (dish != null)
+            {
+                if (result != null)
+                {
+                    Assert.That(dish.Id, Is.EqualTo(result.DishId));
+                    Assert.That(dish.DishName, Is.EqualTo(result.DishName));
+                    Assert.That(dish.Price, Is.EqualTo(result.DishPrice));
+                    Assert.That(dish.Description, Is.EqualTo(result.Description));
+                    Assert.That(dish.CategoryId, Is.EqualTo(result.CategoryId));
+                }
+            }
+
+            if (result != null) Assert.That(result.Categories, Is.Not.Null);
         }
 
 
@@ -221,11 +228,11 @@ namespace OfficeBiteTests.DishControllerTests
             var result = await dishService.AddDish();
 
             // Assert
-            ClassicAssert.IsNotNull(result);
-            ClassicAssert.IsNotNull(result.Categories);
-            ClassicAssert.IsNotNull(result.Dishes);
-            ClassicAssert.AreEqual(categories.Count, result.Categories.Count());
-            ClassicAssert.AreEqual(dishes.Count, result.Dishes.Count());
+            Assert.That(result, Is.Not.Null);
+            Assert.That(result.Categories, Is.Not.Null);
+            Assert.That(result.Dishes, Is.Not.Null);
+            Assert.That(categories.Count, Is.EqualTo(result.Categories.Count()));
+            Assert.That(dishes.Count, Is.EqualTo(result.Dishes.Count()));
         }
 
         [Test]

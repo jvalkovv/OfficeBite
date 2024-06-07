@@ -79,9 +79,9 @@ namespace OfficeBiteTests.StaffControllerTests
             var result = await staffService.AllOrders();
 
 
-            ClassicAssert.AreEqual(2, result.Count);
-            ClassicAssert.AreEqual(1, result[0].MenuToOrderId);
-            ClassicAssert.AreEqual(2, result[1].MenuToOrderId);
+            Assert.That(result.Count, Is.EqualTo(2));
+            Assert.That(result[0].MenuToOrderId, Is.EqualTo(1));
+            Assert.That(result[1].MenuToOrderId, Is.EqualTo(2));
         }
 
         [Test]
@@ -125,14 +125,14 @@ namespace OfficeBiteTests.StaffControllerTests
        
             var result = await staffService.OrderView(order.Result.Id, user.Result.UserId, date);
 
-        
-            ClassicAssert.IsNotNull(result);
-            ClassicAssert.AreEqual("John", result.FirstName);
-            ClassicAssert.AreEqual("Doe", result.LastName);
-            ClassicAssert.AreEqual("johnd", result.CustomerUsername);
-            ClassicAssert.AreEqual(date, result.SelectedDate);
-            ClassicAssert.AreEqual(10, result.TotalSum);
-            ClassicAssert.AreEqual(1, result.RequestMenuNumber);
+
+            Assert.That(result, Is.Not.Null);
+            Assert.That(result.FirstName, Is.EqualTo("John"));
+            Assert.That(result.LastName, Is.EqualTo("Doe"));
+            Assert.That(result.CustomerUsername, Is.EqualTo("johnd"));
+            Assert.That(result.SelectedDate, Is.EqualTo(date));
+            Assert.That(result.TotalSum, Is.EqualTo(10));
+            Assert.That(result.RequestMenuNumber, Is.EqualTo(1));
         }
 
         [Test]
@@ -144,24 +144,26 @@ namespace OfficeBiteTests.StaffControllerTests
             var orderId = 1;
             var orders = new List<Order>
             {
-                new Order { Id = orderId, Name = "Order 1", UserAgent = new UserAgent { UserId = userId, FirstName = "John", LastName = "Doe", Username = "johnd" }, MenuOrder = new MenuOrder { RequestMenuNumber = 1, TotalPrice = 10 }, SelectedDate = selectedDate, OrderPlacedOnDate = DateTime.Now, IsEaten = false },
+                new Order { Id = orderId, Name = "Order 1", UserAgent = new UserAgent 
+                    { UserId = userId, FirstName = "John", LastName = "Doe", Username = "johnd" }, 
+                    MenuOrder = new MenuOrder { RequestMenuNumber = 1, TotalPrice = 10 }, 
+                    SelectedDate = selectedDate, OrderPlacedOnDate = DateTime.Now, IsEaten = false },
             };
             dbContext.Orders.AddRange(orders);
-            dbContext.SaveChanges();
+            await dbContext.SaveChangesAsync();
 
         
             var result = await staffService.OrderComplete(selectedDate, username, userId, orderId);
 
-           
-            ClassicAssert.IsNotNull(result);
-            ClassicAssert.AreEqual(orderId, result.OrderId);
-            ClassicAssert.AreEqual("Order 1", result.OrderName);
-            ClassicAssert.AreEqual("John", result.CustomerFirstName);
-            ClassicAssert.AreEqual("Doe", result.CustomerLastName);
-            ClassicAssert.AreEqual("johnd", result.CustomerUsername);
-            ClassicAssert.AreEqual(selectedDate, result.LunchDate);
-            ClassicAssert.AreEqual(10, result.TotalPrice);
-            ClassicAssert.AreEqual(1, result.MenuToOrderId);
+
+            Assert.That(result.OrderId, Is.EqualTo(orderId));
+            Assert.That(result.OrderName, Is.EqualTo("Order 1"));
+            Assert.That(result.CustomerFirstName, Is.EqualTo("John"));
+            Assert.That(result.CustomerLastName, Is.EqualTo("Doe"));
+            Assert.That(result.CustomerUsername, Is.EqualTo("johnd"));
+            Assert.That(result.LunchDate, Is.EqualTo(selectedDate));
+            Assert.That(result.TotalPrice, Is.EqualTo(10));
+            Assert.That(result.MenuToOrderId, Is.EqualTo(1));
         }
 
     }

@@ -52,7 +52,7 @@ namespace OfficeBite.Core.Services
             foreach (var group in groupedOrders)
             {
                 var groupModel = group.FirstOrDefault();
-                var totalPriceModel = priceInOrder.FirstOrDefault(p => p.MenuToOrderId == groupModel.MenuToOrderId);
+                var totalPriceModel = priceInOrder.FirstOrDefault(p => groupModel != null && p.MenuToOrderId == groupModel.MenuToOrderId);
 
                 if (groupModel != null)
                 {

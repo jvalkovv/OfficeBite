@@ -40,17 +40,17 @@ namespace OfficeBiteTests.StaffControllerTests
             };
 
             // Assert
-            ClassicAssert.AreEqual(orderId, viewModel.OrderId);
-            ClassicAssert.AreEqual(orderName, viewModel.OrderName);
-            ClassicAssert.AreEqual(menuToOrderId, viewModel.MenuToOrderId);
-            ClassicAssert.AreEqual(customerIdentifier, viewModel.CustomerIdentifier);
-            ClassicAssert.AreEqual(customerFirstName, viewModel.CustomerFirstName);
-            ClassicAssert.AreEqual(customerLastName, viewModel.CustomerLastName);
-            ClassicAssert.AreEqual(customerUsername, viewModel.CustomerUsername);
-            ClassicAssert.AreEqual(totalPrice, viewModel.TotalPrice);
-            ClassicAssert.AreEqual(lunchDate, viewModel.LunchDate);
-            ClassicAssert.AreEqual(dateOrderCreated, viewModel.DateOrderCreated);
-            ClassicAssert.AreEqual(isEaten, viewModel.IsEaten);
+            Assert.That(viewModel.OrderId, Is.EqualTo(orderId));
+            Assert.That(viewModel.OrderName, Is.EqualTo(orderName));
+            Assert.That(viewModel.MenuToOrderId, Is.EqualTo(menuToOrderId));
+            Assert.That(viewModel.CustomerIdentifier, Is.EqualTo(customerIdentifier));
+            Assert.That(viewModel.CustomerFirstName, Is.EqualTo(customerFirstName));
+            Assert.That(viewModel.CustomerLastName, Is.EqualTo(customerLastName));
+            Assert.That(viewModel.CustomerUsername, Is.EqualTo(customerUsername));
+            Assert.That(viewModel.TotalPrice, Is.EqualTo(totalPrice));
+            Assert.That(viewModel.LunchDate, Is.EqualTo(lunchDate));
+            Assert.That(viewModel.DateOrderCreated, Is.EqualTo(dateOrderCreated));
+            Assert.That(viewModel.IsEaten, Is.EqualTo(isEaten));
         }
     }
 }

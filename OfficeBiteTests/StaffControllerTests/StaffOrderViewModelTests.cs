@@ -1,5 +1,4 @@
 ﻿using NUnit.Framework;
-using NUnit.Framework.Legacy;
 using OfficeBite.Core.Models.DishModels;
 using OfficeBite.Core.Models.MenuModels;
 using OfficeBite.Core.Models.StaffModels;
@@ -53,19 +52,20 @@ namespace OfficeBiteTests.StaffControllerTests
             };
 
             // Assert
-            ClassicAssert.AreEqual(id, viewModel.Id);
-            ClassicAssert.AreEqual(firstName, viewModel.FirstName);
-            ClassicAssert.AreEqual(lastName, viewModel.LastName);
-            ClassicAssert.AreEqual(customerIdentifier, viewModel.CustomerIdentifier);
-            ClassicAssert.AreEqual(customerUsername, viewModel.CustomerUsername);
-            ClassicAssert.AreEqual(menuName, viewModel.MenuName);
-            ClassicAssert.AreEqual(requestMenuNumber, viewModel.RequestMenuNumber);
-            ClassicAssert.AreEqual(menuOrders.Count(), viewModel.MenuOrders.Count());
-            ClassicAssert.AreEqual(menuItems.Count(), viewModel.MenuItems.Count());
-            ClassicAssert.AreEqual(totalSum, viewModel.TotalSum);
-            ClassicAssert.AreEqual(selectedDate, viewModel.SelectedDate);
-            ClassicAssert.AreEqual(details, viewModel.Details);
-            ClassicAssert.AreEqual(comments, viewModel.Comments);
+            Assert.That(viewModel.Id, Is.EqualTo(id));
+            Assert.That(viewModel.FirstName, Is.EqualTo(firstName));
+            Assert.That(viewModel.LastName, Is.EqualTo(lastName));
+            Assert.That(viewModel.CustomerIdentifier, Is.EqualTo(customerIdentifier));
+            Assert.That(viewModel.CustomerUsername, Is.EqualTo(customerUsername));
+            Assert.That(viewModel.MenuName, Is.EqualTo(menuName));
+            Assert.That(viewModel.RequestMenuNumber, Is.EqualTo(requestMenuNumber));
+            Assert.That(viewModel.MenuOrders.Count(), Is.EqualTo(menuOrders.Count()));
+            Assert.That(viewModel.MenuItems.Count(), Is.EqualTo(menuItems.Count()));
+            Assert.That(viewModel.TotalSum, Is.EqualTo(totalSum));
+            Assert.That(viewModel.SelectedDate, Is.EqualTo(selectedDate));
+            Assert.That(viewModel.Details, Is.EqualTo(details));
+            Assert.That(viewModel.Comments, Is.EqualTo(comments));
+
         }
     }
 }

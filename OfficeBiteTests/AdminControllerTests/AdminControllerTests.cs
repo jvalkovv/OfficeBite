@@ -39,8 +39,8 @@ namespace OfficeBiteTests.AdminControllerTests
             userStoreMock = new Mock<IUserStore<IdentityUser>>();
             roleStoreMock = new Mock<IRoleStore<IdentityRole>>();
             repositoryMock = new Mock<IRepository>();
-            userManagerMock = new Mock<UserManager<IdentityUser>>(userStoreMock.Object, null, null, null, null, null, null, null, null);
-            roleManagerMock = new Mock<RoleManager<IdentityRole>>(roleStoreMock.Object, null, null, null, null);
+            userManagerMock = new Mock<UserManager<IdentityUser>>(userStoreMock.Object, null!, null!, null!, null!, null!, null!, null!, null!);
+            roleManagerMock = new Mock<RoleManager<IdentityRole>>(roleStoreMock.Object, null!, null!, null!, null!);
         }
 
         [Test]
@@ -53,7 +53,7 @@ namespace OfficeBiteTests.AdminControllerTests
             var result = await controller.Admin() as ViewResult;
 
             ClassicAssert.IsNotNull(result);
-            ClassicAssert.AreEqual(expectedModel, result.Model);
+            if (result != null) Assert.That(result.Model, Is.EqualTo(expectedModel));
         }
 
         [Test]
@@ -66,8 +66,8 @@ namespace OfficeBiteTests.AdminControllerTests
             var result = await controller.GetRoleAsync();
 
 
-            ClassicAssert.IsNotNull(result);
-            ClassicAssert.AreEqual(expectedRoles, result);
+            Assert.That(result, Is.Not.Null);
+            Assert.That(expectedRoles, Is.EqualTo(result));
         }
         [Test]
         public async Task GetUsersAsync_ReturnsListOfUsers()
@@ -85,8 +85,8 @@ namespace OfficeBiteTests.AdminControllerTests
             var result = await controller.GetUsersAsync();
 
 
-            ClassicAssert.IsNotNull(result);
-            ClassicAssert.AreEqual(expectedUsers.Count, result.Count);
+            Assert.That(result, Is.Not.Null);
+            Assert.That(expectedUsers.Count, Is.EqualTo(result.Count));
 
         }
 
