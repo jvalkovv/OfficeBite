@@ -52,9 +52,7 @@ else
 
 }
 
-app.UseExceptionHandler("/error/404");
-app.UseExceptionHandler("/error/500");
-app.UseExceptionHandler("/error/503");
+app.UseStatusCodePagesWithReExecute("/error/{0}");
 
 app.Use((httpsScheme, next) =>
 {
