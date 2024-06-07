@@ -52,7 +52,7 @@ namespace OfficeBiteTests.StaffControllerTests
             };
 
             // Assert
-            Assert.That(viewModel.Id, Is.EqualTo(id));
+            Assert.That(viewModel.Id, Is.EqualTo(1));
             Assert.That(viewModel.FirstName, Is.EqualTo(firstName));
             Assert.That(viewModel.LastName, Is.EqualTo(lastName));
             Assert.That(viewModel.CustomerIdentifier, Is.EqualTo(customerIdentifier));
