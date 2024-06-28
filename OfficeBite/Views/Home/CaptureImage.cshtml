@@ -1,4 +1,4 @@
-﻿@{
+@{
     ViewBag.Title = "Capture Image";
 }
 
@@ -15,27 +15,31 @@
 </form>
 
 <script>
-    document.getElementById('start-camera').addEventListener('click', async function () {
-        try {
-            const stream = await navigator.mediaDevices.getUserMedia({ video: true });
-            const video = document.getElementById('video');
-            video.srcObject = stream;
-            video.play();
-            document.getElementById('capture').style.display = 'inline';
-        } catch (err) {
-            console.error('Error accessing camera:', err);
-            alert('Unable to access camera. Please check permissions.');
+    document.getElementById('capture').addEventListener('click', function() {
+        document.getElementById('fileInput').click();
+    });
+
+    document.getElementById('fileInput').addEventListener('change', function() {
+        if (this.files && this.files.length > 0) {
+            const file = this.files[0];
+            const reader = new FileReader();
+
+            reader.onload = function(e) {
+                const img = document.getElementById('capturedImage');
+                img.src = e.target.result;
+                img.style.display = 'block';
+            };
+
+            reader.readAsDataURL(file);
+            document.getElementById('uploadButton').style.display = 'block';
         }
     });
 
-    document.getElementById('capture').addEventListener('click', function () {
-        const video = document.getElementById('video');
-        const canvas = document.getElementById('canvas');
-        canvas.width = video.videoWidth;
-        canvas.height = video.videoHeight;
-        canvas.getContext('2d').drawImage(video, 0, 0, canvas.width, canvas.height);
-        const dataUrl = canvas.toDataURL('image/png');
-        document.getElementById('imageData').value = dataUrl;
-        document.getElementById('uploadButton').click(); // Automatically submit the form
+    document.getElementById('imageForm').addEventListener('submit', function(e) {
+        const fileInput = document.getElementById('fileInput');
+        if (!fileInput.files || fileInput.files.length === 0) {
+            e.preventDefault();
+            alert('Please capture an image first.');
+        }
     });
 </script>
