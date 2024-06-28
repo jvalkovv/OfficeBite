@@ -1,5 +1,4 @@
-﻿
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 
 namespace OfficeBite.Controllers
 {
@@ -17,7 +16,7 @@ namespace OfficeBite.Controllers
             return View();
         }
 
-        [Microsoft.AspNetCore.Mvc.HttpPost]
+        [HttpPost]
         public IActionResult UploadImage(string imageData)
         {
             if (string.IsNullOrEmpty(imageData))
@@ -27,7 +26,7 @@ namespace OfficeBite.Controllers
 
             var imageBytes = Convert.FromBase64String(imageData.Split(',')[1]);
 
-            var filePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "UploadedImages", "image.png");
+            var filePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "UploadedImages", $"{Guid.NewGuid()}.png");
             Directory.CreateDirectory(Path.GetDirectoryName(filePath)); // Ensure directory exists
             System.IO.File.WriteAllBytes(filePath, imageBytes);
 
