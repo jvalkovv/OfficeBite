@@ -1,0 +1,41 @@
+﻿@{
+    ViewBag.Title = "Capture Image";
+}
+
+<h2>Capture Image</h2>
+
+<button id="start-camera">Start Camera</button>
+<video id="video" width="320" height="240" style="display: none;"></video>
+<button id="capture" style="display: none;">Capture Image</button>
+<canvas id="canvas" width="320" height="240" style="display: none;"></canvas>
+
+<form id="imageForm" action="/Home/UploadImage" method="post" enctype="multipart/form-data">
+    <input type="hidden" name="imageData" id="imageData" />
+    <input type="submit" value="Upload Image" style="display: none;" id="uploadButton" />
+</form>
+
+<script>
+    document.getElementById('start-camera').addEventListener('click', async function () {
+        try {
+            const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+            const video = document.getElementById('video');
+            video.srcObject = stream;
+            video.play();
+            document.getElementById('capture').style.display = 'inline';
+        } catch (err) {
+            console.error('Error accessing camera:', err);
+            alert('Unable to access camera. Please check permissions.');
+        }
+    });
+
+    document.getElementById('capture').addEventListener('click', function () {
+        const video = document.getElementById('video');
+        const canvas = document.getElementById('canvas');
+        canvas.width = video.videoWidth;
+        canvas.height = video.videoHeight;
+        canvas.getContext('2d').drawImage(video, 0, 0, canvas.width, canvas.height);
+        const dataUrl = canvas.toDataURL('image/png');
+        document.getElementById('imageData').value = dataUrl;
+        document.getElementById('uploadButton').click(); // Automatically submit the form
+    });
+</script>
