@@ -24,7 +24,8 @@ namespace OfficeBite.Controllers
                 return BadRequest("No image file received");
             }
 
-            var filePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "UploadedImages", imageFile.FileName);
+            var fileName = Guid.NewGuid() + Path.GetExtension(imageFile.FileName);
+            var filePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "UploadedImages", fileName);
 
             Directory.CreateDirectory(Path.GetDirectoryName(filePath));
 
