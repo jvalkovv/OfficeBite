@@ -17,18 +17,21 @@ namespace OfficeBite.Controllers
         }
 
         [HttpPost]
-        public IActionResult UploadImage(string imageData)
+        public IActionResult UploadImage(IFormFile imageFile)
         {
-            if (string.IsNullOrEmpty(imageData))
+            if (imageFile == null || imageFile.Length == 0)
             {
-                return BadRequest("No image data received");
+                return BadRequest("No image file received");
             }
 
-            var imageBytes = Convert.FromBase64String(imageData.Split(',')[1]);
+            var filePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "UploadedImages", imageFile.FileName);
 
-            var filePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "UploadedImages", $"{Guid.NewGuid()}.png");
-            Directory.CreateDirectory(Path.GetDirectoryName(filePath)); // Ensure directory exists
-            System.IO.File.WriteAllBytes(filePath, imageBytes);
+            Directory.CreateDirectory(Path.GetDirectoryName(filePath));
+
+            using (var stream = new FileStream(filePath, FileMode.Create))
+            {
+                imageFile.CopyTo(stream);
+            }
 
             return Content("Image uploaded successfully");
         }
