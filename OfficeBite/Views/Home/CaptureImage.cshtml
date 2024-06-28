@@ -1,0 +1,39 @@
+﻿@{
+    ViewBag.Title = "Capture Image";
+}
+
+<h2>Capture Image</h2>
+
+<button id="start-camera">Start Camera</button>
+<video id="video" width="320" height="240" autoplay></video>
+<button id="capture">Capture Image</button>
+<canvas id="canvas" width="320" height="240" style="display:none;"></canvas>
+
+<form id="imageForm" action="/Home/UploadImage" method="post">
+    <input type="hidden" name="imageData" id="imageData" />
+    <input type="submit" value="Upload Image" />
+</form>
+
+<script>
+    document.getElementById('start-camera').addEventListener('click', async function() {
+        const constraints = {
+            video: true
+        };
+
+        try {
+            const stream = await navigator.mediaDevices.getUserMedia(constraints);
+            const video = document.getElementById('video');
+            video.srcObject = stream;
+        } catch (err) {
+            console.error('Error accessing camera: ', err);
+        }
+    });
+
+    document.getElementById('capture').addEventListener('click', function() {
+        const canvas = document.getElementById('canvas');
+        const video = document.getElementById('video');
+        canvas.getContext('2d').drawImage(video, 0, 0, canvas.width, canvas.height);
+        const dataUrl = canvas.toDataURL('image/png');
+        document.getElementById('imageData').value = dataUrl;
+    });
+</script>
