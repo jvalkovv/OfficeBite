@@ -55,8 +55,4 @@
 	  <ProjectReference Include="..\OfficeBite.Core\OfficeBite.Core.csproj" />
 	</ItemGroup>
 
-	<ItemGroup>
-	  <Folder Include="wwwroot\UploadedImages\" />
-	</ItemGroup>
-
 </Project>
