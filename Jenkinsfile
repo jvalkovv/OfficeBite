@@ -61,11 +61,11 @@ pipeline {
             }
         }
 
-      stage('Test') {
+    stage('Test') {
             steps {
                 script {
                     // Running tests
-                    bat "dotnet test OfficeBiteTests --no-restore --configuration Release"
+                    bat "dotnet test --no-restore --configuration Release"
                 }
             }
         }
