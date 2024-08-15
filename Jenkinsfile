@@ -29,9 +29,17 @@ pipeline {
                     if (appPoolStatus == 'Stopped') {
                         echo "The application pool 'OfficeBiteProd' is already stopped."
                     } else {
-                        // Stop the application pool
-                        bat 'C:\\Windows\\System32\\inetsrv\\appcmd stop apppool /apppool.name:"OfficeBiteProd"'
-                        returnStatus: true
+                        // Stop the application pool, handling the error if already stopped
+                        def stopResult = bat(
+                            script: 'C:\\Windows\\System32\\inetsrv\\appcmd stop apppool /apppool.name:"OfficeBiteProd"',
+                            returnStatus: true // Capture the exit code instead of failing
+                        )
+
+                        if (stopResult == 1062) {
+                            echo "The application pool 'OfficeBiteProd' is already stopped (Exit code 1062)."
+                        } else if (stopResult != 0) {
+                            error "Failed to stop the application pool 'OfficeBiteProd' with exit code ${stopResult}."
+                        }
                     }
                 }
             }
