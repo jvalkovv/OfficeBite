@@ -26,7 +26,7 @@ pipeline {
                         returnStdout: true
                     ).trim()
 
-                    if (appPoolStatus.toLowerCase() == 'stopped') {
+                    if (appPoolStatus == 'Stopped') {
                         echo "The application pool 'OfficeBiteProd' is already stopped."
                     } else {
                         // Stop the application pool
