@@ -13,7 +13,6 @@ pipeline {
                         script: 'C:\\Windows\\System32\\inetsrv\\appcmd list site "OfficeBiteProd" /text:state',
                         returnStdout: true
                     ).trim()
-                    echo "Site status: '${siteStatus}'"
                     if (siteStatus == 'Stopped') {
                         echo "The site 'OfficeBiteProd' is already stopped."
                     } else {
