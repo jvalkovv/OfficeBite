@@ -31,6 +31,7 @@ pipeline {
                     } else {
                         // Stop the application pool
                         bat 'C:\\Windows\\System32\\inetsrv\\appcmd stop apppool /apppool.name:"OfficeBiteProd"'
+                        returnStatus: true
                     }
                 }
             }
