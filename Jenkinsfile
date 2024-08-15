@@ -13,7 +13,7 @@ pipeline {
                         script: 'C:\\Windows\\System32\\inetsrv\\appcmd list site "OfficeBiteProd" /text:state',
                         returnStdout: true
                     ).trim()
-                    if (siteStatus == 'Stopped') {
+                    if (siteStatus.toLowerCase() == 'stopped') {
                         echo "The site 'OfficeBiteProd' is already stopped."
                     } else {
                         // Stop the specific IIS website
@@ -26,7 +26,7 @@ pipeline {
                         returnStdout: true
                     ).trim()
 
-                    if (appPoolStatus == 'Stopped') {
+                    if (appPoolStatus.toLowerCase() == 'stopped') {
                         echo "The application pool 'OfficeBiteProd' is already stopped."
                     } else {
                         // Stop the application pool
