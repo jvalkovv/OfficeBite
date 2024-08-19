@@ -1,5 +1,7 @@
 # OfficeBite
-# URL: <a href="https://officebite.freeddns.org/"> OFFICEBITEAPP </a>
+# URL: <a href="https://officebite.freeddns.org/"> OFFICEBITEAPP ON IIS Deploy on own Windows Server Host</a>
+# URL: <a href="https://officebite.azurewebsites.net/"> OFFICEBITEAPP ON Azure Deploy on Virtual Host</a>
+
 OfficeBite е уеб базирано приложение за управление на хранителното меню в офиси или заводи.
 Приложението позволява на потребителите да разглеждат менютата за определени дати, да поръчват ястия, включва генерирането на справки от персонала и административен панел за управление на ролите от администраторите.
     
