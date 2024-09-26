@@ -2,7 +2,6 @@
 # URL: <a href="https://officebite.freeddns.org/"> OFFICEBITEAPP ON IIS Deploy on own Windows Server Host</a>
 # URL: <a href="https://officebite.azurewebsites.net/"> OFFICEBITEAPP ON Azure Deploy on Virtual Host</a>
 
-# OfficeBite
 
 **OfficeBite** is a web-based application for managing the food menu in offices or factories. The application allows users to view menus for specific dates, order meals, generate reports by staff, and includes an administrative panel for role management by administrators.
 
