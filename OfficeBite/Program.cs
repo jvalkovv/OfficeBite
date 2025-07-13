@@ -71,7 +71,7 @@ app.Use((httpsScheme, next) =>
 // --- Add IP blocking middleware here ---
 app.Use(async (context, next) =>
 {
-    var blockedIp = "78.83.26.10";
+    var blockedIp = "176.222.15.61";
     var remoteIp = context.Connection.RemoteIpAddress?.ToString();
 
     if (remoteIp == blockedIp)
