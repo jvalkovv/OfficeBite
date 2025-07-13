@@ -60,7 +60,29 @@ app.Use((httpsScheme, next) =>
 
     return next();
 });
+app.UseStatusCodePagesWithReExecute("/error/{0}");
 
+app.Use((httpsScheme, next) =>
+{
+    httpsScheme.Request.Scheme = "https";
+    return next();
+});
+
+// --- Add IP blocking middleware here ---
+app.Use(async (context, next) =>
+{
+    var blockedIp = "176.222.15.61";
+    var remoteIp = context.Connection.RemoteIpAddress?.ToString();
+
+    if (remoteIp == blockedIp)
+    {
+        context.Response.StatusCode = 403; // Forbidden
+        await context.Response.WriteAsync("Nice try");
+        return;
+    }
+
+    await next();
+});
 app.UseHttpsRedirection();
 app.UseStaticFiles();
 
