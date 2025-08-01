@@ -61,11 +61,6 @@ app.Use((httpsScheme, next) =>
     return next();
 });
 
-app.UseEndpoints(endpoints =>
-{
-    endpoints.MapRazorPages();
-    endpoints.MapHub<TwoFactorHub>("/2fahub");
-});
 app.UseHttpsRedirection();
 app.UseStaticFiles();
 
