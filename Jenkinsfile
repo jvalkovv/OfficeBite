@@ -22,15 +22,15 @@ pipeline {
 
                     // Check if the application pool is already stopped
                     def appPoolStatus = bat(
-                        script: 'C:\\Windows\\System32\\inetsrv\\appcmd list apppool "OfficeBiteProd" /text:state',
+                        script: 'C:\\Windows\\System32\\inetsrv\\appcmd list apppool "OfficeBite" /text:state',
                         returnStdout: true
                     ).trim()
 
                     if (appPoolStatus == 'Stopped') {
-                        echo "The application pool 'OfficeBiteProd' is already stopped."
+                        echo "The application pool 'OfficeBite' is already stopped."
                     } else {
                         // Stop the application pool
-                        bat 'C:\\Windows\\System32\\inetsrv\\appcmd stop apppool /apppool.name:"OfficeBiteProd"'
+                        bat 'C:\\Windows\\System32\\inetsrv\\appcmd stop apppool /apppool.name:"OfficeBite"'
                     }
                 }
             }
@@ -104,15 +104,15 @@ pipeline {
 
                     // Check if the application pool is already started
                     def appPoolStatus = bat(
-                        script: 'C:\\Windows\\System32\\inetsrv\\appcmd list apppool "OfficeBiteProd" /text:state',
+                        script: 'C:\\Windows\\System32\\inetsrv\\appcmd list apppool "OfficeBite" /text:state',
                         returnStdout: true
                     ).trim()
 
                     if (appPoolStatus == 'Started') {
-                        echo "The application pool 'OfficeBiteProd' is already started."
+                        echo "The application pool 'OfficeBite' is already started."
                     } else {
                         // Start the application pool
-                        bat 'C:\\Windows\\System32\\inetsrv\\appcmd start apppool /apppool.name:"OfficeBiteProd"'
+                        bat 'C:\\Windows\\System32\\inetsrv\\appcmd start apppool /apppool.name:"OfficeBite"'
                     }
                 }
             }
