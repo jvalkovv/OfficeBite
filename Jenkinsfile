@@ -13,6 +13,7 @@ pipeline {
                         script: 'C:\\Windows\\System32\\inetsrv\\appcmd list site "OfficeBiteProd" /text:state',
                         returnStdout: true
                     ).trim()
+
                     if (siteStatus == 'Stopped') {
                         echo "The site 'OfficeBiteProd' is already stopped."
                     } else {
@@ -22,15 +23,15 @@ pipeline {
 
                     // Check if the application pool is already stopped
                     def appPoolStatus = bat(
-                        script: 'C:\\Windows\\System32\\inetsrv\\appcmd list apppool "OfficeBite" /text:state',
+                        script: 'C:\\Windows\\System32\\inetsrv\\appcmd list apppool "OfficeBiteProd" /text:state',
                         returnStdout: true
                     ).trim()
 
                     if (appPoolStatus == 'Stopped') {
-                        echo "The application pool 'OfficeBite' is already stopped."
+                        echo "The application pool 'OfficeBiteProd' is already stopped."
                     } else {
                         // Stop the application pool
-                        bat 'C:\\Windows\\System32\\inetsrv\\appcmd stop apppool /apppool.name:"OfficeBite"'
+                        bat 'C:\\Windows\\System32\\inetsrv\\appcmd stop apppool /apppool.name:"OfficeBiteProd"'
                     }
                 }
             }
@@ -60,7 +61,7 @@ pipeline {
             }
         }
 
-    stage('Test') {
+        stage('Test') {
             steps {
                 script {
                     // Running tests
@@ -104,15 +105,15 @@ pipeline {
 
                     // Check if the application pool is already started
                     def appPoolStatus = bat(
-                        script: 'C:\\Windows\\System32\\inetsrv\\appcmd list apppool "OfficeBite" /text:state',
+                        script: 'C:\\Windows\\System32\\inetsrv\\appcmd list apppool "OfficeBiteProd" /text:state',
                         returnStdout: true
                     ).trim()
 
                     if (appPoolStatus == 'Started') {
-                        echo "The application pool 'OfficeBite' is already started."
+                        echo "The application pool 'OfficeBiteProd' is already started."
                     } else {
                         // Start the application pool
-                        bat 'C:\\Windows\\System32\\inetsrv\\appcmd start apppool /apppool.name:"OfficeBite"'
+                        bat 'C:\\Windows\\System32\\inetsrv\\appcmd start apppool /apppool.name:"OfficeBiteProd"'
                     }
                 }
             }
