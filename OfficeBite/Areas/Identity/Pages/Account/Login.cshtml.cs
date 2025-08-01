@@ -119,16 +119,11 @@ namespace OfficeBite.Areas.Identity.Pages.Account
                         return LocalRedirect(returnUrl);
                     }
 
-                    // Step 2: Check if 2FA is required
-                    if (await userManager.GetTwoFactorEnabledAsync(user))
+                    if (result.RequiresTwoFactor)
                     {
-                        // ✅ Generate push challenge via our custom provider
-                        var token = await userManager.GenerateTwoFactorTokenAsync(user, "SqlPush2FA");
-
-                        // ✅ Redirect to waiting page
-                        return RedirectToPage("./WaitingForPush", new { userId = user.Id, token, returnUrl });
+                        return RedirectToPage("./LoginWith2fa",
+                            new { ReturnUrl = returnUrl, RememberMe = true });
                     }
-
                     if (result.IsLockedOut)
                     {
                         _logger.LogWarning("User account locked out.");
