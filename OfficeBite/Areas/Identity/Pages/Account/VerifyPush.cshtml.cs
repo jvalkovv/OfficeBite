@@ -4,16 +4,17 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
 using OfficeBite.Infrastructure.Data;
+using OfficeBite.Infrastructure.Data.Models;
 
 namespace OfficeBite.Areas.Identity.Pages.Account
 {
     public class VerifyPushModel : PageModel
     {
         private readonly OfficeBiteDbContext _db;
-        private readonly UserManager<ApplicationUser> _userManager;
-        private readonly SignInManager<ApplicationUser> _signInManager;
+        private readonly UserManager<UserAgent> _userManager;
+        private readonly SignInManager<UserAgent> _signInManager;
 
-        public VerifyPushModel(OfficeBiteDbContext db, UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager)
+        public VerifyPushModel(OfficeBiteDbContext db, UserManager<UserAgent> userManager, SignInManager<UserAgent> signInManager)
         {
             _db = db;
             _userManager = userManager;
