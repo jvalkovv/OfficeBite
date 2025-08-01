@@ -75,7 +75,8 @@ namespace OfficeBite.Core.Extensions
                 })
                 .AddRoles<IdentityRole>()
                 .AddEntityFrameworkStores<OfficeBiteDbContext>()
-                .AddDefaultTokenProviders();
+                .AddDefaultTokenProviders()
+                .AddTokenProvider<SqlPushTokenProvider<IdentityUser>>("SqlPush2FA");
 
 
 

@@ -1,0 +1,23 @@
+﻿@page
+@model WaitingForPushModel
+@{
+    ViewData["Title"] = "Waiting for Push Approval";
+}
+<h2>Waiting for Push Approval...</h2>
+<div id="status">Pending approval...</div>
+
+<script src="~/lib/signalr/signalr.js"></script>
+<script>
+    const token = "@Model.Token";
+    const userId = "@Model.UserId";
+    const connection = new signalR.HubConnectionBuilder().withUrl("/2fahub").build();
+
+    connection.on("LoginApproved", function (approvedToken) {
+        if (approvedToken === token) {
+            document.getElementById("status").innerText = "Approved!";
+            window.location.href = '/Identity/Account/VerifyPush?token=' + token + '&userId=' + userId + '&returnUrl=@Model.ReturnUrl';
+        }
+    });
+
+    connection.start();
+</script>

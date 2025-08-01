@@ -38,6 +38,8 @@ namespace OfficeBite.Infrastructure.Data
         public DbSet<MenuOrder> MenuOrders { get; set; }
 
         public DbSet<OrderHistory> OrderHistories { get; set; }
+        public DbSet<TwoFactorPushChallenge> TwoFactorPushChallenges { get; set; }
+
 
     }
 }
