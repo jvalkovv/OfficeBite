@@ -42,8 +42,8 @@ namespace OfficeBite.Core.Extensions
                         options.EnableRetryOnFailure(maxRetryCount: 5, maxRetryDelay: TimeSpan.FromSeconds(15),
                             errorNumbersToAdd: null);
                     })
-                    .EnableDetailedErrors()
-                    .EnableSensitiveDataLogging());;
+                     .EnableDetailedErrors()
+                     .EnableSensitiveDataLogging();
             });
 
             services.AddScoped<IRepository, Repository>();
