@@ -1,6 +1,9 @@
-﻿using Microsoft.AspNetCore.Localization;
+﻿using Microsoft.AspNetCore.HttpOverrides;
+using Microsoft.AspNetCore.Localization;
+using Microsoft.EntityFrameworkCore;
 using OfficeBite.Core.Extensions;
 using OfficeBite.Core.Extensions.Interfaces;
+using OfficeBite.Infrastructure.Data;
 using OfficeBite.Infrastructure.Data.Seeds.Interfaces;
 using System.Globalization;
 
@@ -16,9 +19,14 @@ builder.Services.ConfigureCookie(builder.Configuration);
 //builder.Services.AddApplicationExternalFbIdentity(builder.Configuration);
 //builder.Services.AddMvc();
 builder.Services.AddProgressiveWebApp();
-
+builder.Services.Configure<ForwardedHeadersOptions>(options => {
+    options.ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto;
+    // Доверяваме се само на нашия Nginx контейнер (CT 152)
+    options.KnownProxies.Add(System.Net.IPAddress.Parse("192.168.1.152"));
+});
 var app = builder.Build();
 
+app.UseForwardedHeaders();
 
 using (var scope = app.Services.CreateScope())
 {
@@ -72,5 +80,10 @@ app.UseAuthorization();
 app.MapDefaultControllerRoute();
 app.MapRazorPages();
 
+using (var scope = app.Services.CreateScope())
+{
+    var db = scope.ServiceProvider.GetRequiredService<OfficeBiteDbContext>(); // Замени ApplicationDbContext с твоето име на контекста, ако е различно
+    db.Database.Migrate();
+}
 
 app.Run();
