@@ -8,7 +8,6 @@ jobs:
   build-and-deploy:
     runs-on: self-hosted
     
-    # КРИТИЧНО: Решава проблема с липсващия HOME при NuGet.targets
     env:
       DOTNET_CLI_HOME: /home/runner
       HOME: /home/runner
@@ -17,32 +16,29 @@ jobs:
       - name: 📥 Checkout Code
         uses: actions/checkout@v4
 
-      - name: ⚙️ Setup .NET 8
-        uses: actions/setup-dotnet@v4
-        with:
-          dotnet-version: 8.0.x
-
-      - name: 🔨 Verify & Build
+      - name: 🔨 Verify, Build & Publish
         run: |
           export PATH=$PATH:/usr/share/dotnet:/usr/bin
           
-          # Динамично намиране на OfficeBite проекта
-          PROJECT_FILE=$(find . -maxdepth 3 -iname "*OfficeBite*.csproj" | head -n 1)
-          echo "🚀 Found project at: $PROJECT_FILE"
+          # 1. Намираме точно къде е проектът
+          PROJECT_FILE=$(find . -maxdepth 4 -iname "OfficeBite.csproj" | head -n 1)
+          PROJECT_DIR=$(dirname "$PROJECT_FILE")
+          echo "🚀 Project found in: $PROJECT_DIR"
           
-          if [ -z "$PROJECT_FILE" ]; then
-            echo "❌ ERROR: OfficeBite.csproj not found!"
-            ls -R
-            exit 1
-          fi
-
-          dotnet restore "$PROJECT_FILE"
-          dotnet publish "$PROJECT_FILE" -c Release -o ./publish
+          # 2. Публикуваме ВЪТРЕ в папката на проекта за сигурност
+          dotnet publish "$PROJECT_FILE" -c Release -o "$PROJECT_DIR/publish"
+          
+          # 3. Запазваме пътя за следващата стъпка в променлива на средата
+          echo "FINAL_PUBLISH_PATH=$PROJECT_DIR/publish" >> $GITHUB_ENV
 
       - name: 🚀 Sync to Production (CT 160)
         run: |
-          rsync -avz -e "ssh -o StrictHostKeyChecking=no" --delete ./publish/ root@192.168.1.160:/var/www/officebite/
+          # Използваме динамично намерения път от предната стъпка
+          echo "📂 Syncing from: ${{ env.FINAL_PUBLISH_PATH }}"
+          
+          rsync -avz -e "ssh -o StrictHostKeyChecking=no -i /home/runner/.ssh/id_ed25519" \
+          --delete "${{ env.FINAL_PUBLISH_PATH }}/" root@192.168.1.160:/var/www/officebite/
 
       - name: 🔄 Restart Service
         run: |
-          ssh -o StrictHostKeyChecking=no root@192.168.1.160 "systemctl restart officebite.service"
+          ssh -o StrictHostKeyChecking=no -i /home/runner/.ssh/id_ed25519 root@192.168.1.160 "systemctl restart officebite.service"
