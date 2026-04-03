@@ -1,0 +1,32 @@
+name: Deploy OfficeBite to Proxmox
+
+on:
+  push:
+    branches: [ "master", "main" ] # Ще се задейства при push в главния клон
+
+jobs:
+  build-and-deploy:
+    runs-on: self-hosted # Казва на GitHub да ползва твоя CT 159
+
+    steps:
+    - name: 📥 Checkout Code
+      uses: actions/checkout@v4
+
+    - name: ⚙️ Setup .NET 8
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: 8.0.x
+
+    - name: 🔨 Build and Publish
+      run: dotnet publish -c Release -o ./publish
+
+    - name: 🚀 Deploy to Application Node (CT 160)
+      # rsync копира само променените файлове, което прави деплоя светкавичен
+      # StrictHostKeyChecking=no предотвратява спиране на пайплайна при първо свързване
+      run: |
+        rsync -avz -e "ssh -o StrictHostKeyChecking=no" --delete ./publish/ root@192.168.1.160:/var/www/officebite/
+
+    - name: 🔄 Restart Kestrel Service
+      # Рестартира демона в CT 160, за да зареди новите .dll файлове
+      run: |
+        ssh -o StrictHostKeyChecking=no root@192.168.1.160 "systemctl restart officebite.service"
